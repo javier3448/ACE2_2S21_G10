@@ -41,7 +41,7 @@ public class ConectionApi extends AppCompatActivity {
     private String ritmoCardiaco=" ";
     private String oxigenoSangre=" ";
 
-    //---------------Variables comunicacion bluetooh----------------------------
+    //---------------Variables comunicacion. bluetooh----------------------------
     Handler bluetoothIn;
     final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
