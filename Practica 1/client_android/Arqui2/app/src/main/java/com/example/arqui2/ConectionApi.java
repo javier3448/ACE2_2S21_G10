@@ -32,6 +32,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import java.util.ArrayList; 
+import java.nio.ByteBuffer; 
+import java.nio.ByteOrder; 
+
 public class ConectionApi extends AppCompatActivity {
     //variables de la interfaz
     Button IdDesconectar;
@@ -55,6 +59,8 @@ public class ConectionApi extends AppCompatActivity {
     //variables de comunicacion con api para mandar informacion
     RequestQueue requestQueue;
 
+    private ArrayList<Byte> byteBuffer = new ArrayList<Byte>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,45 +78,52 @@ public class ConectionApi extends AppCompatActivity {
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 if (msg.what == handlerState) {
-                    String readMessage = (String) msg.obj;
-                    //IdBufferIn.setText("");
+                    // Segun un men en StackOverflow: 'There is no guarantee or 
+                    // attempt to preserve packetization. So any number of writes 
+                    // can result in any number of reads, just the stream of bytes 
+                    // are guaranteed to be correct.'
+                    // Lo que quiere decir que hay dos problemas que pueden 
+                    // ocurrir:
+                    // * Cuando hagamos un read desde el celular no estan los 12
+                    //   bytes necesarios para sacar una medicion congruente.
+                    // * Desconectamos el arduino justo cuando esta mandando el 
+                    //   mensaje.
 
-                    //IdBufferIn.setText("Temperatura: "+readMessage+"°C");
-                    DataStringIN.append(readMessage);
-                    //delay(1000L);
-                    int identificaTemperatura = DataStringIN.indexOf("#"); //Identificar si viene medicion temperatura
-                    int identificaRitmo=DataStringIN.indexOf("$"); //Identifica lectura de ritmo cardiaco
-                    int identifiOxigeno=DataStringIN.indexOf("&"); //identifica lectura de oxigeno en la sangre
+                    // Entonces:
+                    // vamos a tener un buffer de bytes (lo vamos a llamar `byteBuffer`), 
+                    // en el que vamos a meter todos los bytes que recibimos, 
+                    // cuando recivamos al menos 12 bytes, vamos a construir los 
+                    // floats con esos bytes y los vamos a sacar de buffer. Esto solucionara el primer
+                    // problema
+                    // Es muuuuy dificil que se de el seguno problema, pero creo
+                    // que la solucion es muy simple,  solo es de vaciar el `byteBuffer`
+                    // si perdemos la coneccion con el modulo solo es de vaciar
+                    // el mensaje incompleto que quedo en el buffer. No se si hay
+                    // un evento/callback/funcion o algo asi que se ejecute cuando
+                    // suceda eso?
 
-                    if (identificaTemperatura > 0) {
-                        //IdBufferIn.setText("");
-                        String dataInPrint = DataStringIN.substring(0, identificaTemperatura);
-                        IdBufferIn.setText("Temperatura: "+dataInPrint+"°C");//<-<- PARTE A MODIFICAR >->->
-                        temperatura=dataInPrint;
-                        DataStringIN.delete(0, DataStringIN.length());
-                    }else if(identificaRitmo>0){
-                        String dataInprint=DataStringIN.substring(0,identificaRitmo);
-                        IdBufferIn.setText("Ritmo cardiaco "+dataInprint);
-                        ritmoCardiaco=dataInprint;
-                        DataStringIN.delete(0,DataStringIN.length()); //limpiar la variable
-                    }else if(identifiOxigeno>0){
-                        String dataInprint=DataStringIN.substring(0,identifiOxigeno);
-                        IdBufferIn.setText("Ritmo cardiaco "+dataInprint);
-                        oxigenoSangre=dataInprint;
-                        DataStringIN.delete(0,DataStringIN.length()); //limpiar la variable
+                    byteBuffer.addAll(Arrays.asList( (byte[]) msg.obj ));
+
+                    if(byteBuffer.size() >= 12){
+                        byte[] bytesTemperaturaMedida = {byteBuffer.get(0), byteBuffer.get(1), byteBuffer.get(2), byteBuffer.get(3)}; 
+                        byte[] byteRitmoCardiaco = {byteBuffer.get(4), byteBuffer.get(5), byteBuffer.get(6), byteBuffer.get(7)}; 
+                        byte[] byteOxigeno = {byteBuffer.get(8), byteBuffer.get(9), byteBuffer.get(10), byteBuffer.get(11)}; 
+
+                        float floatTemperaturaMedida = ByteBuffer.wrap(bytesTemperaturaMedida).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+                        float floatRitmoCardiaco = ByteBuffer.wrap(bytesRitmoCardiaco).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+                        float floatOxigeno = ByteBuffer.wrap(bytesOxigeno).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+
+                        // @TODO:
+                        // De una se van todos al servidor
+
+                        temperatura = Float.toString(floatTemperaturaMedida);
+                        ritmoCardiaco = Float.toString(floatTemperaturaMedida);
+                        oxigenoSangre = Float.toString(floatTemperaturaMedida);
+
+                        // Quitamos los 12 bytes que ya leimos
+                        byteBuffer = (ArrayList<Byte>) byteBuffer.subList(0, 12);
                     }
-                    /**
-                     * Comenatio... supongo que se mandaran los tres datos juntos a la api?
-                     * si es el caso esperaria que se llenen los tres datos y mandarlos
-                     */
-                    if(!temperatura.equals(" ") && !ritmoCardiaco.equals(" ") && !oxigenoSangre.equals(" ")){
-                        //Lamar api
-                        //insercionMediciones("se agregara el endpint despues");
-                        //setear los valores
-                        temperatura=" ";
-                        ritmoCardiaco=" ";
-                        oxigenoSangre=" ";
-                    }
+
                 }
             }
         };
