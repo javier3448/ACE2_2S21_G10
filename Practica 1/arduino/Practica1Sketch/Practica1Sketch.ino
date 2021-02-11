@@ -26,7 +26,11 @@ void setup()
     Serial.begin(9600);
     BT1.begin(38400); 
 }
- 
+
+
+// [???]
+// Que pasa si prendemos y apagamos el arduino :
+
 void loop()
 {  
 	// Nos indica si el modulo esta conectado a otro dispositivo bluetooth
@@ -40,16 +44,30 @@ void loop()
 		};
 
 		//@debug:
-		Serial.println(muestra[0]);
-		Serial.println(muestra[1]);
-		Serial.println(muestra[2]);
+		Serial.print('$');
+		Serial.print(muestra[0]);
+		Serial.print('|');
+		Serial.print(muestra[1]);
+		Serial.print('|');
+		Serial.print(muestra[2]);
+		Serial.print(';');
+		Serial.println();
+
 
 		// Enviamos los 3 floats atravez del modulo bluetooth
-		BT1.write((char*)muestra, sizeof(muestra));
+		BT1.print('$');
+		BT1.print(muestra[0]);
+		BT1.print('|');
+		BT1.print(muestra[1]);
+		BT1.print('|');
+		BT1.print(muestra[2]);
+		BT1.print(';');
 
+		// [!!!] SI AGREGAMOS CUALQUIER OTRA COSA A NUESTRO 'PAQUETE' TENEMOS QUE
+		// CAMBIARLO DEL LADO DE ANDROID TAMBIEN!
 		//@debug: un salto de linea para que sea mas facil de leer en la aplicacion
 		//de bluetooth que estamos usando para hacer pruebas
-		BT1.println();
+		//BT1.println();
 	}
 
 	// @Mejora: Quisiera revisara si el modulo esta conectado cada 100-500 milis
