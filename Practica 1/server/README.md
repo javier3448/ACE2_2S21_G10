@@ -31,8 +31,10 @@ Campos requeridos para que funcione:
 1. nombre
 2. apellidos
 3. carnet
-4. usuario
-5. password
+4. altura
+5. peso
+6. usuario
+7. password
 
 ### Metodo DELETE
 Para eliminar usuarios
@@ -66,6 +68,6 @@ este va a ser para eliminar algun registro de lo que marquen los sensores
     https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors
 
 
-### Nota 
-aun hace falta agregarle la base de datos para que almacene los datos, pero para que vayan viendo como agregar la API xd 
+## Nota 
+Ya esta terminada la conexion con la base de datos. prueben y cualquier onda me avisan
 
