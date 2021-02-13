@@ -31,8 +31,10 @@ Campos requeridos para que funcione:
 1. nombre
 2. apellidos
 3. carnet
-4. usuario
-5. password
+4. altura
+5. peso
+6. usuario
+7. password
 
 ### Metodo DELETE
 Para eliminar usuarios

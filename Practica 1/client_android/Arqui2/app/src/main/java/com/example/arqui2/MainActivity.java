@@ -13,9 +13,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -40,37 +43,58 @@ public class MainActivity extends AppCompatActivity {
        btnLogin.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               login("agregaremos url");
+               login("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/login/"+txtusername.getText()+"/"+txtpassword.getText());
            }
        });
 
     }
     public void login(String url){
-    Intent intent=new Intent(MainActivity.this,BluetoohConecta.class);
-    startActivity(intent);
+   // Intent intent=new Intent(MainActivity.this,BluetoohConecta.class);
+    //startActivity(intent);
     //Codigo para conectarse a la api y realizar el inicio de sesion
-        /*Map<String,String> parametros=new HashMap<String,String>();
-    parametros.put("email",txtusername.getText().toString());
-    parametros.put("password",txtpassword.getText().toString());
-
-        JSONObject objeto=new JSONObject(parametros);
-
-        JsonObjectRequest respuesta=new JsonObjectRequest(Request.Method.POST, url, objeto, new Response.Listener<JSONObject>() {
+        JsonArrayRequest respuesta=new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
-                //Agregaremos esto para ver el mensaje de retorno
-                Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_SHORT).show();
-                //Toast.makeText(getApplicationContext(), "Registro exitoso", Toast.LENGTH_SHORT).show();
+            public void onResponse(JSONArray response) {
+                //response.getJSONArray(); para objetos en array
+                JSONObject jsonObject = null;
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        jsonObject = response.getJSONObject(i);
+
+                        ideUser=jsonObject.getString("IdUser");
+                        Intent intent=new Intent(MainActivity.this,BluetoohConecta.class);
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+              if(error.networkResponse !=null){
+                  try {
+                      byte[] errorByte= error.networkResponse.data;
+                      String parseError=errorByte.toString();
+                      JSONObject errorObject=new JSONObject(parseError);
+                      String errorMessage=errorObject.getString("message");
+                      Toast.makeText(getApplicationContext(),errorMessage,Toast.LENGTH_SHORT).show();
+                  } catch (JSONException e) {
+                      e.printStackTrace();
+                  }
+              }
+              else{
+                  Toast.makeText(getApplicationContext(),"Contraseña y/o usuario incorrecto",Toast.LENGTH_SHORT).show();
+              }
+
             }
-        }
-        );
+        });
+
+
+
+
        requestQueue=Volley.newRequestQueue(this);
-       requestQueue.add(respuesta);*/
+       requestQueue.add(respuesta);
     }
 
 }
