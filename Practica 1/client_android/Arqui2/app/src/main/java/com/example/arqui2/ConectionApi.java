@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -102,7 +103,7 @@ public class ConectionApi extends AppCompatActivity {
                     // un evento/callback/funcion o algo asi que se ejecute cuando
                     // suceda eso?
 
-                    byteBuffer.addAll(Arrays.asList( (byte[]) msg.obj ));
+                    byteBuffer.addAll(Arrays.asList((Byte[]) msg.obj));
 
                     if(byteBuffer.size() >= 12){
                         byte[] bytesTemperaturaMedida = {byteBuffer.get(0), byteBuffer.get(1), byteBuffer.get(2), byteBuffer.get(3)}; 
@@ -110,8 +111,8 @@ public class ConectionApi extends AppCompatActivity {
                         byte[] byteOxigeno = {byteBuffer.get(8), byteBuffer.get(9), byteBuffer.get(10), byteBuffer.get(11)}; 
 
                         float floatTemperaturaMedida = ByteBuffer.wrap(bytesTemperaturaMedida).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-                        float floatRitmoCardiaco = ByteBuffer.wrap(bytesRitmoCardiaco).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-                        float floatOxigeno = ByteBuffer.wrap(bytesOxigeno).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+                        float floatRitmoCardiaco = ByteBuffer.wrap(byteRitmoCardiaco).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+                        float floatOxigeno = ByteBuffer.wrap(byteOxigeno).order(ByteOrder.LITTLE_ENDIAN).getFloat();
 
                         // @TODO:
                         // De una se van todos al servidor
@@ -119,7 +120,8 @@ public class ConectionApi extends AppCompatActivity {
                         temperatura = Float.toString(floatTemperaturaMedida);
                         ritmoCardiaco = Float.toString(floatTemperaturaMedida);
                         oxigenoSangre = Float.toString(floatTemperaturaMedida);
-
+                        //los datos obtenidos se enviaran al servidor
+                        insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors");
                         // Quitamos los 12 bytes que ya leimos
                         byteBuffer = (ArrayList<Byte>) byteBuffer.subList(0, 12);
                     }
@@ -155,6 +157,7 @@ public class ConectionApi extends AppCompatActivity {
           parametros.put("temperatura",temperatura);
           parametros.put("ritmo",ritmoCardiaco);
           parametros.put("oxigeno",oxigenoSangre);
+          parametros.put("idUser",MainActivity.ideUser);
           JSONObject objeto=new JSONObject(parametros);
 
           JsonObjectRequest respuesta=new JsonObjectRequest(Request.Method.POST, url, objeto, new Response.Listener<JSONObject>() {
