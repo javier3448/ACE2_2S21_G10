@@ -33,7 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.nio.ByteBuffer; 
 import java.nio.ByteOrder; 
 
@@ -42,13 +43,14 @@ public class ConectionApi extends AppCompatActivity {
     Button IdDesconectar;
     TextView IdBufferIn; //texto donde se visualizaran los valores que se mandaran a la api
     //Variables que se mandaran a la api
+    // [?]: No seria mejor pasar estos 3 strings a la funcion `insercionMediciones` por parametro?
     private String temperatura=" ";
     private String ritmoCardiaco=" ";
     private String oxigenoSangre=" ";
 
     //---------------Variables comunicacion. bluetooh----------------------------
     Handler bluetoothIn;
-    final int handlerState = 0;
+    public static final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
@@ -60,7 +62,17 @@ public class ConectionApi extends AppCompatActivity {
     //variables de comunicacion con api para mandar informacion
     RequestQueue requestQueue;
 
-    private ArrayList<Byte> byteBuffer = new ArrayList<Byte>();
+    private class Medicion {
+        public double temperatura;
+        public double ritmoCardiaco;
+        public double oxigeno;
+
+        public Medicion(double temperatura, double ritmoCardiaco,  double oxigeno){
+            this.temperatura = temperatura;
+            this.ritmoCardiaco = ritmoCardiaco;
+            this.oxigeno = oxigeno;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,59 +84,25 @@ public class ConectionApi extends AppCompatActivity {
          IdDesconectar=(Button)findViewById(R.id.IdDesconectar);
          IdBufferIn=(TextView)findViewById(R.id.IdBufferIn);
 
-        /**
-         *Comunicacion de bluetooh con arduino para leer los datos que se mandaran desde arduino
-         *
-         */
+
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
                 if (msg.what == handlerState) {
-                    // Segun un men en StackOverflow: 'There is no guarantee or 
-                    // attempt to preserve packetization. So any number of writes 
-                    // can result in any number of reads, just the stream of bytes 
-                    // are guaranteed to be correct.'
-                    // Lo que quiere decir que hay dos problemas que pueden 
-                    // ocurrir:
-                    // * Cuando hagamos un read desde el celular no estan los 12
-                    //   bytes necesarios para sacar una medicion congruente.
-                    // * Desconectamos el arduino justo cuando esta mandando el 
-                    //   mensaje.
 
-                    // Entonces:
-                    // vamos a tener un buffer de bytes (lo vamos a llamar `byteBuffer`), 
-                    // en el que vamos a meter todos los bytes que recibimos, 
-                    // cuando recivamos al menos 12 bytes, vamos a construir los 
-                    // floats con esos bytes y los vamos a sacar de buffer. Esto solucionara el primer
-                    // problema
-                    // Es muuuuy dificil que se de el seguno problema, pero creo
-                    // que la solucion es muy simple,  solo es de vaciar el `byteBuffer`
-                    // si perdemos la coneccion con el modulo solo es de vaciar
-                    // el mensaje incompleto que quedo en el buffer. No se si hay
-                    // un evento/callback/funcion o algo asi que se ejecute cuando
-                    // suceda eso?
+                    Medicion medicion = (Medicion) msg.obj;
 
-                    byteBuffer.addAll(Arrays.asList((Byte[]) msg.obj));
+                    // @debug
+                    System.out.println("Desde handleMessage:");
+                    System.out.println("temperatura" + medicion.temperatura);
+                    System.out.println("ritmoCardiaco" + medicion.ritmoCardiaco);
+                    System.out.println("oxigeno" + medicion.oxigeno);
 
-                    if(byteBuffer.size() >= 12){
-                        byte[] bytesTemperaturaMedida = {byteBuffer.get(0), byteBuffer.get(1), byteBuffer.get(2), byteBuffer.get(3)}; 
-                        byte[] byteRitmoCardiaco = {byteBuffer.get(4), byteBuffer.get(5), byteBuffer.get(6), byteBuffer.get(7)}; 
-                        byte[] byteOxigeno = {byteBuffer.get(8), byteBuffer.get(9), byteBuffer.get(10), byteBuffer.get(11)}; 
+                    temperatura = Double.toString(medicion.temperatura);
+                    ritmoCardiaco = Double.toString(medicion.ritmoCardiaco);
+                    oxigenoSangre = Double.toString(medicion.oxigeno);
 
-                        float floatTemperaturaMedida = ByteBuffer.wrap(bytesTemperaturaMedida).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-                        float floatRitmoCardiaco = ByteBuffer.wrap(byteRitmoCardiaco).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-                        float floatOxigeno = ByteBuffer.wrap(byteOxigeno).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-
-                        // @TODO:
-                        // De una se van todos al servidor
-
-                        temperatura = Float.toString(floatTemperaturaMedida);
-                        ritmoCardiaco = Float.toString(floatTemperaturaMedida);
-                        oxigenoSangre = Float.toString(floatTemperaturaMedida);
-                        //los datos obtenidos se enviaran al servidor
-                        insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors");
-                        // Quitamos los 12 bytes que ya leimos
-                        byteBuffer = (ArrayList<Byte>) byteBuffer.subList(0, 12);
-                    }
+                    //los datos obtenidos se enviaran al servidor
+                    insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors");
 
                 }
             }
@@ -282,15 +260,66 @@ public class ConectionApi extends AppCompatActivity {
             // Se mantiene en modo escucha para determinar el ingreso de datos
             while (true) {
                 try {
-                    bytes = mmInStream.read(buffer);
-                    String readMessage = new String(buffer, 0, bytes);
-                    // Envia los datos obtenidos hacia el evento via handler
-                    bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
+                    // Analiza el inputStream buscando este patron:
+                    // '$' {numeroReal} | {numeroReal} | {numeroReal} ';'
+                    // cada vez que encuentra dicho patron en via los numeros reales a un handler
+
+                    outer: while(true){
+                        byte currByte = getNextByteFromInStream();
+
+                        if(currByte == (byte) '$'){
+                            currByte = getNextByteFromInStream();
+                            StringBuilder medicionesCrudas = new StringBuilder();
+                            while (currByte != ';'){
+                                // Armamos el string que hay desde: '$' hasta ';'
+                                medicionesCrudas.append((char)currByte);
+                                currByte = getNextByteFromInStream();
+
+                                if(medicionesCrudas.length() > 100){
+                                    System.err.println("'$' sin terminacion ';' :`" + medicionesCrudas.toString() + "`");
+                                    continue outer;
+                                }
+                            }
+
+                            String[] medicionesSpliteadas = medicionesCrudas.toString().split("\\|");
+
+                            // @debug:
+                            System.out.println("Temperatura: " + medicionesSpliteadas[0]);
+                            System.out.println("Ritmo cardiaco: " + medicionesSpliteadas[1]);
+                            System.out.println("Oxigeno: " + medicionesSpliteadas[2]);
+
+                            double temperatura =  Double.parseDouble(medicionesSpliteadas[0]);
+                            double ritmoCardiaco =  Double.parseDouble(medicionesSpliteadas[1]);
+                            double oxigeno =  Double.parseDouble(medicionesSpliteadas[2]);
+
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(temperatura, ritmoCardiaco, oxigeno)).sendToTarget();
+                        }
+                    }
                 } catch (IOException e) {
                     break;
                 }
             }
         }
+
+        // Si queremos llevarnoslas de OOP y de java el estado la funcion getNextByteFromInStream
+        // y su estado deberian estar en una Inner class :/
+        // private final NextByteGetter nextByteGetter = new NextByteGetter();
+        // private class NextByteGetter{
+            byte[] readBuffer = new byte[256];
+            int readBufferCurrentIndex = 0;
+            int readBufferLength = 0;
+            private byte getNextByteFromInStream() throws IOException{
+                if(readBufferCurrentIndex >= readBufferLength){
+                    readBufferLength = mmInStream.read(readBuffer);
+                    readBufferCurrentIndex = 0;
+                }
+
+                byte result = readBuffer[readBufferCurrentIndex];
+                readBufferCurrentIndex += 1;
+                return result;
+            }
+        // }
+
         //Envio de trama
         public void write(String input)
         {
