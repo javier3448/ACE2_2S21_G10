@@ -32,10 +32,12 @@ exports.handler = (event, context, callback) => {
       password: {
         S: event.password,
       },
+      tipo: {
+        S: event.tipo,
+      },
     },
     TableName: "Users",
   };
-
   dynamodb.putItem(params, function (err, data) {
     if (err) {
       console.log(err);

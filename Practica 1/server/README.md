@@ -4,6 +4,7 @@
 * [Login](#Login)
 * [Usuarios](#Usuarios)
 * [Sensores](#Sensores)
+* [Reports](#reports)
 * [Nota](#Nota)
 
 ## Login
@@ -33,8 +34,9 @@ Campos requeridos para que funcione:
 3. carnet
 4. altura
 5. peso
-6. usuario
+6. username
 7. password
+8. tipo (atleta o coach)
 
 ### Metodo DELETE
 Para eliminar usuarios
@@ -53,21 +55,57 @@ Campos requeridos
 3. oxigeno
 4. idUser
 
-### Metodo GET
-este va a ser para poder hacer los reportes
-
-    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors/{type}
-
-- type: este campo va a ser por si se quieren obtener todos los campos entonces se coloca (all) o si solo uno (single) este todavia lo tengo que ver como lo dejo 
-
-Nota: single solo retorna un registro
 
 ### Metodo DELETE
 este va a ser para eliminar algun registro de lo que marquen los sensores
 
     https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors
 
+## Reports
+### Ritmo (Son metodos GET)
+Reporte 1: aqui retorna una lista de los datos de ritmo marcado por el usuario en un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/heart-rate/report1/{idUser}
+
+Reporte 3: aqui retorna el promedio del ritmo del usuario mediante un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/heart-rate/report3/{idUser}
+
+Nota: idUser es para retornar solo los datos de dicho usuario, puedes obtener el id cuando inicia sesion, ya que aqui retorno todo la informacion del usuario en un JSON y podrias guardarlo por localstorage para que se te facilite manejar esta informacion para las validaciones     
+
+### Oxigeno (Son metodos GET)
+Reporte 1: aqui retorna una lista de los datos de oxigeno marcado por el usuario en un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/oxygen/report1/{idUser}
+
+Reporte 3: aqui retorna el promedio del oxigeno del usuario mediante un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/oxygen/report3/{idUser}
+
+Nota: idUser es para retornar solo los datos de dicho usuario, puedes obtener el id cuando inicia sesion, ya que aqui retorno todo la informacion del usuario en un JSON y podrias guardarlo por localstorage para que se te facilite manejar esta informacion para las validaciones     
+
+### Temperatura (Son metodos GET)
+Reporte 1: aqui retorna una lista de los datos de temperatura marcado por el usuario en un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/temperature/report1/{idUser}
+
+Reporte 3: aqui retorna el promedio de la temperatura del usuario mediante un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/temperature/report3/{idUser}
+
+Reporte 4: aqui retorna la temperatura maxima del usuario mediante un JSON 
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/temperature/report4/{idUser}
+
+Report 5: aqui retorna la temperatura minima del usuario mediante un JSON
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/temperature/report5/{idUser}
+
+Nota: idUser es para retornar solo los datos de dicho usuario, puedes obtener el id cuando inicia sesion, ya que aqui retorno todo la informacion del usuario en un JSON y podrias guardarlo por localstorage para que se te facilite manejar esta informacion para las validaciones     
 
 ## Nota 
-Ya esta terminada la conexion con la base de datos. prueben y cualquier onda me avisan
+1. Todo esta terminado Otzoy lee la nota de la seccion reports, para que no tengas problemas con la apis de reportes
+2. Ya puse en la nube la pagina web, solo es que se termine para que ya se pueda usar, por el momento solo esta lo que lleva el compañero Otzoy, les dejo el URL 
+   
+        http://ace2-practica1-prenda-1s2021.s3-website.us-east-2.amazonaws.com
 
