@@ -5,6 +5,7 @@
   - [Table of contents](#table-of-contents)
   - [Sensors](#sensors)
   - [Users](#users)
+  - [Reports](#reports)
   - [Nota](#nota)
 
 ## Sensors
@@ -14,6 +15,9 @@ Cabe recalcar que en AWS solo tiene base de datos NoSQL, la que se utilizo fue D
 
 ## Users 
 Los archivos JS que contiene es igual para lo mismo para lambda y la conexion con la base de datos
+
+## Reports
+Los archivos JS que contiene esta carpeta son igual para lambada y la conexion con la base de datos
 
 ## Nota
 So lo me hace falta los js para realizar los reportes 

@@ -38,6 +38,7 @@ exports.handler = (event, context, callback) => {
           carnet: +data.Item.carnet.N,
           username: data.Item.username.S,
           password: data.Item.password.S,
+          tipo: data.Item.tipo.S,
         },
       ];
 
