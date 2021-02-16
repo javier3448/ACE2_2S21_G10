@@ -3,19 +3,19 @@ import { urlServer } from "../../config";
 import TimeView from "../nav-bar/TimeView";
 import PropTypes from 'prop-types'
 
+/***
+ * ----------------------Conexion   con api---------------------------
+ * 
+ */
 async function singIn(credentials) {
     console.log(credentials);
-    return fetch(urlServer + `login/${credentials.username}/${credentials.password}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }//,
-        //body: JSON.stringify(credentials)
-    }).then((response) => {
-        console.log(response);
-    });
+    const response=await fetch(urlServer+`login/${credentials.username}/${credentials.password}`)
+    return await response.json();
 }
-
+/**
+ * Interaccion de datos con interfaz 
+ * @param {setToken} param0 
+ */
 export default function SingIn({setToken}) {
     const [username, setUser] = useState();
     const [password, setPass] = useState();
@@ -26,8 +26,11 @@ export default function SingIn({setToken}) {
             console.log({username, password});
             const infoUser = await singIn({
                 username, password
-            });            
+            });      
+            console.log('get object json');      
             console.log(infoUser)
+            console.log('obtener cada dato');
+            console.log(infoUser[0].apellidos);
         } catch (error) {
             console.log(error);            
         }
