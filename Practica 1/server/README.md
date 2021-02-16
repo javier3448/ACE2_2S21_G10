@@ -37,6 +37,14 @@ Campos requeridos para que funcione:
 6. username
 7. password
 8. tipo (atleta o coach)
+9. asignacion (usuario del coach, si es coach poner none o algo asi)
+
+### Metodo GET 
+obtener los usuarios por coach para ver los reportes 
+
+     https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/users/show/{asignacion}
+asignacion: es el usuario del coach, podes recuperarlo cuando te logueas ya que ahi te retorno el usuario y toda la data
+
 
 ### Metodo DELETE
 Para eliminar usuarios

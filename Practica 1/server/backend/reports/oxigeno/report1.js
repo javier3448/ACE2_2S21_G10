@@ -22,13 +22,17 @@ exports.handler = (event, context, callback) => {
       let dataOxigeno = [];
       for (let index = 0; index < length; index++) {
         if (event.idUser === array[index].idUser.S) {
-          dataOxigeno.push(+array[index].oxigeno.N);
+          dataOxigeno.push({
+            oxigeno: +array[index].oxigeno.N,
+            dateTime: array[index].dateTime.S,
+          });
         }
       }
       let items = null;
+      dataOxigeno.sort(dynamicSort("dateTime"));
       if (dataOxigeno.length > 0) {
         items = dataOxigeno.map((dataField) => {
-          return { oxigeno: dataField };
+          return { oxigeno: dataField.oxigeno, dateTime: dataField.dateTime };
         });
       }
 
@@ -36,3 +40,18 @@ exports.handler = (event, context, callback) => {
     }
   });
 };
+
+function dynamicSort(property) {
+  let sortOrder = 1;
+
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+
+  return function (a, b) {
+    let result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result * sortOrder;
+  };
+}

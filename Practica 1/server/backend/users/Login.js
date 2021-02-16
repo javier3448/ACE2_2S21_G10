@@ -39,6 +39,7 @@ exports.handler = (event, context, callback) => {
           username: data.Item.username.S,
           password: data.Item.password.S,
           tipo: data.Item.tipo.S,
+          asignacion: data.Item.asignacion.S,
         },
       ];
 
