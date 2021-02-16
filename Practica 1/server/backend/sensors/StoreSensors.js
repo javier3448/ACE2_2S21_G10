@@ -6,6 +6,12 @@ const dynamodb = new AWS.DynamoDB({
 });
 
 exports.handler = (event, context, callback) => {
+  let today = new Date();
+  let date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  let time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  let dateTime = date + " " + time;
   const params = {
     Item: {
       idSensors: {
@@ -22,6 +28,9 @@ exports.handler = (event, context, callback) => {
       },
       idUser: {
         S: event.idUser,
+      },
+      dateTime: {
+        S: dateTime,
       },
     },
     TableName: "Sensors",

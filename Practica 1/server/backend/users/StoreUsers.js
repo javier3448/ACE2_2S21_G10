@@ -35,6 +35,9 @@ exports.handler = (event, context, callback) => {
       tipo: {
         S: event.tipo,
       },
+      asignacion: {
+        S: event.asignacion,
+      },
     },
     TableName: "Users",
   };

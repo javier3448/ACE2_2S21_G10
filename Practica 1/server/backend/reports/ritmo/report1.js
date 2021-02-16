@@ -22,13 +22,17 @@ exports.handler = (event, context, callback) => {
       let dataRitmo = [];
       for (let index = 0; index < length; index++) {
         if (event.idUser === array[index].idUser.S) {
-          dataRitmo.push(+array[index].ritmo.N);
+          dataRitmo.push({
+            ritmo: +array[index].ritmo.N,
+            dateTime: array[index].dateTime.S,
+          });
         }
       }
       let items = null;
+      dataRitmo.sort(dynamicSort("dateTime"));
       if (dataRitmo.length > 0) {
         items = dataRitmo.map((dataField) => {
-          return { ritmo: dataField };
+          return { ritmo: dataField.ritmo, dateTime: dataField.dateTime };
         });
       }
 
@@ -36,3 +40,18 @@ exports.handler = (event, context, callback) => {
     }
   });
 };
+
+function dynamicSort(property) {
+  let sortOrder = 1;
+
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+
+  return function (a, b) {
+    let result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result * sortOrder;
+  };
+}
