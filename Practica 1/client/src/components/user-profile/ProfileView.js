@@ -1,3 +1,5 @@
+import TimeView from "../nav-bar/TimeView";
+
 export default function Profile() {
     return (
         <div className="vh-100">
@@ -8,10 +10,7 @@ export default function Profile() {
                             <h1>Usuario</h1>
                             <h6>Tipo usuario</h6>
                         </div>
-                        <div className="col" align="right">
-                            <h4>16:52 hrs</h4>
-                            <h5>11/02/2021</h5>
-                        </div>
+                        <TimeView></TimeView>
                     </div>
                     <div className="card card-body">
                         <div className="row">

@@ -1,7 +1,22 @@
+import React, {useState, useEffect} from 'react'
 import NavBar from "../nav-bar/NavBarView";
+import TimeView from "../nav-bar/TimeView";
 import AthleteCard from "./AthleteCardView";
+import {
+    useParams
+  } from "react-router-dom";
 
-export default function Coach() {
+export default function Coach(props) {
+    let {id} = useParams();
+    console.log(id)
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        fetch('https://pokeapi.co/api/v2/pokemon')
+        .then(response => response.json())
+        .then(data => setData(data)) 
+	},[]);
+
     return (
         <div className="vh-100">
             <div className="h-100">
@@ -11,17 +26,13 @@ export default function Coach() {
                             <h1>Usuario</h1>
                             <h6>Tipo usuario</h6>
                         </div>
-                        <div className="col" align="right">
-                            <h4>16:52 hrs</h4>
-                            <h5>11/02/2021</h5>
-                        </div>
+                        <TimeView></TimeView>
                     </div>
                     <hr></hr>
                     <div className="row">
-                        <AthleteCard></AthleteCard>
-                        <AthleteCard></AthleteCard>
-                        <AthleteCard></AthleteCard>
-                        <AthleteCard></AthleteCard>
+                        {data.results ? data.results.map(pokemon => (
+                            <AthleteCard data={pokemon}/>
+                        )) : <div>Cargando</div>}
                     </div>
                 </div>
             </div>
