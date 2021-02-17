@@ -1,39 +1,31 @@
 import React, { useState } from "react";
 import { urlServer } from "../../config";
-import TimeView from "../nav-bar/TimeView";
 import PropTypes from 'prop-types'
+import axios from 'axios';
 
-async function singIn(credentials) {
-    console.log(credentials);
-    return fetch(urlServer + `login/${credentials.username}/${credentials.password}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }//,
-        //body: JSON.stringify(credentials)
-    }).then((response) => {
-        console.log(response);
-    });
+async function signIn(credentials) {
+    const res = await axios.get(urlServer + `login/${credentials.username}/${credentials.password}`);
+    // const obj = eval("(" + JSON.stringify(res) + ")");
+    // const parseado = JSON.stringify(obj);
+    // const data = JSON.parse(parseado).data;
+    const data = res.data;
+    return data;
 }
 
-export default function SingIn({setToken}) {
+export default function SignIn(/*{setToken}*/) {
     const [username, setUser] = useState();
     const [password, setPass] = useState();
 
     const handleSubmit = async e => {
         e.preventDefault();
         try {
-            console.log({username, password});
-            const infoUser = await singIn({
+            const infoUser = await signIn({
                 username, password
             });            
-            console.log(infoUser)
+            sessionStorage['infoUser'] = infoUser;
+            this.props.history.push('coach');
         } catch (error) {
-            console.log(error);            
         }
-
-        
-        //setToken(infoUser)
     }
 
     return (
@@ -44,7 +36,6 @@ export default function SingIn({setToken}) {
                     <div className="row mt-4">
                         <span className="col-lg-2 col-xs-0 col-sm-0"></span>
                         <h3 className="col-lg-8 col-xs-12 col-sm-12 text-center">Iniciar sesión</h3>
-                        <TimeView></TimeView>
                     </div>
                     <div className="form-group">
                         <label htmlFor="username"></label>
@@ -63,6 +54,6 @@ export default function SingIn({setToken}) {
     );
 }
 
-SingIn.propTypes = {
-    setToken: PropTypes.func.isRequired
-}
+//SingIn.propTypes = {
+    //setToken: PropTypes.func.isRequired
+//}

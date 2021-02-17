@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import TimeView from '../nav-bar/TimeView';
 export default function TemperatureView() {
 
   const [data, setData] = useState([ ]);
@@ -39,7 +38,6 @@ export default function TemperatureView() {
             <div className="col">
               <h1>Temperatura</h1>
             </div>
-            <TimeView></TimeView>
           </div>
           <div className="card card-body my-4">
             <div className="row">
