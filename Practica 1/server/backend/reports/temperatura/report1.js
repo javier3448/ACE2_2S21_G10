@@ -22,13 +22,20 @@ exports.handler = (event, context, callback) => {
       let dataTemperatura = [];
       for (let index = 0; index < length; index++) {
         if (event.idUser === array[index].idUser.S) {
-          dataTemperatura.push(+array[index].temperatura.N);
+          dataTemperatura.push({
+            temperatura: +array[index].temperatura.N,
+            dateTime: array[index].dateTime.S,
+          });
         }
       }
       let items = null;
+      dataTemperatura.sort(dynamicSort("dateTime"));
       if (dataTemperatura.length > 0) {
         items = dataTemperatura.map((dataField) => {
-          return { temperatura: dataField };
+          return {
+            temperatura: dataField.temperatura,
+            dateTime: dataField.dateTime,
+          };
         });
       }
 
@@ -36,3 +43,18 @@ exports.handler = (event, context, callback) => {
     }
   });
 };
+
+function dynamicSort(property) {
+  let sortOrder = 1;
+
+  if (property[0] === "-") {
+    sortOrder = -1;
+    property = property.substr(1);
+  }
+
+  return function (a, b) {
+    let result =
+      a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    return result * sortOrder;
+  };
+}
