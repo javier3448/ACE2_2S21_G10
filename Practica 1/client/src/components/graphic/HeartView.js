@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import TimeView from '../nav-bar/TimeView';
+import UserInfo from '../nav-bar/UserInfoView';
 export default function HeartView() {
 
   const [data, setData] = useState([ ]);
@@ -36,7 +36,6 @@ export default function HeartView() {
             <div className="col">
               <h1>Ritmo cardiaco</h1>
             </div>
-            <TimeView></TimeView>
           </div>
           <div className="card card-body my-4">
             <div className="row">
