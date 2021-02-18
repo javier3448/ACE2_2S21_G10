@@ -38,6 +38,12 @@ exports.handler = (event, context, callback) => {
       asignacion: {
         S: event.asignacion,
       },
+      sexo: {
+        S: event.sexo
+      },
+      edad: {
+        N: event.edad
+      }
     },
     TableName: "Users",
   };
