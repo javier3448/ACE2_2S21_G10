@@ -40,6 +40,8 @@ exports.handler = (event, context, callback) => {
           password: data.Item.password.S,
           tipo: data.Item.tipo.S,
           asignacion: data.Item.asignacion.S,
+          sexo: data.Item.sexo.S,
+          edad: data.Item.edad.N
         },
       ];
 
