@@ -1,10 +1,60 @@
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { getAthletes } from "../../services/coachInfo";
+import ErrorView from "../error-page/Error";
 import UserInfo from "../nav-bar/UserInfoView";
 
 export default function Profile() {
-  // Recupera la variabla de sesión que contiene
-  // la información del usuario
-  const infoUser = JSON.parse(localStorage.getItem("userInfo"));
-  return (
+  const params = useParams();
+  const [viewAllow, setViewAllow] = useState(false);
+  const [hasAuth, setHasAuth] = useState(false);
+  const [peso, setPeso] = useState(0);
+  const [altura, setAltura] = useState(0);
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  //const [atleta, setAtleta] = useState(null);
+  useEffect(async () => {
+    const infoUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (params.id !== undefined) {
+      const listAthletes = await getAthletes(infoUser.username);
+      const athlete = listAthletes.find((e) => e.IdUser === params.id);
+      if (!athlete) {
+        setViewAllow(true);
+        setHasAuth(false);
+      } else {
+        setViewAllow(true);
+        setHasAuth(true);
+        setPeso(athlete.peso);
+        setAltura(athlete.altura);
+        setNombre(athlete.nombre);
+        setApellido(athlete.apellidos);
+      }
+    } else {
+      setViewAllow(true);
+      setHasAuth(true);
+      setPeso(infoUser.peso);
+      setAltura(infoUser.altura);
+      setNombre(infoUser.nombre);
+      setApellido(infoUser.apellidos);
+    }
+  });
+  return !viewAllow ? (
+    <div className="vh-100">
+      <div className="h-100">
+        <div role="main" className="container">
+          <div className="row">
+            <div className="col">
+              <h1>Cargando...</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : !hasAuth ? (
+    <ErrorView data={{ error: "401 - No autorizado" }} />
+  ) : (
     <div className="vh-100">
       <div className="h-100">
         <div role="main" className="container">
@@ -13,19 +63,11 @@ export default function Profile() {
             <div className="row">
               <div className="from-group col-md-6">
                 <label>Nombres</label>
-                <input
-                  className="form-control"
-                  readOnly
-                  value={infoUser.nombre}
-                />
+                <input className="form-control" readOnly value={nombre} />
               </div>
               <div className="from-group col-md-6">
                 <label>Apellidos</label>
-                <input
-                  className="form-control"
-                  readOnly
-                  value={infoUser.apellidos}
-                />
+                <input className="form-control" readOnly value={apellido} />
               </div>
             </div>
             <div className="row">
@@ -44,7 +86,7 @@ export default function Profile() {
                 <input
                   className="form-control"
                   readOnly
-                  value={infoUser.peso + " lbs."}
+                  value={peso + " lbs."}
                 />
               </div>
               <div className="from-group col-md-6 col-xs-12">
@@ -52,7 +94,7 @@ export default function Profile() {
                 <input
                   className="form-control"
                   readOnly
-                  value={infoUser.altura + " m."}
+                  value={altura + " m."}
                 />
               </div>
             </div>

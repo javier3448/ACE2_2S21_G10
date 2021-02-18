@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import UserInfo from "../nav-bar/UserInfoView";
 import axios from "axios";
 import { urlServer } from "../../config";
+import ErrorView from "../error-page/Error";
 
 export default function Coach() {
   //let { id } = useParams();
@@ -15,7 +16,11 @@ export default function Coach() {
     axios.get(urlServer + `users/show/${userInfo.username}`)
       .then((response) => setData(response.data))
   }, []);
-  //
+  // El usuario debe ser un coach
+  if (userInfo.tipo.toLowerCase() !== 'coach') {
+    return <ErrorView data={{"error": "401 - No autorizado"}} />
+  };
+
   return (
     <div className="vh-100">
       <div className="h-100">
