@@ -13,6 +13,7 @@ import TemperatureView from "./components/graphic/TemperatureView";
 import HeartView from "./components/graphic/HeartView";
 import NavBar from "./components/nav-bar/NavBarView";
 import { ProvideAuth, useAuth } from "./services/useInfo";
+import ErrorView from "./components/error-page/Error";
 
 /**
  * Vista de login
@@ -28,45 +29,47 @@ function App() {
     <ProvideAuth>
       <Router>
         <Switch>
-          <Route path="/signin">
+          <Route exact path="/signin">
             <SignIn />
           </Route>
-          <PrivateRoute path="/coach">
+          <Route exact path="/">
+            <Redirect to='/dashboard' />
+          </Route>
+          <PrivateRoute exact path="/coach">
             <NavBar />
             <CoachView />
           </PrivateRoute>
-          <PrivateRoute path="/info-user">
+          <PrivateRoute exact path="/info-user">
             <NavBar />
             <ProfileView />
           </PrivateRoute>
-          <PrivateRoute path="/dashboard">
+          <PrivateRoute exact path="/dashboard">
             <NavBar />
             <DashboardView />
           </PrivateRoute>
-          <PrivateRoute path="/dashboard/:id">
+          <PrivateRoute exact path="/dashboard/:id">
             <NavBar />
             <DashboardView />
           </PrivateRoute>
-          <PrivateRoute path="/athlete/info/:id">
+          <PrivateRoute exact path="/athlete/info-user/:id">
             <NavBar />
             <ProfileView />
           </PrivateRoute>
-          <PrivateRoute path="/athlete/stats/heart/:id">
+          <PrivateRoute exact path="/athlete/stats/heart/:id">
             <NavBar />
             <HeartView />
           </PrivateRoute>
-          <PrivateRoute path="/athlete/stats/temp/:id">
+          <PrivateRoute exact path="/athlete/stats/temp/:id">
             <NavBar />
             <TemperatureView />
           </PrivateRoute>
-          <PrivateRoute path="/athlete/stats/oxygen/:id">
+          <PrivateRoute exact path="/athlete/stats/oxygen/:id">
             <NavBar />
             <OxygenView />
           </PrivateRoute>
-          <PrivateRoute path="/">
-            <NavBar />
-            <DashboardView />
-          </PrivateRoute>
+          <Route>
+            <ErrorView  data={{"error": "404 - Recurso no encontrado"}} />
+          </Route>
         </Switch>
       </Router>
     </ProvideAuth>
