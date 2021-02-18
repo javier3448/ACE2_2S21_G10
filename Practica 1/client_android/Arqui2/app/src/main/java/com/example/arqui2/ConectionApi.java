@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -277,6 +278,14 @@ public class ConectionApi extends AppCompatActivity {
 
                                 if(medicionesCrudas.length() > 100){
                                     System.err.println("'$' sin terminacion ';' :`" + medicionesCrudas.toString() + "`");
+
+                                    //Print toast
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "FATAL:\n '$' sin terminacion ';' :`" + medicionesCrudas.toString() + " `",
+                                            Toast.LENGTH_LONG
+                                    ).show();
+
                                     continue outer;
                                 }
                             }
