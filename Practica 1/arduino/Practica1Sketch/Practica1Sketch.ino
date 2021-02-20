@@ -83,9 +83,7 @@ void loop()
 void sendToBluetooth()
 {
 	// Nos indica si el modulo esta conectado a otro dispositivo bluetooth
-	// @NOCHECKIN!:
-	bool isConnected = true;
-	//bool isConnected = digitalRead(BT_STATE);
+	bool isConnected = digitalRead(BT_STATE);
 
 	if(isConnected){
 
@@ -105,15 +103,14 @@ void sendToBluetooth()
 		Serial.print(';');
 		Serial.println();
 
-		// @NO CHECKIN: decomentar todo lo de bluetooth
 		// Enviamos los 3 floats atravez del modulo bluetooth
-		// BT1.print('$');
-		// BT1.print(muestra[0]);
-		// BT1.print('|');
-		// BT1.print(muestra[1]);
-		// BT1.print('|');
-		// BT1.print(muestra[2]);
-		// BT1.print(';');
+		BT1.print('$');
+		BT1.print(muestra[0]);
+		BT1.print('|');
+		BT1.print(muestra[1]);
+		BT1.print('|');
+		BT1.print(muestra[2]);
+		BT1.print(';');
 
 		// [!!!] SI AGREGAMOS CUALQUIER OTRA COSA A NUESTRO 'PAQUETE' TENEMOS QUE
 		// CAMBIARLO DEL LADO DE ANDROID TAMBIEN!
