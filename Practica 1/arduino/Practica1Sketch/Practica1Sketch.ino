@@ -1,8 +1,20 @@
 #include <SoftwareSerial.h>
+#include <Wire.h>
+#include "MAX30105.h"
+#include "heartRate.h"
 
 #define BT_RX 10
 #define BT_TX 11
 #define BT_STATE 12
+
+MAX30105 particleSensor;
+const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
+byte rates[RATE_SIZE]; //Array of heart rates
+byte rateSpot = 0;
+long lastBeat = 0; //Time at which the last beat occurred
+
+float beatsPerMinute;
+int beatAvg;
 
 // Para arduino uno:
 SoftwareSerial BT1(BT_RX, BT_TX);
@@ -25,6 +37,19 @@ void setup()
 
     Serial.begin(9600);
     BT1.begin(38400); 
+
+	// Initialize sensor
+	if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) 
+	{
+		Serial.println("MAX30105 was not found. Please check wiring/power. ");
+		// @TODO que no se muera todo cuando no encuentra el MAX30105
+		while (1);
+	}
+	Serial.println("Place your index finger on the sensor with steady pressure.");
+
+	particleSensor.setup(); //Configure sensor with default settings
+	particleSensor.setPulseAmplitudeRed(0x0A);  
+	particleSensor.setPulseAmplitudeGreen(0); 
 }
 
 
@@ -37,11 +62,9 @@ void loop()
 	bool isConnected = digitalRead(BT_STATE);
 
 	if(isConnected){
-		float muestra[] = {
-			getTemperatura(),
-			getRitmoCardiaco(),
-			getOxigeno()
-		};
+		float muestra[3];
+
+		getMuestra(muestra);
 
 		//@debug:
 		Serial.print('$');
@@ -77,18 +100,61 @@ void loop()
 	delay(1000);
 }
 
-float getTemperatura(){
-	float tempC = analogRead(A0);
-	tempC = (1.1 * tempC * 100.0)/1024.0;
-	return tempC;
+// @TODO: organizar todo despues de 'refactorizacion'
+// @TODO: Agrupar todo bien bien
+
+void getMuestra(float* muestra)
+{
+	{//getTemperatura
+		float tempC = analogRead(A0);
+		tempC = (1.1 * tempC * 100.0)/1024.0;
+		muestra[0] = tempC;
+	}
+
+	// @TODO: Que no se trabe cuando el mensaje quede incompleto
+	{//get ritmo cardiaco y oxigeno
+		long irValue = particleSensor.getIR();
+
+		if (checkForBeat(irValue) == true)
+		{
+			//We sensed a beat!
+			long delta = millis() - lastBeat;
+			lastBeat = millis();
+
+			beatsPerMinute = 60 / (delta / 1000.0);
+
+			if (beatsPerMinute < 255 && beatsPerMinute > 20)
+			{
+				rates[rateSpot++] = (byte)beatsPerMinute; 
+				rateSpot %= RATE_SIZE; 
+
+				//Take average of readings
+				beatAvg = 0;
+				for (byte x = 0 ; x < RATE_SIZE ; x++)
+					beatAvg += rates[x];
+				beatAvg /= RATE_SIZE;
+			}
+		}
+
+		//@debug
+		Serial.print(", BPM=");
+		Serial.print(beatsPerMinute);
+		Serial.print("IR=");
+		Serial.print(irValue);
+		Serial.print(", Avg BPM=");
+		Serial.print(beatAvg);
+
+		if (irValue < 50000)
+	    	Serial.print(" No finger?");
+
+	    muestra[1] = beatsPerMinute;
+	    muestra[2] = (float)irValue;
+
+		Serial.println();
+	}
+
 }
 
-// @TODO:
-float getRitmoCardiaco(){
-	return 0;
-}
 
-// @TODO:
-float getOxigeno(){
-	return 0;
-}
+
+
