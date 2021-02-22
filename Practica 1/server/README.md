@@ -38,6 +38,8 @@ Campos requeridos para que funcione:
 7. password
 8. tipo (atleta o coach)
 9. asignacion (usuario del coach, si es coach poner none o algo asi)
+10. sexo (M masculino F femenino) 
+11. edad
 
 ### Metodo GET 
 obtener los usuarios por coach para ver los reportes 
