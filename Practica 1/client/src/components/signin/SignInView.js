@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Redirect, useLocation } from "react-router-dom";
 import { useAuth } from "../../services/useInfo";
+import TimeView from "../nav-bar/TimeView";
 
 export default function SignIn() {
   // Sirve para acceder a la función signIn de useInfo
@@ -64,6 +65,7 @@ export default function SignIn() {
             <h3 className="col-lg-8 col-xs-12 col-sm-12 text-center">
               Iniciar sesión
             </h3>
+            <TimeView />
           </div>
           {alert}
           <div className="form-group">

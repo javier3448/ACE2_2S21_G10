@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import TimeView from '../nav-bar/TimeView';
 import UserInfo from '../nav-bar/UserInfoView';
 export default function HeartView() {
 
@@ -33,9 +34,10 @@ export default function HeartView() {
       <div className="h-100">
         <div role="main" className="container">
           <div className="row">
-            <div className="col">
+            <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
               <h1>Ritmo cardiaco</h1>
             </div>
+            <TimeView />
           </div>
           <div className="card card-body my-4">
             <div className="row">
