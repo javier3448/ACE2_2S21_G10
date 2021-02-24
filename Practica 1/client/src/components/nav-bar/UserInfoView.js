@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getAthletes } from "../../services/coachInfo";
+import TimeView from "./TimeView";
 
 export default function UserInfo() {
   const params = useParams()
@@ -50,7 +51,7 @@ export default function UserInfo() {
 
   return (
     <div className="row">
-      <div className="col">
+      <div className="col-lg-10 col-xs-12 col-sm-12">
         {
           !viewAllow ? "Cargando..." :
           (<>
@@ -62,6 +63,7 @@ export default function UserInfo() {
           </>)
         }
       </div>
+      <TimeView />
     </div>
   );
 }

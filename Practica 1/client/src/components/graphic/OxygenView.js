@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import TimeView from '../nav-bar/TimeView';
 export default function OxygenView() {
 
   const [data, setData] = useState([ ]);
@@ -32,9 +33,10 @@ export default function OxygenView() {
       <div className="h-100">
         <div role="main" className="container">
           <div className="row">
-            <div className="col">
+            <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
               <h1>Oxigeno en la sangre</h1>
             </div>
+            <TimeView />
           </div>
           <div className="card card-body my-4">
             <div className="row">
