@@ -71,7 +71,7 @@ export default function HeartView() {
       data.pulso = data.pulso;
       return data;
     }));
-    if (dataSet.length >= 59)  {
+    if (dataSet.length >= 60)  {
       // Elimina el primer dato
       dataSet.shift();
       setData(dataSet);
@@ -83,7 +83,7 @@ export default function HeartView() {
     const filterData = dataSet.filter(value => value.pulso > 0);
     /// Calcula el promedio de pulsaciones
     const avgData = Math.round(filterData.reduce((total, value) => total + value.pulso,0) / filterData.length);
-    setAvg(isNan(avgData) ? 0 : avgData);
+    setAvg(isNaN(avgData) ? 0 : avgData);
     /// Determina el color del icono del corazón
     setColorHeart((avg < 10) ? 'text-muted' : (avg >= 10 && avg < 60) ? 'text-warning' : (avg >= 60 && avg <= 100) ? 'text-success' : 'text-danger');
   }, 1000);

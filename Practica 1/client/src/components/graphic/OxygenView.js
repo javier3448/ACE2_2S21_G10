@@ -67,7 +67,7 @@ export default function OxygenView() {
       data.oxigeno = data.oxigeno;
       return data;
     }));
-    if (dataSet.length >= 59)  {
+    if (dataSet.length >= 60)  {
       // Elimina el primer dato
       dataSet.shift();
       setData(dataSet);
@@ -79,7 +79,7 @@ export default function OxygenView() {
     const filterData = dataSet.filter(value => value.oxigeno > 0);
     const avgData = Math.round(filterData.reduce((total, value) => total + value.oxigeno,0) / filterData.length);
     /// Calcula el promedio de oxigeno en la sangre
-    setAvg(IsNan(avgData) ? 0 : avgData);
+    setAvg(isNaN(avgData) ? 0 : avgData);
     /// Determina el color del icono de pulmón
     /// setColorOxygen((avg < 10) ? 'text-muted' : (avg >= 10 && avg < 60) ? 'text-warning' : (avg >= 60 && avg <= 100) ? 'text-success' : 'text-danger');
   }, 1000)

@@ -69,7 +69,7 @@ export default function TemperatureView() {
         data.temperatura = data.temperatura;
         return data;
       }));
-      if (dataSet.length >= 59)  {
+      if (dataSet.length >= 60)  {
         // Elimina el primer dato
         dataSet.shift();
         setData(dataSet);
@@ -86,8 +86,8 @@ export default function TemperatureView() {
       const firstValue = filterData.length > 0 ? filterData[0].temperatura: 0;
       /// Establece el valor menor, mayor y promedio del conjunto de dato 'dataSet'
       setMin(filterData.reduce((min, b) => Math.min(min, b.temperatura), firstValue));
-      setMax(filterDate.reduce((max, b) => Math.max(max, b.temperatura), firstValue));
-      setAvg(isNan(avgData) ? 0 : formatter.format(avgData));
+      setMax(filterData.reduce((max, b) => Math.max(max, b.temperatura), firstValue));
+      setAvg(isNaN(avgData) ? 0 : formatter.format(avgData));
       /// Determina el color y el icono a colocar dependendiendo de 'avg'
       if (avgData <= 0) {
         setIconTemperature('fa fa-thermometer-empty');
@@ -125,7 +125,7 @@ export default function TemperatureView() {
                   data={dataSet}
                   margin={{ top: 5, right: 30, left: 20, bottom: 5, }} >
                   <XAxis dataKey="name" />
-                  <CartesianGrid strokeDasharray="2 2" />
+                  <CartesianGrid strokeDasharray="1 1" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
