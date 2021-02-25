@@ -15,70 +15,73 @@ import axios from "axios";
 import { useInterval } from "../../services/interval";
 
 export default function HeartView() {
+  /// Establece un hook para la información (dataSet)
+  /// de la gráfica.
+  /// Almacenará 'name' valor para el eje X
+  /// 'sec' referencia que ayudará a 'mover' los datos
+  /// 'pulso' valor para el eje Y
   const [dataSet, setData] = useState([{name: '00s', sec:0, pulso: 0}]);
+  /// Establece un hook para mostrar el promedio de pulso
   const [avg, setAvg] = useState(0);
+  /// Establece un hook para mostrar de diferente color 
+  /// el icono de corazón
+  /// text-danger si es mayor a 100 (exclusivo)
+  /// text-success si está entre 60 y 100 (inclusivo)
+  /// text-warning si es menor a 60 y mayor a 10 (inclusivo)
+  /// text-muted si es menor a 10 (exclusivo)
   const [colorHeart, setColorHeart] = useState("text-muted");
-  const infoUser = JSON.parse(localStorage.getItem("userInfo"));
-
   useInterval(async () => {
-    const response = await axios.get("https://pokeapi.co/api/v2/pokemon/squirtle")
+    /// Solicita al servidor todos los datos del usuario con id: IdUser
+    const infoUser = JSON.parse(localStorage.getItem("userInfo"));
+    const response = await axios.get(urlServer + `/heart-rate/report1/${infoUser.IdUser}`);
+    /// Servirá como referencia para determinar
+    /// si insertar un cero o el valor de pulso
+    /// que retornó el servidor en su último valor
+    const refDate = new Date();
     const data = response.data;
+    let flagInsertZero = false;
     if (data !== null) {
-      /// Reordena los elementos
-      setData(dataSet.map((data) => {
-        data.sec++;
-        if (data.sec < 10) {
-          data.name = '0' + data.sec + 's';
-        } else {
-          data.name = data.sec + 's';
-        }
-        data.pulso = data.pulso;
-        return data;
-      }));
-      if (dataSet.length === 60)  {
-        dataSet.shift();
-        setData(dataSet);
+      /// Recupera el último dato
+      const lastRecord = data[data.length - 1];
+      /// Recupera la fecha del último dato
+      const lastDate = new Date(lastRecord.dateTime);
+      /// Muestra un mensaje
+      console.log($`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
+      if (refDate - lastDate > 1100) {
+        /// Si la diferencia de tiempo es mayor a 1.1 seg, insertará un cero
+        flagInsertZero = true;
       }
-      const newData = {name: '00s', sec:0, pulso: data.base_experience * Math.random()};
-      setData(data => [...data, newData]);
+    } else {
+      /// El servidor puede devolver null cuando no hay ningún registro
+      /// del sensor de latidos para el usuario dado
+      console.log(`El servidor respondió null, no hay datos`);
+      /// El servidor no tiene dato, insertará un 0
+      flagInsertZero = true;
     }
+    /// Reordena los elementos con el objetivo
+    /// que parezca que la gráfica se mueve
+    setData(dataSet.map((data) => {
+      data.sec++;
+      if (data.sec < 10) {
+        data.name = '0' + data.sec + 's';
+      } else {
+        data.name = data.sec + 's';
+      }
+      data.pulso = data.pulso;
+      return data;
+    }));
+    if (dataSet.length >= 60)  {
+      dataSet.shift();
+      setData(dataSet);
+    }
+    /// Inserta el nuevo dato o un cero, dependiendo del resultado de flagInsertZero
+    const newData = {name: '00s', sec:0, pulso: flagInsertZero ? 0 : data.pulso };
+    setData(data => [...data, newData]);
+    /// Calcula el promedio de pulsaciones
+    setAvg(dataSet.reduce((total, value) => total + value.pulso,0) / dataSet.length);
+    /// Determina el color del icono del corazón
+    setColorHeart((avg < 10) ? 'text-muted' : (avg >= 10 && avg < 60) ? 'text-warning' : (avg >= 60 && avg <= 100) ? 'text-success' ? 'text-danger');
   }, 1000);
-
-  // useEffect(() => {
-    // const response = axios.get(urlServer + `/heart-rate/report1/${infoUser.IdUser}`);
-    // if (response.data !== null) {
-    //   let lengthData = response.data.length;
-    //   if (dataSet.length === 0) {
-    //     // Está vacío
-    //     // Recupera el último dato de la lista que envió el servidor
-    //     let lastRecord = response.data[lengthData - 1];
-    //     // Convierte la fecha
-    //     let lastRecordDate = new Date(lastRecord.dateTime);
-    //     // Determina si el registro es el más reciente
-    //     let lastSeconds = new Date();
-    //     // Si la diferencia es mmayor a 0.6 y menor a 1.4
-    //     let difference = lastSeconds - lastRecordDate;
-    //     if (difference >= 0.6 && lastRecordDate <= 1.4) {
-    //       dataSet.push({name: '00s', sec: 0, pulse:lastRecord.ritmo})
-    //     }
-    //   } else {
-    //     // No está vacío
-    //   }
-    // }
-  //   const interval = setInterval(() => {
-  //     axios.get("https://pokeapi.co/api/v2/pokemon/squirtle")
-  //     .then((response) => {
-  //       setData((data) => {
-  //         if(data.length === 60) {
-  //           data.pop();
-  //         }
-  //         data.unshift({name: '00s', sec:0, pulso: response.data.base_experience * Math.random()})
-  //       })
-  //     });
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
   return (
     <div className="vh-100">
       <div className="h-100">
