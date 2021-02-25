@@ -13,6 +13,7 @@ export default function OxygenView() {
   /// 'oxigeno' valor para el eje Y
   const [dataSet, setData] = useState([{name: '00s', sec:0, oxigeno: 0}]);
   /// Establece un hook para mostrar el promedio de oxígeno en la sangre
+  /// del conjunto de datos 'dataSet'
   const [avg, setAvg] = useState(0);
   /// Establece un hook para mostrar de difernte color
   /// el icono de pulmones
@@ -30,7 +31,7 @@ export default function OxygenView() {
     /// const response = await axios.get('http://localhost:4200/api/oxygen/all')
     const response = await axios.get(urlServer + `reports/oxygen/report1/${infoUser.IdUser}`)
     /// Servirá como referencia para determinar
-    /// si insertar un cero o el valor de pulso
+    /// si insertar un cero o el valor de oxigeno
     /// que retornó el servidor en su último valor
     const refDate = new Date();
     if (response.status === 200) {

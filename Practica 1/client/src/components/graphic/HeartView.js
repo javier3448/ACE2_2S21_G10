@@ -18,6 +18,7 @@ export default function HeartView() {
   /// 'pulso' valor para el eje Y
   const [dataSet, setData] = useState([{name: '00s', sec:0, pulso: 0}]);
   /// Establece un hook para mostrar el promedio de pulso
+  /// del conjunto de datos 'dataSet'
   const [avg, setAvg] = useState(0);
   /// Establece un hook para mostrar de diferente color 
   /// el icono de corazón
