@@ -101,7 +101,8 @@ public class ConectionApi extends AppCompatActivity {
                     temperatura = Double.toString(medicion.temperatura);
                     ritmoCardiaco = Double.toString(medicion.ritmoCardiaco);
                     oxigenoSangre = Double.toString(medicion.oxigeno);
-
+                    //setear los valores para visualizarl los datos que se mandaran a la api
+                    IdBufferIn.setText("Temp: "+temperatura+" ritmo: "+ritmoCardiaco+" oxigeno: "+oxigenoSangre);
                     //los datos obtenidos se enviaran al servidor
                     insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors");
 
@@ -147,7 +148,7 @@ public class ConectionApi extends AppCompatActivity {
           }, new Response.ErrorListener() {
               @Override
               public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+                  Toast.makeText(getApplicationContext(),String.valueOf(error.getSuppressed()),Toast.LENGTH_SHORT).show();
               }
           }
           );

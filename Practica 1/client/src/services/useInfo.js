@@ -37,8 +37,10 @@ function useProvideAuth() {
     console.log(user);
     return false;
   };
-  const signOut = () => {
+  const signOut = async () => {
+    const response = await axios.delete(urlServer + `login`);
     localStorage.removeItem("userInfo");
+    console.log(response.data);
     setUser(false);
   };
   return {
