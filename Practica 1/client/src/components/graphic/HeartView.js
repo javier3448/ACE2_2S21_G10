@@ -9,8 +9,10 @@ import {
 import { useInterval } from "../../services/interval";
 import {urlServer} from '../../config'
 import TimeView from "../nav-bar/TimeView";
+import { useParams } from "react-router-dom";
 
 export default function HeartView() {
+  const params = useParams();
   /// Establece un hook para la información (dataSet)
   /// de la gráfica.
   /// Almacenará 'name' valor para el eje X
@@ -29,11 +31,10 @@ export default function HeartView() {
   const [colorHeart, setColorHeart] = useState("text-muted");
   useInterval(async () => {
     /// Solicita al servidor todos los datos del usuario con id: IdUser
-    const infoUser = JSON.parse(localStorage.getItem("userInfo"));
     var flagInsertZero = false;
     var lastRecord;
     /// const response = await axios.get('http://localhost:4200/api/heart/all');
-    const response = await axios.get(urlServer + `reports/heart-rate/report1/${infoUser.IdUser}`);
+    const response = await axios.get(urlServer + `reports/heart-rate/report1/${params.id}`);
     /// Servirá como referencia para determinar
     /// si insertar un cero o el valor de pulso
     /// que retornó el servidor en su último valor
