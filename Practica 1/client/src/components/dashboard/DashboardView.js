@@ -85,21 +85,9 @@ export default function Dashboard() {
                       </Link>
                     </div>
                     <div className="col-6 d-grid gap-2">
-                      <button
-                        className="btn btn-outline-success"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseHeart"
-                        aria-expanded="false"
-                        aria-controls="collapseHeart"
-                      >
+                      <Link className="btn btn-outline-success" to={`/athlete/stats-history/heart/${atleta}`}>
                         Historial
-                      </button>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="collapse" id="collapseHeart">
-                      <p>Registros anteriores</p>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -119,26 +107,14 @@ export default function Dashboard() {
                 <div className="card-body">
                   <div className="row">
                     <div className="col-6 d-grid gap-2">
-                    <Link className="btn btn-outline-primary" to={`/athlete/stats/oxygen/${atleta}`} >
+                      <Link className="btn btn-outline-primary" to={`/athlete/stats/oxygen/${atleta}`} >
                         Tiempo real
                       </Link>
                     </div>
                     <div className="col-6  d-grid gap-2">
-                      <button
-                        className="btn btn-outline-success"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOxygen"
-                        aria-expanded="false"
-                        aria-controls="collapseOxygen"
-                      >
-                        Historial
-                      </button>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="collapse" id="collapseOxygen">
-                      <p>Registros anteriores</p>
+                    <Link className="btn btn-outline-success" to={`/athlete/stats-history/oxygen/${atleta}`}>
+                      Historial
+                    </Link>
                     </div>
                   </div>
                 </div>
@@ -159,26 +135,14 @@ export default function Dashboard() {
                 <div className="card-body">
                   <div className="row">
                     <div className="col-6 d-grid gap-2">
-                    <Link className="btn btn-outline-primary" to={`/athlete/stats/temp/${atleta}`} >
+                      <Link className="btn btn-outline-primary" to={`/athlete/stats/temp/${atleta}`} >
                         Tiempo real
                       </Link>
                     </div>
                     <div className="col-6  d-grid gap-2">
-                      <button
-                        className="btn btn-outline-success"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseTemperature"
-                        aria-expanded="false"
-                        aria-controls="collapseTemperature"
-                      >
+                      <Link className="btn btn-outline-success" to={`/athlete/stats-history/temp/${atleta}`}>
                         Historial
-                      </button>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="collapse" id="collapseTemperature">
-                      <p>Registros anteriores</p>
+                      </Link>
                     </div>
                   </div>
                 </div>
