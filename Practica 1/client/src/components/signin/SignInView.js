@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect, useLocation } from "react-router-dom";
+import { Link, Redirect, useLocation } from "react-router-dom";
 import { useAuth } from "../../services/useInfo";
 import TimeView from "../nav-bar/TimeView";
 
@@ -56,10 +56,7 @@ export default function SignIn() {
     <div className="container vh-100">
       <div className="row align-items-center h-100">
         <div className="col-1"></div>
-        <form
-          className="col-10 border border-info rounded"
-          onSubmit={handleSubmit}
-        >
+        <form className="col-10 border border-info rounded" onSubmit={handleSubmit} >
           <div className="row mt-4">
             <span className="col-lg-2 col-xs-0 col-sm-0"></span>
             <h3 className="col-lg-8 col-xs-12 col-sm-12 text-center">
@@ -67,6 +64,7 @@ export default function SignIn() {
             </h3>
             <TimeView />
           </div>
+          <Link className="badge bg-primary" to="/signup">Registrar usuario</Link>
           {alert}
           <div className="form-group">
             <label htmlFor="username"></label>
