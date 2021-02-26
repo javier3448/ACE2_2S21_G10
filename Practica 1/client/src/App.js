@@ -14,6 +14,7 @@ import HeartView from "./components/graphic/HeartView";
 import NavBar from "./components/nav-bar/NavBarView";
 import { ProvideAuth, useAuth } from "./services/useInfo";
 import ErrorView from "./components/error-page/Error";
+import SignUpView from "./components/sign-up/SignUpView";
 
 /**
  * Vista de login
@@ -31,6 +32,9 @@ function App() {
         <Switch>
           <Route exact path="/signin">
             <SignIn />
+          </Route>
+          <Route exact path='/signup'>
+            <SignUpView />
           </Route>
           <Route exact path="/">
             <Redirect to='/dashboard' />
