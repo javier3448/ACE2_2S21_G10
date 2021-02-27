@@ -18,7 +18,8 @@ export default function HeartView() {
   /// Almacenará 'name' valor para el eje X
   /// 'sec' referencia que ayudará a 'mover' los datos
   /// 'pulso' valor para el eje Y
-  const [dataSet, setData] = useState([{name: '00s', sec:0, pulso: 0}]);
+  const dateRef = new Date();
+  const [dataSet, setData] = useState([{name: dateRef.toLocaleTimeString("es-GT",{timeZone: "America/Guatemala"}), timestamp: dateRef, pulso: 0}]);
   /// Establece un hook para mostrar el promedio de pulso
   /// del conjunto de datos 'dataSet'
   const [avg, setAvg] = useState(0);
@@ -30,55 +31,43 @@ export default function HeartView() {
   /// text-muted si es menor a 10 (exclusivo)
   const [colorHeart, setColorHeart] = useState("text-muted");
   useInterval(async () => {
-    /// Solicita al servidor todos los datos del usuario con id: IdUser
-    var flagInsertZero = false;
     var lastRecord;
-    /// const response = await axios.get('http://localhost:4200/api/heart/all');
+    const refDate = new Date(dataSet[dataSet.length - 1]);
+    /// Solicita al servidor todos los datos del usuario con id: IdUser
     const response = await axios.get(urlServer + `reports/heart-rate/report1/${params.id}`);
     /// Servirá como referencia para determinar
     /// si insertar un cero o el valor de pulso
     /// que retornó el servidor en su último valor
-    const refDate = new Date();
     if (response.status === 200) {
       const data = response.data;
       if (data !== null) {
         /// Recupera el último dato
         lastRecord = data[data.length - 1];
         /// Recupera la fecha del último dato
-        const lastDate = new Date(lastRecord.dateTime);
-        /// Muestra un mensaje
+        const lastDate = new Date(lastRecord.timestamp);
+        /// Decide si el dato es el más reciente posible
         console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
-        if (refDate - lastDate > 1250) {
-          /// Si la diferencia de tiempo es mayor a 1.1 seg, insertará un cero
-          flagInsertZero = true;
+        if (!(refDate - lastDate > 0 && refDate - lastDate <= 6000)) {
+          return;
         }
       } else {
         /// El servidor puede devolver null cuando no hay ningún registro
         /// del sensor de latidos para el usuario dado
         console.log(`El servidor respondió null, no hay datos`);
         /// El servidor no tiene dato, insertará un 0
-        flagInsertZero = true;
+        return;
       }
     }
-    /// Reordena los elementos con el objetivo
-    /// que parezca que la gráfica se mueve
-    setData(dataSet.map((data) => {
-      data.sec++;
-      if (data.sec < 10) {
-        data.name = '0' + data.sec + 's';
-      } else {
-        data.name = data.sec + 's';
-      }
-      data.pulso = data.pulso;
-      return data;
-    }));
+    /// Si la gráfica llega a los 60 datos
+    /// Se elimina el primer dato
     if (dataSet.length >= 60)  {
       // Elimina el primer dato
       dataSet.shift();
       setData(dataSet);
     }
-    /// Inserta el nuevo dato o un cero, dependiendo del resultado de flagInsertZero
-    const newData = {name: '00s', sec:0, pulso: flagInsertZero ? 0 : lastRecord.pulso };
+    /// Inserta el nuevo dato
+    const newTimestamp = new Date(lastRecord.dateTime);
+    const newData = {timestamp: newTimestamp, name: newTimestamp.toLocaleTimeString("es-GT",{timeZone: "America/Guatemala"}), pulso: lastRecord.pulso };
     setData(data => [...data, newData]);
     /// Filtra la información, recuperando únicamente los que sean mayor a cero
     const filterData = dataSet.filter(value => value.pulso > 0);
@@ -104,7 +93,7 @@ export default function HeartView() {
               <ResponsiveContainer width="100%" height={400}>
                 <LineChart width={1000} height={400} data={dataSet}
                   margin={{ top: 5, right: 30, left: 20,bottom: 5,}}>
-                  <XAxis dataKey="name"/>
+                  <XAxis dataKey="timestamp"/>
                   <CartesianGrid strokeDasharray="2 2" />
                   <YAxis />
                   <Tooltip />
