@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { urlServer } from '../../config';
 import { useInterval } from '../../services/interval';
 import TimeView from '../nav-bar/TimeView';
 export default function TemperatureView() {
+  const params = useParams();
   /// Establece un hook para la información (dataSet)
   /// de la gráfica
   /// Almacenará 'name' valor para el eje X
@@ -32,7 +34,7 @@ export default function TemperatureView() {
     var flagInsertZero = false;
     var lastRecord;
     /// const response = await axios.get('http://localhost:4200/api/temperature/all')
-    const response = await axios.get(urlServer + `reports/temperature/report1/${infoUser.IdUser}`)
+    const response = await axios.get(urlServer + `reports/temperature/report1/${params.id}`)
     /// Servirá como referencia para determinar
     /// si insertar un cero o el valor de temperatura
     /// que retornó el servidor en su último valor
