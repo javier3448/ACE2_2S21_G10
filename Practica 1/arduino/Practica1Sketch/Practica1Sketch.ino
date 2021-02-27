@@ -162,6 +162,9 @@ void correrCodigoMax301002()
 	}
 	else{
     	muestra[1] = beatsPerMinute;
-    	muestra[2] = (float)irValue;
+      // Chapuz para que retorne valores de oxigenacion mas razonables. No esta basado en 
+      // ninguna formula ni nada, suponemos que la relacion entre lo que retorna el sensor
+      // y la oxigenacion en la sangre es lineal
+    	muestra[2] = ((float)irValue) / 1100;
 	}
 }
