@@ -44,7 +44,7 @@ Cuando haya sesión activa, se mostrará información del usuario logeado o bien
 
 El diseño de estas pantallas son las mismas para las estadísticas en tiempo real y la estadística de historial. Se usa una gráfica de líneas para mostrar las estadísticas.
 ### Corazon
-Muestra la estadística con una gráfica de líneas. Si la vista es en tiempo real, el promedio será el promedio de las mediciones de los últimos 60 segs. Si la vista es del historial, el promedio será el proemdio de todas las mediciones registradas. 
+Muestra la estadística con una gráfica de líneas. Si la vista es en tiempo real, el promedio será el promedio de las mediciones de los últimos 60 segs. Si la vista es del historial, el promedio será el promedio de todas las mediciones registradas. 
 
 El icono del corazón cambiará de color dependiendo del valor promedio. Si está por debajo de las 60 pulsaciones el corazón será <strong style="color: #ffc107">amarillo</strong>; si está entre 60 - 100 pulsaciones, el corazón será <strong style="color: #198754">verde</strong>; si es mayor a 100 pulsaciones, el corazón será <strong style="color: #dc3545">rojo</strong>. Si el promedio es 0, el corazón será <strong style="color: #6c757d ">gris</strong>.
 ![Corazon](img/corazon.png?raw=true "")
@@ -52,7 +52,7 @@ El icono del corazón cambiará de color dependiendo del valor promedio. Si est�
 Muestra la estadística con una gráfica de líneas. Si la vista es en tiempo real, el promedio será el promedio de las mediciones de los últimos 60 segs. Si la vista es del historial, el promedio será el proemdio de todas las mediciones registradas. 
 ![Oxigeno](img/oxigeno.png?raw=true "")
 ### Temperatura
-Muestra la estadística con una gráfica de líneas. Si la vista es en tiempo real, el promedio será el promedio de las mediciones de los últimos 60 segs. Si la vista es del historial, el promedio será el proemdio de todas las mediciones registradas. 
+Muestra la estadística con una gráfica de líneas. Si la vista es en tiempo real, el promedio será el promedio de las mediciones de los últimos 60 segs. Si la vista es del historial, el promedio será el promedio de todas las mediciones registradas. Lo mismo se cumple con los datos de temperatura máxima y temperatura mínima.
 
 El icono del termómetro cambiará de color dependiendo del valor promedio. Si está por debajo de las 36°C (pero mayor a 0°C) el termómetro será <strong style="color: #17a2b8">azul claro</strong>; si está entre 36°C - 37°C , el termómetro será <strong style="color: #0d6efd">azul</strong>; si está entre 37°C - 38°C , el termómetro será <strong style="color: #ffc107">amarillo</strong>; si es mayor a 38°C, el termómetro será <strong style="color: #dc3545">rojo</strong>. Si el promedio es 0, el termómetro será <strong style="color: #6c757d ">gris</strong>.
 ![Temperatura](img/temperatura.png?raw=true "")
