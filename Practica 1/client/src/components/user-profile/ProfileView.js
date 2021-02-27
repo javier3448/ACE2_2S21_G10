@@ -14,6 +14,8 @@ export default function Profile() {
   const [altura, setAltura] = useState(0);
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
+  const [edad, setEdad] = useState(0);
+  const [sexo, setSexo] = useState('');
   //const [atleta, setAtleta] = useState(null);
   useEffect(async () => {
     const infoUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -30,6 +32,8 @@ export default function Profile() {
         setAltura(athlete.altura);
         setNombre(athlete.nombre);
         setApellido(athlete.apellidos);
+        setEdad(athlete.edad ? athlete.edad : '');
+        setSexo( athlete.sexo ? (athlete.sexo  === 'M' ? 'Hombre' : 'Mujer') : '');
       }
     } else {
       setViewAllow(true);
@@ -38,6 +42,8 @@ export default function Profile() {
       setAltura(infoUser.altura);
       setNombre(infoUser.nombre);
       setApellido(infoUser.apellidos);
+      setEdad(infoUser.edad ? infoUser.edad : '');
+      setSexo(infoUser.sexo ? (infoUser.sexo === 'M' ? 'Hombre' : 'Mujer') : '');
     }
   });
   return !viewAllow ? (
@@ -73,11 +79,11 @@ export default function Profile() {
             <div className="row">
               <div className="from-group col-md-6 col-xs-12">
                 <label>Edad</label>
-                <input className="form-control" readOnly value="" />
+                <input className="form-control" readOnly value={edad} />
               </div>
               <div className="from-group col-md-6 col-xs-12">
                 <label>Sexo</label>
-                <input className="form-control" readOnly value="" />
+                <input className="form-control" readOnly value={sexo} />
               </div>
             </div>
             <div className="row">

@@ -19,11 +19,11 @@ export default function AthleteCard(props) {
         <div className="card-body">
           <div className="row">
             <div className="col">Edad:</div>
-            <div className="col"></div>
+            <div className="col">{props.data.edad ? props.data.edad : ''}</div>
           </div>
           <div className="row">
             <div className="col">Sexo:</div>
-            <div className="col"></div>
+            <div className="col">{props.data.sexo ? (props.data.sexo === 'M' ? 'Hombre' : 'Mujer'): '' }</div>
           </div>
           <div className="row">
             <div className="col">Estatura:</div>

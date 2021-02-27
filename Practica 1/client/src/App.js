@@ -15,6 +15,9 @@ import NavBar from "./components/nav-bar/NavBarView";
 import { ProvideAuth, useAuth } from "./services/useInfo";
 import ErrorView from "./components/error-page/Error";
 import SignUpView from "./components/sign-up/SignUpView";
+import HeartHistory from "./components/graphicHistory/HeartView";
+import TemperatureHistory from "./components/graphicHistory/TemperatureView";
+import OxygenHistory from "./components/graphicHistory/OxygenView";
 
 /**
  * Vista de login
@@ -71,6 +74,20 @@ function App() {
             <NavBar />
             <OxygenView />
           </PrivateRoute>
+
+          <PrivateRoute exact path="/athlete/stats-history/heart/:id">
+            <NavBar />
+            <HeartHistory />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats-history/temp/:id">
+            <NavBar />
+            <TemperatureHistory />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats-history/oxygen/:id">
+            <NavBar />
+            <OxygenHistory />
+          </PrivateRoute>
+
           <Route>
             <ErrorView  data={{"error": "404 - Recurso no encontrado"}} />
           </Route>
