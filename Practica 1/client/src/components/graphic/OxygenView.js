@@ -43,8 +43,8 @@ export default function OxygenView() {
         /// Recupera la fecha del último dato
         const lastDate = new Date(lastRecord.dateTime);
         /// Muestra un mensaje
-        console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
-        if (refDate - lastDate > 1250) {
+        /// console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
+        if (Math.abs(refDate - lastDate) > 5000) {
           /// Si la diferencia de tiempo es mayor a 1.1 seg, insertará un cero
           flagInsertZero = true;
         }
@@ -58,7 +58,7 @@ export default function OxygenView() {
     }
     /// Reordena los elementos con el objetivo
     /// que parezca que la gráfica se mueve
-    setData(dataSet.map((data) => {
+    const newDataSet = dataSet.map((data) => {
       data.sec++;
       if (data.sec < 10) {
         data.name = '0' + data.sec + 's';
@@ -67,15 +67,15 @@ export default function OxygenView() {
       }
       data.oxigeno = data.oxigeno;
       return data;
-    }));
-    if (dataSet.length >= 60)  {
-      // Elimina el primer dato
-      dataSet.shift();
-      setData(dataSet);
-    }
+    });
     /// Inserta el nuevo dato o un cero, dependiendo del resultado de flagInsertZero
     const newData = {name: '00s', sec:0, oxigeno: flagInsertZero ? 0 : lastRecord.oxigeno };
-    setData(data => [...data, newData]);
+    newDataSet.push(newData);
+    if (newDataSet.length >= 60)  {
+      // Elimina el primer dato
+      newDataSet.shift();
+    }
+    setData(newDataSet);
     /// Filtra la información, recuperando únicamente los que sean mayor a cero
     const filterData = dataSet.filter(value => value.oxigeno > 0);
     const avgData = Math.round(filterData.reduce((total, value) => total + value.oxigeno,0) / filterData.length);
@@ -83,7 +83,7 @@ export default function OxygenView() {
     setAvg(isNaN(avgData) ? 0 : avgData);
     /// Determina el color del icono de pulmón
     /// setColorOxygen((avg < 10) ? 'text-muted' : (avg >= 10 && avg < 60) ? 'text-warning' : (avg >= 60 && avg <= 100) ? 'text-success' : 'text-danger');
-  }, 1000)
+  }, 980)
 
   return (
     <div className="vh-100">

@@ -30,7 +30,6 @@ export default function TemperatureView() {
   const [iconTemperature, setIconTemperature] = useState('fa fa-thermometer-empty');
   useInterval(async () => {
     /// Solicita al servidor todos los datos del usuario con id: IdUser
-    const infoUser = JSON.parse(localStorage.getItem('userInfo'));
     var flagInsertZero = false;
     var lastRecord;
     /// const response = await axios.get('http://localhost:4200/api/temperature/all')
@@ -47,8 +46,8 @@ export default function TemperatureView() {
         /// Recupera la fecha del último dato
         const lastDate = new Date(lastRecord.dateTime);
         /// Muestra un mensaje
-        console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
-        if (refDate - lastDate > 1250) {
+        /// console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
+        if (Math.abs(refDate - lastDate) > 5000) {
           /// Si la diferencia de tiempo es mayor a 1.1 seg, insertará un cero
           flagInsertZero = true;
         }
@@ -61,7 +60,7 @@ export default function TemperatureView() {
       }
       /// Reordena los elementos con el objetivo
       /// que parezca que la gráfica se mueve
-      setData(dataSet.map((data) => {
+      const newDataSet = dataSet.map((data) => {
         data.sec++;
         if (data.sec < 10) {
           data.name = '0' + data.sec + 's';
@@ -70,20 +69,20 @@ export default function TemperatureView() {
         }
         data.temperatura = data.temperatura;
         return data;
-      }));
-      if (dataSet.length >= 60)  {
-        // Elimina el primer dato
-        dataSet.shift();
-        setData(dataSet);
-      }
+      });
       /// Inserta el nuevo dato o un cero, dependiendo del resultado de flagInsertZero
       const newData = {name: '00s', sec:0, temperatura: flagInsertZero ? 0 : lastRecord.temperatura };
-      setData(data => [...data, newData]);
+      newDataSet.push(newData);
+      if (newDataSet.length >= 60)  {
+        // Elimina el primer dato
+        newDataSet.shift();
+      }
+      setData(newDataSet);
       /// Filtra la información, recuperando únicamente los que sean mayor a cero
-      const filterData = dataSet.filter(value => value.oxigeno > 0);
+      const filterData = dataSet.filter(value => value.temperatura > 0);
       /// Calcula el valor promedio
       const formatter = new Intl.NumberFormat('es-GT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-      const avgData = filterData.reduce((total, value) => total + value.oxigeno,0) / filterData.length;
+      const avgData = filterData.reduce((total, value) => total + value.temperatura,0) / filterData.length;
       /// Recupera el primer valor de filterDate o 0
       const firstValue = filterData.length > 0 ? filterData[0].temperatura: 0;
       /// Establece el valor menor, mayor y promedio del conjunto de dato 'dataSet'
@@ -108,7 +107,7 @@ export default function TemperatureView() {
         setColorTemperature('text-danger'); 
       }
     }
-  }, 1000)
+  }, 980)
 
   return (
     <div className="vh-100">
