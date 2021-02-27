@@ -148,7 +148,7 @@ public class ConectionApi extends AppCompatActivity {
           }, new Response.ErrorListener() {
               @Override
               public void onErrorResponse(VolleyError error) {
-                  Toast.makeText(getApplicationContext(),String.valueOf(error.getSuppressed()),Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(getApplicationContext(),String.valueOf(error.getSuppressed()),Toast.LENGTH_SHORT).show();
               }
           }
           );
