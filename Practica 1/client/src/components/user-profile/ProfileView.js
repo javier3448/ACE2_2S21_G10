@@ -32,8 +32,8 @@ export default function Profile() {
         setAltura(athlete.altura);
         setNombre(athlete.nombre);
         setApellido(athlete.apellidos);
-        setEdad(athlete.edad);
-        setSexo(athlete.sexo  === 'M' ? 'Hombre' : 'Mujer');
+        setEdad(athlete.edad ? athlete.edad : '');
+        setSexo( athlete.sexo ? (athlete.sexo  === 'M' ? 'Hombre' : 'Mujer') : '');
       }
     } else {
       setViewAllow(true);
@@ -42,8 +42,8 @@ export default function Profile() {
       setAltura(infoUser.altura);
       setNombre(infoUser.nombre);
       setApellido(infoUser.apellidos);
-      setEdad(infoUser.edad);
-      setSexo(infoUser.sexo === 'M' ? 'Hombre' : 'Mujer');
+      setEdad(infoUser.edad ? infoUser.edad : '');
+      setSexo(infoUser.sexo ? (infoUser.sexo === 'M' ? 'Hombre' : 'Mujer') : '');
     }
   });
   return !viewAllow ? (
