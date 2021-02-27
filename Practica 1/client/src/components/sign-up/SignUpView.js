@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { useState } from "react";
-import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { Link, Redirect, useHistory, useLocation } from "react-router-dom";
 import { urlServer } from "../../config";
 import { useAuth } from "../../services/useInfo";
 import TimeView from "../nav-bar/TimeView";
@@ -57,7 +57,7 @@ export default function SignUp() {
       history.push('/signin');
     } else {
       /// El servidor no está OK
-      alert('Nose pudo crear el usuario')
+      alert('No se pudo crear el usuario')
     }
   };
 
@@ -139,6 +139,7 @@ export default function SignUp() {
             </h3>
             <TimeView />
           </div>
+          <Link className="badge bg-primary mb-2" to="/signin">Iniciar sesión</Link>
           <div className="row">
             <div className="col">
               <label className="form-label">Rol</label>
