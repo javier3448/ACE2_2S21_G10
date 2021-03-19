@@ -47,9 +47,9 @@ export default function HeartView() {
         /// Recupera la fecha del último dato
         const lastDate = new Date(lastRecord.dateTime);
         /// Muestra un mensaje
-        console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${refDate - lastDate}`)
-        if (refDate - lastDate > 1250) {
-          /// Si la diferencia de tiempo es mayor a 1.1 seg, insertará un cero
+        /// console.log(`Fecha cliente : ${refDate}\n fecha server: ${lastDate}\n diferencia: ${Math.abs(refDate - lastDate)}`)
+        if (Math.abs(refDate - lastDate) > 5000) {
+          /// Si la diferencia de tiempo es mayor a 5 seg, insertará un cero
           flagInsertZero = true;
         }
       } else {
@@ -62,7 +62,7 @@ export default function HeartView() {
     }
     /// Reordena los elementos con el objetivo
     /// que parezca que la gráfica se mueve
-    setData(dataSet.map((data) => {
+    const newDataSet = dataSet.map((data) => {
       data.sec++;
       if (data.sec < 10) {
         data.name = '0' + data.sec + 's';
@@ -71,15 +71,15 @@ export default function HeartView() {
       }
       data.pulso = data.pulso;
       return data;
-    }));
-    if (dataSet.length >= 60)  {
-      // Elimina el primer dato
-      dataSet.shift();
-      setData(dataSet);
-    }
+    });
     /// Inserta el nuevo dato o un cero, dependiendo del resultado de flagInsertZero
-    const newData = {name: '00s', sec:0, pulso: flagInsertZero ? 0 : lastRecord.pulso };
-    setData(data => [...data, newData]);
+    const newData = {name: '00s', sec:0, pulso: flagInsertZero ? 0 : lastRecord.ritmo };
+    newDataSet.push(newData);
+    if (newDataSet.length >= 60)  {
+      // Elimina el primer dato
+      newDataSet.shift();
+    }
+    setData(newDataSet);
     /// Filtra la información, recuperando únicamente los que sean mayor a cero
     const filterData = dataSet.filter(value => value.pulso > 0);
     /// Calcula el promedio de pulsaciones
@@ -87,7 +87,7 @@ export default function HeartView() {
     setAvg(isNaN(avgData) ? 0 : avgData);
     /// Determina el color del icono del corazón
     setColorHeart((avg < 10) ? 'text-muted' : (avg >= 10 && avg < 60) ? 'text-warning' : (avg >= 60 && avg <= 100) ? 'text-success' : 'text-danger');
-  }, 1000);
+  }, 980);
 
   return (
     <div className="vh-100">
