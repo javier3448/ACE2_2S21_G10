@@ -57,21 +57,15 @@ The gps module just sends out data and we have to read it
 
 $GPVTG,,,,,,,,,N*30
 Course and speed information relative to the ground
-
 $GPGGA,185253.00,,,,,0,00,99.99,,,,,,*6E
 Global positioning system fix data (time, position, fix type data)
-
 $GPGSA,A,1,,,,,,,,,,,,,99.99,99.99,99.99*30
 GPS receiver operating mode, satellites used in the position solution, and DOP values.
-
 $GPGSV,1,1,00*79
 The number of GPS satellites in view satellite ID numbers, elevation, azimuth and SNR values.
-
 $GPGLL,,,,,185253.00,V,N*42
 Geographic position, latitude, longitude
-
 $GPRMC,185254.00,V,,,,,,,230321,,,N*7
 Time, date, position, course and speed data
-
 IMPORTANTE: Cuando no parpadea el led del modulo bluetooth es porque no ha encontrado
 satelites
