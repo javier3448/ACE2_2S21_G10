@@ -117,6 +117,18 @@ Report 5: aqui retorna la temperatura minima del usuario mediante un JSON
 
     https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/reports/temperature/report5/{idUser}
 
+## Proyecto Reportes 
+Reporte 2: Velocidad alcanzada aqui devuelvo el siguiente JSON con la siguiente estructura.
+    
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/get-velocity-report/{idUser}
+
+1. max
+2. min
+3. avgtiempo
+4. avgvelocidad
+5. repeticion
+    
+
 Nota: idUser es para retornar solo los datos de dicho usuario, puedes obtener el id cuando inicia sesion, ya que aqui retorno todo la informacion del usuario en un JSON y podrias guardarlo por localstorage para que se te facilite manejar esta informacion para las validaciones     
 
 ## Nota 
