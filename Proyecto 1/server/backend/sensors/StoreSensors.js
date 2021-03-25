@@ -1,17 +1,15 @@
 const AWS = require("aws-sdk");
-
+const moment = require("moment-timezone");
 const dynamodb = new AWS.DynamoDB({
   region: "us-east-2",
   apiVersion: "2012-08-10",
 });
 
 exports.handler = (event, context, callback) => {
-  let today = new Date();
-  let date =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-  let time =
-    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  let dateTime = date + " " + time;
+  let date = new Date();
+  let dateTime = moment(date.getTime())
+    .tz("America/Guatemala")
+    .format("YYYY-MM-DD HH:mm:ss");
   const params = {
     Item: {
       idSensors: {
@@ -25,6 +23,24 @@ exports.handler = (event, context, callback) => {
       },
       oxigeno: {
         N: event.oxigeno,
+      },
+      repeticion: {
+        N: event.repeticion,
+      },
+      velocidad: {
+        N: event.velocidad,
+      },
+      distancia: {
+        N: event.distancia,
+      },
+      tiempo: {
+        N: event.tiempo,
+      },
+      falla: {
+        N: event.falla,
+      },
+      rindio: {
+        N: event.rindio,
       },
       idUser: {
         S: event.idUser,
@@ -40,8 +56,8 @@ exports.handler = (event, context, callback) => {
       console.log(err);
       callback();
     } else {
-      console.log(data);
-      callback(null, data);
+      console.log("Se inserto la data");
+      callback(null, "Se inserto la data");
     }
   });
 };
