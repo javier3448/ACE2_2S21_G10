@@ -5,14 +5,15 @@
 #include <heartRate.h>
 #include <TinyGPS.h>
 
-#define BT_RX 10
-#define BT_TX 11
-#define BT_STATE 12
+#include "pindefs.h"
 
-#define GPS_TX 3
-#define GPS_RX 4
+#include "prueba.h"
+#include "mygps.h"
+#include "mybluetooth.h"
 
-#define MOTOR_PIN 2
+// @TODO NOW: probar buzzer solo antes de meterlo al proyecto 
+
+// @TODO: Valores sentinela
 
 MAX30105 particleSensor;
 const byte RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
@@ -22,31 +23,25 @@ long lastBeat = 0; //Time at which the last beat occurred
 float beatsPerMinute;
 int beatAvg;
 
-// Los valores que se enviaran en el siguiente 'paquete' bluetooth
-float temperaturaAEnviar;
-float ritmoCardiacoAEnviar;
-float oxigenoAEnviar;
-float latitudAEnviar;
-float longitudAEnviar;
-unsigned long ageAEnviar;
-
-SoftwareSerial btSerial(BT_RX, BT_TX);
-
-SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
-TinyGPS gps;
-
 void setup()
 {
+
+    // setup buzzer
+    {
+        pinMode(BUZZER_PIN, OUTPUT);
+    }
+
+    // setup buttons
+    {
+        pinMode(BUTTON_START_PIN, INPUT_PULLUP);
+        pinMode(BUTTON_QUIT_PIN, INPUT_PULLUP);
+    }
+
     // setup motor:
     {
         pinMode(2, OUTPUT);
     }
 
-    // setup bluetooth:
-    {
-        pinMode(BT_STATE, INPUT);
-        btSerial.begin(38400);
-    }
 
     // setup temperatura
     {
@@ -62,6 +57,7 @@ void setup()
         {
             Serial.println("MAX30105 was not found. Please check wiring/power. ");
             // @TODO que no se muera todo cuando no encuentra el MAX30105
+            // o que haga eso cuando no se logre conectar con cualquier otro sensor
             pinMode(LED_BUILTIN, OUTPUT);
             while (1)
             {
@@ -78,98 +74,20 @@ void setup()
         particleSensor.setPulseAmplitudeGreen(0); 
     }
 
-    // set up gps
-    {
-        gpsSerial.begin(9600); 
-    }
+    MyGps::setup();
+
+    MyBluetooth::setup();
 
     Serial.begin(9600);
 }
 
 void loop()
 {  
-    bool isConnected = digitalRead(BT_STATE);
-    if(isConnected){
-        sendToBluetoothEverySecond();
-    }
+    MyBluetooth::sendToBluetoothEverySecond();
 
-    { // encode gps
-        while(gpsSerial.available())
-        {
-            char c = gpsSerial.read();
-            // Serial.write(c); // uncomment this line if you want to see the GPS data flowing
-            gps.encode(c);
-        }
-    }
+    MyGps::loop();
 
     correrCodigoMax301002();
-}
-
-// @MEJORA?: mover toda la logica de bluetooth a otro archivo?
-// @TODO: nombre que nos indique que este codigo debe corre 'concurrentemente'
-// ie que adentro lidea con todo el estado que implica llevar un DeltaTime
-long bluetoothLastTime = 0;
-void sendToBluetoothEverySecond()
-{
-    // millis for now, explore using micros or something else even
-
-    // si no ha pasado 1 segundo desde la ultima vez que mandamos por bluetooth
-    // retornamos de esta funcion sin hacer nada mas
-    long bluetoothCurrTime = millis();
-    long bluetoothDeltaTime = bluetoothCurrTime - bluetoothLastTime;
-    if(bluetoothDeltaTime < 1000)
-    {
-        return;
-    }
-    else
-    {
-        bluetoothLastTime = bluetoothCurrTime;
-        // @TODO: mover afuera de aqui
-
-        {//getTemperatura
-            float tempC = analogRead(A0);
-            tempC = (1.1 * tempC * 100.0)/1024.0;
-            temperaturaAEnviar = tempC;
-        }
-
-        {//get position
-            gps.f_get_position(&latitudAEnviar, &longitudAEnviar, &ageAEnviar);
-        }
-
-        //@debug:
-        Serial.print('$');
-        Serial.print(temperaturaAEnviar);
-        Serial.print('|');
-        Serial.print(ritmoCardiacoAEnviar);
-        Serial.print('|');
-        Serial.print(oxigenoAEnviar);
-        Serial.print('|');
-        Serial.print(latitudAEnviar);
-        Serial.print('|');
-        Serial.print(longitudAEnviar);
-        Serial.print('|');
-        Serial.print(ageAEnviar);
-        Serial.print(';');
-        Serial.println();
-
-        // $temperatura|ritmo|oxigeno|latitud|longitud|age;
-        // Enviamos los 3 floats atravez del modulo bluetooth
-        btSerial.print('$');
-        btSerial.print(temperaturaAEnviar);
-        btSerial.print('|');
-        btSerial.print(ritmoCardiacoAEnviar);
-        btSerial.print('|');
-        btSerial.print(oxigenoAEnviar);
-        btSerial.print('|');
-        btSerial.print(latitudAEnviar);
-        btSerial.print('|');
-        btSerial.print(longitudAEnviar);
-        btSerial.print('|');
-        btSerial.print(ageAEnviar);
-        btSerial.print(';');
-        // @DEBUG:
-        btSerial.println();
-    }
 }
 
 // @TODO: averigurar que putas esta pasando aqui realmente y si irValue
@@ -212,14 +130,14 @@ void correrCodigoMax301002()
     //      tiene puesto el dedo que, segun el ejemplo de MAX301002 es cuando
     //      ir tiene un nivel de 50000
     if(irValue < 50000){
-        ritmoCardiacoAEnviar = 0;
-        oxigenoAEnviar = 0;
+        MyBluetooth::Paquete::ritmoCardiaco = 0;
+        MyBluetooth::Paquete::oxigeno = 0;
     }
     else{
-        ritmoCardiacoAEnviar = beatsPerMinute;
-      // Chapuz para que retorne valores de oxigenacion mas razonables. No esta basado en 
-      // ninguna formula ni nada, suponemos que la relacion entre lo que retorna el sensor
-      // y la oxigenacion en la sangre es lineal
-       oxigenoAEnviar = ((float)irValue) / 1100;
+        MyBluetooth::Paquete::ritmoCardiaco = beatsPerMinute;
+        // Chapuz para que retorne valores de oxigenacion mas razonables. No esta basado en 
+        // ninguna formula ni nada, suponemos que la relacion entre lo que retorna el sensor
+        // y la oxigenacion en la sangre es lineal
+        MyBluetooth::Paquete::oxigeno = ((float)irValue) / 1100.0;
     }
 }

@@ -69,3 +69,39 @@ $GPRMC,185254.00,V,,,,,,,230321,,,N*7
 Time, date, position, course and speed data
 IMPORTANTE: Cuando no parpadea el led del modulo bluetooth es porque no ha encontrado
 satelites
+
+
+# OTRAS NOTAS
+// Example of bluetooth message encoding (ignore linejumps or blank spaces)
+// $
+// *Runtime*
+// repeticionActual| (?)
+// distanciaRepeticionActual|
+// velocidad|
+// tiempoRepeticionActual (?)
+
+// distanciaTotalPrueba|
+// tiempoPrueba (?)
+
+// *Para mantener logica de juego
+// Si esta jugando, se rindio, o fallo, 
+//
+// *Para hacerlo aqui de una*
+// velPromedioRepeticion|
+// velMinimaRepeticion|
+// velMaximaRepeticion|
+
+// velPromedioPrueba|
+// velMinimaPrueba|
+// velMaximaPrueba|
+
+// NumeroRepeticion|
+// temperatura|
+// ritmo|
+// oxigeno|
+// latitud|
+// longitud|
+// age
+//;
+
+

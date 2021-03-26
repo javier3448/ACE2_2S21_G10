@@ -53,6 +53,9 @@ public class ConectionApi extends AppCompatActivity {
     private String velocidadAtleta=" ";
     private String distanciaAleta=" ";
 
+    public String tiempoAtleta=" ";
+    public String fallaAtleta=" ";
+    public String rindioAtleta=" ";
     //---------------Variables comunicacion. bluetooh----------------------------
     Handler bluetoothIn;
     public static final int handlerState = 0;
@@ -76,13 +79,21 @@ public class ConectionApi extends AppCompatActivity {
         public double velocidad;
         public double distancia;
 
-        public Medicion(double temperatura, double ritmoCardiaco,  double oxigeno, int repeticion, double velocidad, double distancia){
+        public double tiempo;
+        public int falla;
+        public int rindio;
+
+        public Medicion(double temperatura, double ritmoCardiaco,  double oxigeno, int repeticion, double velocidad, double distancia, double tiempo, int falla,int rindio){
             this.temperatura = temperatura;
             this.ritmoCardiaco = ritmoCardiaco;
             this.oxigeno = oxigeno;
             this.repeticion=repeticion;
             this.velocidad=velocidad;
             this.distancia=distancia;
+
+            this.tiempo=tiempo;
+            this.falla=falla;
+            this.rindio=rindio;
         }
     }
 
@@ -117,11 +128,19 @@ public class ConectionApi extends AppCompatActivity {
                     velocidadAtleta=Double.toString(medicion.velocidad);
                     distanciaAleta=Double.toString(medicion.distancia);
 
+                    tiempoAtleta=Double.toString(medicion.tiempo);
+                    fallaAtleta=Integer.toString(medicion.falla);
+                    rindioAtleta=Double.toString(medicion.rindio);
+
                     //setear los valores para visualizarl los datos que se mandaran a la api
                     IdBufferIn.setText("Temp: "+temperatura+"\nritmo: "+ritmoCardiaco+"\noxigeno: "+
                             oxigenoSangre+"\nRepeticion: "+repeticionAtleta+
                             "\nVelocidad: "+velocidadAtleta+
-                            "\nDistancia: "+distanciaAleta);
+                            "\nDistancia: "+distanciaAleta+
+                            "\ntiempo: "+tiempoAtleta+
+                            "\nfalla: "+fallaAtleta+
+                            "\nrindio: "+rindioAtleta);
+
 
                     //los datos obtenidos se enviaran al servidor
                     insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors");
@@ -161,6 +180,11 @@ public class ConectionApi extends AppCompatActivity {
           parametros.put("repeticion",repeticionAtleta);
           parametros.put("velocidad",velocidadAtleta);
           parametros.put("distancia",distanciaAleta);
+
+          parametros.put("tiempo",tiempoAtleta);
+          parametros.put("falla",fallaAtleta);
+          parametros.put("rindio",rindioAtleta);
+
           parametros.put("idUser",MainActivity.ideUser);
           JSONObject objeto=new JSONObject(parametros);
 
@@ -330,8 +354,12 @@ public class ConectionApi extends AppCompatActivity {
                             double velocidad=Double.parseDouble(medicionesSpliteadas[4]);
                             double distancia=Double.parseDouble(medicionesSpliteadas[5]);
 
+                            double tiempo=Double.parseDouble(medicionesSpliteadas[6]);
+                            int falla=Integer.parseInt(medicionesSpliteadas[7]);
+                            int rindio=Integer.parseInt(medicionesSpliteadas[8]);
 
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(temperatura, ritmoCardiaco, oxigeno,repeticion,velocidad,distancia)).sendToTarget();
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(temperatura, ritmoCardiaco, oxigeno,
+                                    repeticion,velocidad,distancia,tiempo,falla,rindio)).sendToTarget();
                         }
                     }
                 } catch (IOException e) {
