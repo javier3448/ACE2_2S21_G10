@@ -7,11 +7,11 @@
 #include "pindefs.h"
 // @MEJORA?: dada la descripcion del .h talvez sea mejor aqui manejar los 'timings'
 
+// @Decision: para sacar las distancias asumimos que todo el recorrido es linea recta
 
 namespace Prueba {
 
     enum State{
-        START,
         PLAY,
         STOP
     };
@@ -28,7 +28,7 @@ namespace Prueba {
     struct Repeticion{
         // [!] numeroDeRep 0 significa una repeticion no valida, => numeroDeRep va de 
         // 1 a 21
-        int numeroDeRep;
+        int8_t numeroDeRep;
         Posicion posicionInicial;
         unsigned long tiempoInicial;
     };
@@ -38,6 +38,7 @@ namespace Prueba {
     // @Mejora: esta posicionInicial es algo confusa con la de la repeticion actual
     // usar otro nombre
     extern Posicion posicionInicial;
+
     extern Repeticion repeticionActual;
 
 

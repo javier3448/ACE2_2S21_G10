@@ -11,6 +11,8 @@
 #include "mygps.h"
 #include "mybluetooth.h"
 
+// @TODO NOW: probar buzzer solo antes de meterlo al proyecto 
+
 // @TODO: Valores sentinela
 
 MAX30105 particleSensor;
@@ -128,14 +130,14 @@ void correrCodigoMax301002()
     //      tiene puesto el dedo que, segun el ejemplo de MAX301002 es cuando
     //      ir tiene un nivel de 50000
     if(irValue < 50000){
-        MyBluetooth::Package::ritmoCardiaco = 0;
-        MyBluetooth::Package::oxigeno = 0;
+        MyBluetooth::Paquete::ritmoCardiaco = 0;
+        MyBluetooth::Paquete::oxigeno = 0;
     }
     else{
-        MyBluetooth::Package::ritmoCardiaco = beatsPerMinute;
+        MyBluetooth::Paquete::ritmoCardiaco = beatsPerMinute;
         // Chapuz para que retorne valores de oxigenacion mas razonables. No esta basado en 
         // ninguna formula ni nada, suponemos que la relacion entre lo que retorna el sensor
         // y la oxigenacion en la sangre es lineal
-        MyBluetooth::Package::oxigeno = ((float)irValue) / 1100.0;
+        MyBluetooth::Paquete::oxigeno = ((float)irValue) / 1100.0;
     }
 }

@@ -1,11 +1,15 @@
 #include "mybluetooth.h"
 
+#include <TinyGPS.h>
+
 #include "mygps.h"
+#include "prueba.h"
 
 SoftwareSerial MyBluetooth::btSerial(BT_RX, BT_TX);
 
-float MyBluetooth::Package::ritmoCardiaco = 0;
-float MyBluetooth::Package::oxigeno = 0;
+MyBluetooth::HeaderPaquete MyBluetooth::Paquete::headerPaquete = (MyBluetooth::HeaderPaquete)0xff;
+float MyBluetooth::Paquete::ritmoCardiaco = 0;
+float MyBluetooth::Paquete::oxigeno = 0;
 
 void MyBluetooth::setup()
 {
@@ -33,61 +37,98 @@ void MyBluetooth::sendToBluetoothEverySecond()
     else
     {
         lastTimeSent = currTime;
-
+        // @Debug:
         // if the bluetooth module is not connected we dont send any data
-        if(!digitalRead(BT_STATE)) return;
+        if(!digitalRead(BT_STATE))
+        {
+            Serial.println('sendToBluetoothNow(): No se pudo enviar paquete por blutooth porque el modulo bluetooth esta desconectado!');
+            return;
+        } 
 
-        float temperaturaAEnviar;
+        float temperatura;
         {//getTemperatura
-            temperaturaAEnviar = analogRead(A0);
-            temperaturaAEnviar = (1.1 * temperaturaAEnviar * 100.0)/1024.0;
+            temperatura = analogRead(A0);
+            temperatura = (1.1 * temperatura * 100.0)/1024.0;
         }
 
-        float latitudAEnviar;
-        float longitudAEnviar;
-        unsigned long ageAEnviar;
+        // get posicionAcual
+        //{
+            float latitudActual;
+            float longitudActual;
+            unsigned long ageActual;
+            MyGps::gps.f_get_position(&latitudActual, &longitudActual, &ageActual);
+        //}
+
+        // Conseguimos todos los datos de la prueba
+        //{
+            float distanciaTotalPrueba = TinyGPS::distance_between(
+                latitudActual, longitudActual, 
+                Prueba::posicionInicial.latitud, Prueba::posicionInicial.longitud
+            );
+
+            auto& numeroDeRepActual = Prueba::repeticionActual.numeroDeRep;
+
+            float distanciaRepeticionActual = TinyGPS::distance_between(
+                latitudActual, longitudActual, 
+                Prueba::repeticionActual.posicionInicial.latitud, Prueba::repeticionActual.posicionInicial.longitud
+            );
+
+            float velocidadTiempoReal = MyGps::gps.f_speed_kmph();
+        //}
+
         float velocidadAEnviar;
-        {//get data from gps
-            MyGps::gps.f_get_position(&latitudAEnviar, &longitudAEnviar, &ageAEnviar);
-            velocidadAEnviar = MyGps::gps.f_speed_kmph();
-        }
 
         //@debug:
-        Serial.print('$');
-        Serial.print(temperaturaAEnviar);
-        Serial.print('|');
-        Serial.print(Package::ritmoCardiaco);
-        Serial.print('|');
-        Serial.print(Package::oxigeno);
-        Serial.print('|');
-        Serial.print(latitudAEnviar);
-        Serial.print('|');
-        Serial.print(longitudAEnviar);
-        Serial.print('|');
-        Serial.print(ageAEnviar);
-        Serial.print('|');
-        Serial.print(velocidadAEnviar);
-        Serial.print(';');
-        Serial.println();
 
-        // $temperatura|ritmo|oxigeno|latitud|longitud|age;
-        // Enviamos los 3 floats atravez del modulo bluetooth
         btSerial.print('$');
-        btSerial.print(temperaturaAEnviar);
+        btSerial.print(Paquete::headerPaquete);
         btSerial.print('|');
-        btSerial.print(Package::ritmoCardiaco);
+        btSerial.print(distanciaTotalPrueba);
         btSerial.print('|');
-        btSerial.print(Package::oxigeno);
+        btSerial.print(numeroDeRepActual);
         btSerial.print('|');
-        btSerial.print(latitudAEnviar);
+        btSerial.print(distanciaRepeticionActual);
         btSerial.print('|');
-        btSerial.print(longitudAEnviar);
+        btSerial.print(velocidadTiempoReal);
         btSerial.print('|');
-        btSerial.print(ageAEnviar);
+        btSerial.print(temperatura);
         btSerial.print('|');
-        btSerial.print(velocidadAEnviar);
+        btSerial.print(Paquete::ritmoCardiaco);
+        btSerial.print('|');
+        btSerial.print(Paquete::oxigeno);
         btSerial.print(';');
         // @DEBUG:
+        // @NOCHECKIN:
         btSerial.println();
     }
 }
+
+// @DECISION: vamos a mandar distancias en vez de coordenadas porque son menso bytes,
+// son faciles de obtener con la libreria TinyGps y son faciles de entender
+
+// @DECISION: No vamos a hacer ningun calculos de promedio, minimo y maximo desde
+// el arduino porque no quiero que el 'paquete bluetooth' sea muy pesado. Mejor desde
+// android. ()
+
+// son faciles de obtener con la libreria TinyGps y son faciles de entender
+
+// Necesitamos, enviar la logica de juego para que del otro lado puedan ir acumulando
+// los datos necesarios para guardar una prueba completa Y los datos necesarios
+// para presentar los reportes de tiempo real
+
+// Example of bluetooth message encoding (ignore linejumps or blank spaces)
+// Si estado no es 0 el resto del paquete no tiene datos validos
+// $
+
+// headerPaquete| 
+// distanciaTotalPrueba|
+
+// repeticionActual|
+// distanciaRepeticionActual|
+// velocidadTiempoReal|
+
+// temperatura|
+// ritmo|
+// oxigeno
+//;
+
