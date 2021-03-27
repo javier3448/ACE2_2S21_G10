@@ -9,6 +9,15 @@
 
 #include <SoftwareSerial.h>
 
+// [!!!]
+// @MEJORA?: que reciba como parametro todo el paquete no porque hay que 'armarlo'
+// (conseguir los datos de gps, la temp, etc) y quiero hacer solo cuando ya va 
+// ser enviado i.e. cada segundo
+// tener un global: minutePackage, con lo que necestiamos enviar y tener un struct
+// con que lleva el paquete y tener un MyBluetooth::loop que mantenga esos 
+// 'eventos temporizados'
+
+
 // @DECISION: vamos a mandar distancias en vez de coordenadas porque son menso bytes,
 // son faciles de obtener con la libreria TinyGps y son faciles de entender
 

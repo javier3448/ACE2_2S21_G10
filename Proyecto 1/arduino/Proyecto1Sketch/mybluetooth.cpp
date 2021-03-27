@@ -41,7 +41,7 @@ void MyBluetooth::sendToBluetoothEverySecond()
         // if the bluetooth module is not connected we dont send any data
         if(!digitalRead(BT_STATE))
         {
-            Serial.println('sendToBluetoothNow(): No se pudo enviar paquete por blutooth porque el modulo bluetooth esta desconectado!');
+            Serial.println("sendToBluetoothNow(): No se pudo enviar paquete por blutooth porque el modulo bluetooth esta desconectado!");
             return;
         } 
 

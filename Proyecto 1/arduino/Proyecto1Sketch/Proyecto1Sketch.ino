@@ -25,23 +25,13 @@ int beatAvg;
 
 void setup()
 {
-
-    // setup buzzer
-    {
-        pinMode(BUZZER_PIN, OUTPUT);
-    }
+    Serial.begin(9600);
 
     // setup buttons
     {
         pinMode(BUTTON_START_PIN, INPUT_PULLUP);
         pinMode(BUTTON_QUIT_PIN, INPUT_PULLUP);
     }
-
-    // setup motor:
-    {
-        pinMode(2, OUTPUT);
-    }
-
 
     // setup temperatura
     {
@@ -78,16 +68,23 @@ void setup()
 
     MyBluetooth::setup();
 
-    Serial.begin(9600);
+    Prueba::setup();
 }
 
 void loop()
 {  
+    // @DEBUG 
+    // @NOCHECKIN 
+    Prueba::loop();
+    return;
+
     MyBluetooth::sendToBluetoothEverySecond();
 
     MyGps::loop();
 
     correrCodigoMax301002();
+
+    Prueba::loop();
 }
 
 // @TODO: averigurar que putas esta pasando aqui realmente y si irValue

@@ -8,9 +8,19 @@ Prueba::State Prueba::stateActual;
 Prueba::Posicion Prueba::posicionInicial;
 Prueba::Repeticion Prueba::repeticionActual;
 
+// @Mejora?: poner Bomba y buzzer en su propio archivo, creo que el hecho que 
+// llamemos a Bomba::loop y ::setup desde aqui es algo confuso.
 namespace Bomba{
-    bool isActive = false;
-    long startTime = 0;
+    bool isActive;
+    long startTime;
+
+    void setup()
+    {
+        isActive = false;
+        startTime = 0;
+        pinMode(MOTOR_PIN, OUTPUT);
+    }
+
     void empezarDosSegundosDeBombeo()
     {
         digitalWrite(MOTOR_PIN, HIGH);
@@ -18,6 +28,7 @@ namespace Bomba{
 
         startTime = millis();
     }
+
     void loop()
     {
         if(!isActive) return;
@@ -33,9 +44,17 @@ namespace Bomba{
 namespace Buzzer{
     bool isActive = false;
     long startTime = 0;
+
+    void setup()
+    {
+        isActive = false;
+        startTime = 0;
+        pinMode(BUZZER_PIN, OUTPUT);
+    }
     void empezarDosSegundosDeTono()
     {
-        tone(BUZZER_PIN, 500);
+        tone(BUZZER_PIN, 1000);
+        // digitalWrite(BUZZER_PIN, HIGH);
         isActive = true;
 
         startTime = millis();
@@ -68,6 +87,9 @@ void Prueba::setup(){
         },
         tiempoInicial : 0,
     };
+
+    Bomba::setup();
+    Buzzer::setup();
 }
 
 // @note: para estar en el estado stop, `prueba` deberia de estar en un valor 'sentinel'
@@ -86,7 +108,7 @@ void Prueba::loop()
     {
         case State::STOP:
         {
-            if(digitalRead(BUTTON_START_PIN))
+            if(!digitalRead(BUTTON_START_PIN))
             { 
                 { //stuff we need to do before we go to State::PLAY for the first time
                     float currLatitud;
@@ -112,14 +134,19 @@ void Prueba::loop()
                 }
                 stateActual = State::PLAY;
             }
-        }
+        }break;
 
         case State::PLAY:
         {
 
-            if(digitalRead(BUTTON_QUIT_PIN)){
-                //@TODO: rendirse (inflar globo 2 segundos)
+            if(!digitalRead(BUTTON_QUIT_PIN)){
+                Bomba::empezarDosSegundosDeBombeo();
+                // @TODO:
+                // MyBluetooth::sendQuitPackateNow();
+                stateActual = State::STOP;
             }
+
+            // @TODO: SIMPLIFICAR EL CODIGO BLUETOOTH
 
             // @TODO:
             // if(ritmoCardiacoAlto()){
@@ -127,30 +154,38 @@ void Prueba::loop()
             // }
 
             // siguiente repeticion cada minuto
-            float currTimeRepeticion = millis();
-            float deltaTimeRepeticion = currTimeRepeticion - repeticionActual.tiempoInicial;
-            if(deltaTimeRepeticion >= 1000 * 60){
-                float currLatitud;
-                float currLongitud;
-                unsigned long currAge;
-                MyGps::gps.f_get_position(&currLatitud, &currLongitud, &currAge);
+            long currTimeRepeticion = millis();
+            long deltaTimeRepeticion = currTimeRepeticion - repeticionActual.tiempoInicial;
+            if(deltaTimeRepeticion >= 1000l * 60l)
+            {
+                if(repeticionActual.numeroDeRep >= 21){
+                    // @TODO:
+                    //Terminar prueba exitosamente
 
-                repeticionActual = {
-                    numeroDeRep : repeticionActual.numeroDeRep + 1,
-                    posicionInicial : {
-                        latitud : currLatitud,
-                        longitud : currLongitud,
-                        age : currAge
-                    },
-                    tiempoInicial : millis(),
-                };
-                // @ TODO:
-                // buzzer por 2 segundos
+                }
+                else{
+                    //Ir a siguiente repeticion
+                    float currLatitud;
+                    float currLongitud;
+                    unsigned long currAge;
+                    MyGps::gps.f_get_position(&currLatitud, &currLongitud, &currAge);
+
+                    repeticionActual = {
+                        numeroDeRep : repeticionActual.numeroDeRep + 1,
+                        posicionInicial : {
+                            latitud : currLatitud,
+                            longitud : currLongitud,
+                            age : currAge
+                        },
+                        tiempoInicial : currTimeRepeticion,
+                    };
+
+                    Serial.println("siguiente repeticion");
+                    Buzzer::empezarDosSegundosDeTono();
+                }
             }
 
             MyBluetooth::sendToBluetoothEverySecond();
-
-            return;
-        }
+        }break;
     }
 }
