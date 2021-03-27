@@ -11,6 +11,8 @@
 
 namespace Prueba {
 
+    constexpr int8_t RITMO_ALTO = 120;
+
     enum State{
         PLAY,
         STOP

@@ -16,3 +16,7 @@
 
 #define GPS_TX 3
 #define GPS_RX 4
+
+#define TEMPERATURE_PIN A0
+
+// @TODO: Poner los pines del Max30102

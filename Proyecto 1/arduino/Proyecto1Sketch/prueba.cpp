@@ -2,11 +2,15 @@
 #include "prueba.h"
 
 #include "mygps.h"
-#include "mybluetooth.h"
+#include "mymax30102.h"
 
 Prueba::State Prueba::stateActual;
 Prueba::Posicion Prueba::posicionInicial;
 Prueba::Repeticion Prueba::repeticionActual;
+
+static long lastTimeBtSent;
+
+// @TODO: mover aqui temperatura
 
 // @Mejora?: poner Bomba y buzzer en su propio archivo, creo que el hecho que 
 // llamemos a Bomba::loop y ::setup desde aqui es algo confuso.
@@ -71,6 +75,16 @@ namespace Buzzer{
     }
 }
 
+static SoftwareSerial btSerial(BT_RX, BT_TX);
+inline void sendPlayPackage(float distanciaTotalPrueba, int8_t numeroDeRepActual, 
+    float distanciaRepeticionActual, float velocidadTiempoReal, float temperatura, 
+    float ritmoCardiaco, float oxigeno);
+inline void sendStartPackage();
+inline void sendSuccessPackage();
+inline void sendFailPackage();
+inline void sendQuitPackage();
+
+
 void Prueba::setup(){
     Prueba::stateActual = State::STOP;
     posicionInicial = {
@@ -87,6 +101,12 @@ void Prueba::setup(){
         },
         tiempoInicial : 0,
     };
+
+    // setupBluetooth
+    {
+        pinMode(BT_STATE, INPUT);
+        btSerial.begin(38400);
+    }
 
     Bomba::setup();
     Buzzer::setup();
@@ -126,13 +146,17 @@ void Prueba::loop()
                             longitud : currLongitud,
                             age : currAge
                         },
+                        // reiniciar temporizador de 'repeticion cada minuto'
                         tiempoInicial : millis(),
                     };
 
-                    MyBluetooth::Paquete::headerPaquete = MyBluetooth::HeaderPaquete::CORRIENDO;
-                    MyBluetooth::restartSendToBluetoothEverySecond();
+                    sendStartPackage();
+
+                    // reiniciar temporizador de 'send playPackage every second'
+                    lastTimeBtSent = millis();
                 }
                 stateActual = State::PLAY;
+                return;
             }
         }break;
 
@@ -141,17 +165,69 @@ void Prueba::loop()
 
             if(!digitalRead(BUTTON_QUIT_PIN)){
                 Bomba::empezarDosSegundosDeBombeo();
-                // @TODO:
-                // MyBluetooth::sendQuitPackateNow();
+                sendQuitPackage();
                 stateActual = State::STOP;
+                return;
             }
 
-            // @TODO: SIMPLIFICAR EL CODIGO BLUETOOTH
+            // cada segundo enviamos por bluetooth y revisamos que no falle la 
+            // prueba por ritmo cardiaco
+            long currTimeBtSent = millis();
+            long deltaTimeBtSent = currTimeBtSent - lastTimeBtSent;
+            if(deltaTimeBtSent >= 1000l)
+            {
+                lastTimeBtSent = currTimeBtSent;
 
-            // @TODO:
-            // if(ritmoCardiacoAlto()){
-            //    fallarPrueba (inflar globo 2 segundos)
-            // }
+                // get posicionAcual
+                float latitudActual;
+                float longitudActual;
+                unsigned long ageActual;
+                MyGps::gps.f_get_position(&latitudActual, &longitudActual, &ageActual);
+
+            // Armamos los datos que van a ser enviados:
+
+                // Conseguimos todos los datos de la prueba
+                float distanciaTotalPrueba = TinyGPS::distance_between(
+                    latitudActual, longitudActual, 
+                    Prueba::posicionInicial.latitud, Prueba::posicionInicial.longitud
+                );
+                auto& numeroDeRepActual = Prueba::repeticionActual.numeroDeRep;
+                float distanciaRepeticionActual = TinyGPS::distance_between(
+                    latitudActual, longitudActual, 
+                    Prueba::repeticionActual.posicionInicial.latitud, Prueba::repeticionActual.posicionInicial.longitud
+                );
+                float velocidadTiempoReal = MyGps::gps.f_speed_kmph();
+
+                // Conseguimos los datos de los sensores
+                float temperatura =  (1.1 * analogRead(TEMPERATURE_PIN) * 100.0)/1024.0;
+                float oxigeno = MyMax30102::oxigeno;
+                float ritmoCardiaco = MyMax30102::ritmoCardiaco;
+
+                sendPlayPackage(distanciaTotalPrueba, numeroDeRepActual, distanciaRepeticionActual, velocidadTiempoReal, temperatura, ritmoCardiaco, oxigeno);
+
+                // @TODO
+                // @Mejora: Sacar promedio de los ultimos 4, no que se pasen de
+                // cierto umbral
+
+                // Revisamos si los ultimos 4 ritmos enviados son muy altos
+                {
+                    static int8_t countRitmo = 0;
+                    if(ritmoCardiaco > RITMO_ALTO){
+                        countRitmo++;
+                        if(countRitmo >= 4){
+                            // FALLAR PRUEBA
+                            Bomba::empezarDosSegundosDeBombeo();
+                            sendFailPackage();
+                            stateActual = State::STOP;
+                            return;
+                        }
+                    }
+                    else{
+                        countRitmo = 0;
+                    }
+                }
+            }
+
 
             // siguiente repeticion cada minuto
             long currTimeRepeticion = millis();
@@ -159,9 +235,9 @@ void Prueba::loop()
             if(deltaTimeRepeticion >= 1000l * 60l)
             {
                 if(repeticionActual.numeroDeRep >= 21){
-                    // @TODO:
-                    //Terminar prueba exitosamente
-
+                    sendSuccessPackage();
+                    stateActual = State::STOP;
+                    return;
                 }
                 else{
                     //Ir a siguiente repeticion
@@ -184,8 +260,123 @@ void Prueba::loop()
                     Buzzer::empezarDosSegundosDeTono();
                 }
             }
-
-            MyBluetooth::sendToBluetoothEverySecond();
         }break;
     }
 }
+
+// DE AQUI EN ADELANTE TODO LO QUE BLUETOOTH:
+
+// @TODO: organizar lo bluetooth como namespace, igual quei como hicimos con Bomba
+// y Buzzer
+
+
+enum HeaderPaquete : char{
+    INICIAR_PRUEBA = '!',
+    CORRIENDO_PRUEBA = '#',
+    FIN_EXITO = '$',
+    FIN_RENDICION = '%',
+    FIN_FALLO = '&',
+};
+
+inline void sendPlayPackage(float distanciaTotalPrueba, int8_t numeroDeRepActual, 
+    float distanciaRepeticionActual, float velocidadTiempoReal, float temperatura, 
+    float ritmoCardiaco, float oxigeno)
+{
+    //@debug:
+    Serial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
+    Serial.print(distanciaTotalPrueba);
+    Serial.print('|');
+    Serial.print(numeroDeRepActual);
+    Serial.print('|');
+    Serial.print(distanciaRepeticionActual);
+    Serial.print('|');
+    Serial.print(velocidadTiempoReal);
+    Serial.print('|');
+    Serial.print(temperatura);
+    Serial.print('|');
+    Serial.print(ritmoCardiaco);
+    Serial.print('|');
+    Serial.print(oxigeno);
+    Serial.print(';');
+    Serial.println();
+
+    btSerial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
+    btSerial.print(distanciaTotalPrueba);
+    btSerial.print('|');
+    btSerial.print(numeroDeRepActual);
+    btSerial.print('|');
+    btSerial.print(distanciaRepeticionActual);
+    btSerial.print('|');
+    btSerial.print(velocidadTiempoReal);
+    btSerial.print('|');
+    btSerial.print(temperatura);
+    btSerial.print('|');
+    btSerial.print(ritmoCardiaco);
+    btSerial.print('|');
+    btSerial.print(oxigeno);
+    btSerial.print(';');
+    // @DEBUG:
+    // @NOCHECKIN:
+    btSerial.println();
+}
+
+inline void sendStartPackage()
+{
+    // @debug:
+    Serial.println((char)HeaderPaquete::INICIAR_PRUEBA);
+
+    btSerial.print((char)HeaderPaquete::INICIAR_PRUEBA);
+}
+inline void sendSuccessPackage()
+{
+    // @debug:
+    Serial.println((char)HeaderPaquete::FIN_EXITO);
+
+    btSerial.print((char)HeaderPaquete::FIN_EXITO);
+}
+inline void sendFailPackage()
+{
+    // @debug:
+    Serial.println((char)HeaderPaquete::FIN_FALLO);
+
+    btSerial.print((char)HeaderPaquete::FIN_FALLO);
+}
+inline void sendQuitPackage()
+{
+    // @debug:
+    Serial.println((char)HeaderPaquete::FIN_RENDICION);
+
+    btSerial.print((char)HeaderPaquete::FIN_RENDICION);
+}
+
+// @TODO SOON: mantener estos comentarios:
+
+// @DECISION: vamos a mandar distancias en vez de coordenadas porque son menso bytes,
+// son faciles de obtener con la libreria TinyGps y son faciles de entender
+
+// @DECISION: No vamos a hacer ningun calculos de promedio, minimo y maximo desde
+// el arduino porque no quiero que el 'paquete bluetooth' sea muy pesado. Mejor desde
+// android. ()
+
+// son faciles de obtener con la libreria TinyGps y son faciles de entender
+
+// Necesitamos, enviar la logica de juego para que del otro lado puedan ir acumulando
+// los datos necesarios para guardar una prueba completa Y los datos necesarios
+// para presentar los reportes de tiempo real
+
+// Example of bluetooth message encoding (ignore linejumps or blank spaces)
+// Si estado no es 0 el resto del paquete no tiene datos validos
+// #
+
+// distanciaTotalPrueba|
+
+// repeticionActual|
+// distanciaRepeticionActual|
+// velocidadTiempoReal|
+
+// temperatura|
+// ritmo|
+// oxigeno
+//;
+
+

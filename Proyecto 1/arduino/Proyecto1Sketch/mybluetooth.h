@@ -1,6 +1,7 @@
 // mybluetooth.h
-// todo lo relacionado con el modulo bluetooth, y la empaquetacion de los mensajes
-// hay que escribirle a las globales para que eventualmente se envie
+// Todo lo relacionado con el modulo bluetooth, y la empaquetacion de los mensajes.
+// Cuando vamos a enviar un paquete leemos variables globales que las clases/namespaces 
+// de otros los sensores mantenienen actualizadas/validas.
 
 #ifndef _MYBLUETOOTH_h
 #define _MYBLUETOOTH_h
@@ -8,6 +9,8 @@
 #include "pindefs.h"
 
 #include <SoftwareSerial.h>
+
+// @TODO SOON: mantener estos comentarios
 
 // [!!!]
 // @MEJORA?: que reciba como parametro todo el paquete no porque hay que 'armarlo'
@@ -37,7 +40,6 @@
 // Si estado no es 0 el resto del paquete no tiene datos validos
 // $
 
-// headerPaquete| 
 // distanciaTotalPrueba|
 
 // repeticionActual|
@@ -54,36 +56,32 @@
 
 namespace MyBluetooth {
 
-    //(0:corriendo, 1:se rendio, 2:fallo prueba)
-    enum HeaderPaquete : byte{
-        CORRIENDO = 0,
-        RENDIDO = 1,
-        FALLADO = 2,
+    // Algunos 'paquetes' solo tienen el byte del header, ie tienen de tamano
+    // 1 byte. Dichos paquetes son: 
+    // INICIAR, INICIAR_PRUEBA, CORRIENDO_PRUEBA, FIN_EXITO, FIN_RENDICION, FIN_FALLO,
+    // [estos chars ascii se escogieron arbitrariamente, pueden ser cualquier
+    // caracter a excepcion: [0-9] '.' '|' ';' porque dichos caracteres pueden aparecer
+    // adentro del cuerpo del paquete: CORRIENDO_PRUEBA
+    enum HeaderPaquete : char{
+        INICIAR_PRUEBA = '!',
+        CORRIENDO_PRUEBA = '#',
+        FIN_EXITO = '$',
+        FIN_RENDICION = '%',
+        FIN_FALLO = '&',
     };
-
-    namespace Paquete{
-
-        extern HeaderPaquete headerPaquete; 
-
-        extern float ritmoCardiaco;
-        extern float oxigeno;
-    }
-
-    // [!!!]: not 'comprehensive' i.e. the real Paquete includes things that are not
-    // listed in this namespace, because a lot of the data we will send can be obtained 
-    // 'on the spot' right as we build the Paquete
-
-    // @TODO: escribir detalladamente que lleva el paquete y en que parte del codigo
-    // 'mantememos' esas globales
 
     extern SoftwareSerial btSerial;
 
     void setup();
-    // @TODO: better name for these 2
-    void restartSendToBluetoothEverySecond();
-    // @TODO: nombre que nos indique que este codigo debe corre 'concurrentemente'
-    // ie que adentro lidea con todo el estado que implica llevar un DeltaTime
-    void sendToBluetoothEverySecond();
+
+    void restartPlayNaveteePackageEverySecond();
+    void sendPlayNaveteePackageEverySecond();
+
+    void sendStartPackageNow();
+    void sendSuccessPackageNow();
+    void sendFailPackageNow();
+    void sendQuitPackageNow();
+
 }
 
 #endif

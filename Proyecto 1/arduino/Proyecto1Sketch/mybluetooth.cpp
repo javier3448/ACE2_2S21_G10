@@ -4,12 +4,9 @@
 
 #include "mygps.h"
 #include "prueba.h"
+#include "mymax30102.h"
 
 SoftwareSerial MyBluetooth::btSerial(BT_RX, BT_TX);
-
-MyBluetooth::HeaderPaquete MyBluetooth::Paquete::headerPaquete = (MyBluetooth::HeaderPaquete)0xff;
-float MyBluetooth::Paquete::ritmoCardiaco = 0;
-float MyBluetooth::Paquete::oxigeno = 0;
 
 void MyBluetooth::setup()
 {
@@ -18,11 +15,11 @@ void MyBluetooth::setup()
 }
 
 static long lastTimeSent;
-void MyBluetooth::restartSendToBluetoothEverySecond()
+void MyBluetooth::restartPlayNaveteePackageEverySecond()
 {
     lastTimeSent = millis();
 }
-void MyBluetooth::sendToBluetoothEverySecond()
+void MyBluetooth::sendPlayNaveteePackageEverySecond()
 {
     // millis for now, explore using micros or something else even
 
@@ -45,12 +42,6 @@ void MyBluetooth::sendToBluetoothEverySecond()
             return;
         } 
 
-        float temperatura;
-        {//getTemperatura
-            temperatura = analogRead(A0);
-            temperatura = (1.1 * temperatura * 100.0)/1024.0;
-        }
-
         // get posicionAcual
         //{
             float latitudActual;
@@ -58,6 +49,8 @@ void MyBluetooth::sendToBluetoothEverySecond()
             unsigned long ageActual;
             MyGps::gps.f_get_position(&latitudActual, &longitudActual, &ageActual);
         //}
+
+    // Armamos los datos que van a ser enviados:
 
         // Conseguimos todos los datos de la prueba
         //{
@@ -76,13 +69,38 @@ void MyBluetooth::sendToBluetoothEverySecond()
             float velocidadTiempoReal = MyGps::gps.f_speed_kmph();
         //}
 
-        float velocidadAEnviar;
+        // Conseguimos los datos de los sensores
+        //{
+            float temperatura;
+            {//getTemperatura
+                temperatura = analogRead(A0);
+                temperatura = (1.1 * temperatura * 100.0)/1024.0;
+            }
+
+            float oxigeno = MyMax30102::oxigeno;
+
+            float ritmoCardiaco = MyMax30102::ritmoCardiaco;
+        //}
 
         //@debug:
+        Serial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
+        Serial.print(distanciaTotalPrueba);
+        Serial.print('|');
+        Serial.print(numeroDeRepActual);
+        Serial.print('|');
+        Serial.print(distanciaRepeticionActual);
+        Serial.print('|');
+        Serial.print(velocidadTiempoReal);
+        Serial.print('|');
+        Serial.print(temperatura);
+        Serial.print('|');
+        Serial.print(ritmoCardiaco);
+        Serial.print('|');
+        Serial.print(oxigeno);
+        Serial.print(';');
+        Serial.println();
 
-        btSerial.print('$');
-        btSerial.print(Paquete::headerPaquete);
-        btSerial.print('|');
+        btSerial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
         btSerial.print(distanciaTotalPrueba);
         btSerial.print('|');
         btSerial.print(numeroDeRepActual);
@@ -93,15 +111,35 @@ void MyBluetooth::sendToBluetoothEverySecond()
         btSerial.print('|');
         btSerial.print(temperatura);
         btSerial.print('|');
-        btSerial.print(Paquete::ritmoCardiaco);
+        btSerial.print(ritmoCardiaco);
         btSerial.print('|');
-        btSerial.print(Paquete::oxigeno);
+        btSerial.print(oxigeno);
         btSerial.print(';');
         // @DEBUG:
         // @NOCHECKIN:
         btSerial.println();
     }
 }
+
+void MyBluetooth::sendStartPackageNow()
+{
+    btSerial.print((char)HeaderPaquete::INICIAR_PRUEBA);
+}
+
+void MyBluetooth::sendSuccessPackageNow()
+{
+    btSerial.print((char)HeaderPaquete::FIN_EXITO);
+}
+void MyBluetooth::sendFailPackageNow()
+{
+    btSerial.print((char)HeaderPaquete::FIN_FALLO);
+}
+void MyBluetooth::sendQuitPackageNow()
+{
+    btSerial.print((char)HeaderPaquete::FIN_RENDICION);
+}
+
+// @TODO SOON: mantener estos comentarios:
 
 // @DECISION: vamos a mandar distancias en vez de coordenadas porque son menso bytes,
 // son faciles de obtener con la libreria TinyGps y son faciles de entender
@@ -118,9 +156,8 @@ void MyBluetooth::sendToBluetoothEverySecond()
 
 // Example of bluetooth message encoding (ignore linejumps or blank spaces)
 // Si estado no es 0 el resto del paquete no tiene datos validos
-// $
+// #
 
-// headerPaquete| 
 // distanciaTotalPrueba|
 
 // repeticionActual|
