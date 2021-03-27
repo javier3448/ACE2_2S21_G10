@@ -23,7 +23,7 @@ namespace Bomba{
         if(!isActive) return;
 
         long deltaTime = millis() - startTime;
-        if(deltaTime > 2000){
+        if(deltaTime > 4000){
             digitalWrite(MOTOR_PIN, LOW);
             isActive = false;
         }
