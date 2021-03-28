@@ -80,10 +80,14 @@ public class ConectionApi extends AppCompatActivity {
         public double distancia;
 
         public double tiempo;
+
+        // @TODO cambiar por un enum que indique: corriendo prueba, falla, exito, o rendicion
         public int falla;
         public int rindio;
+        // 1 si Termino la prueba con exito
+        public int aprobo;
 
-        public Medicion(double temperatura, double ritmoCardiaco,  double oxigeno, int repeticion, double velocidad, double distancia, double tiempo, int falla,int rindio){
+        public Medicion(double temperatura, double ritmoCardiaco,  double oxigeno, int repeticion, double velocidad, double distancia, double tiempo, int falla, int rindio, int aprobo){
             this.temperatura = temperatura;
             this.ritmoCardiaco = ritmoCardiaco;
             this.oxigeno = oxigeno;
@@ -94,6 +98,7 @@ public class ConectionApi extends AppCompatActivity {
             this.tiempo=tiempo;
             this.falla=falla;
             this.rindio=rindio;
+            this.aprobo=aprobo;
         }
     }
 
@@ -310,22 +315,59 @@ public class ConectionApi extends AppCompatActivity {
             // Se mantiene en modo escucha para determinar el ingreso de datos
             while (true) {
                 try {
-                    // Analiza el inputStream buscando este patron:
-                    // '$' {numeroReal} | {numeroReal} | {numeroReal} ';'
-                    // cada vez que encuentra dicho patron en via los numeros reales a un handler
+                    // Analiza el inputStream buscando estos patrones:
+
+                    // '!' // PAQUETE: INICIAR_PRUEBA
+
+                    // PAQUETE CORRIENDO: '#'{numeroEntero}'|'{numeroReal} '|'{numeroReal}'|'{numeroReal}'|'{numeroReal}'|'{numeroReal}'|'{numeroReal}';'
+                    // descripcion:       '#'{distanciaTotalPrueba}'|'{repeticionActual}'|'{distanciaRepeticionActual}'|'{velocidadTiempoReal}'|'{temperatura}'|'{ritmo}'|'{oxigeno}';'
+
+                    // '$' // PAQUETE: FIN_EXITO
+
+                    // '%' // PAQUETE: FIN_RENDICION
+
+                    // '&' // PAQUETE: FIN_FALLO
 
                     outer: while(true){
                         byte currByte = getNextByteFromInStream();
 
-                        if(currByte == (byte) '$'){
+                        if(currByte == (byte) '!'){
+                            // Por ahora lo ignoramos porque a la API no le importa cuando empezamos
+                            // la prueba tampoco verificamos que venga uno de estos paquetes antes
+                            // de empezar a leer paquetes '#'
+                            System.out.println("Se empezo la prueba");
+//                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
+//                                    0,0,,tiempo,falla,rindio)).sendToTarget();
+                        }
+                        else if(currByte == (byte) '$'){
+                            System.out.println("Se termino la prueba con Exito");
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
+                                    0,0,0,0,0, 0, 1)).sendToTarget();
+                        }
+                        else if(currByte == (byte) '%'){
+                            System.out.println("Se termino la prueba Rindiendose");
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
+                                    0,0,0,0,0, 1, 0)).sendToTarget();
+                        }
+                        else if(currByte == (byte) '&'){
+                            System.out.println("Se termino la prueba fallando");
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
+                                    0,0,0,0,1, 0, 0)).sendToTarget();
+                        }
+                        else if(currByte == (byte) '#'){
                             currByte = getNextByteFromInStream();
                             StringBuilder medicionesCrudas = new StringBuilder();
                             while (currByte != ';'){
+                                // Caso especial de mensajes incompletos
+                                if(currByte == '!' || currByte == '#' || currByte == '$' || currByte == '%' || currByte == '&'){
+                                    throw new IOException("EROR: PRUEBA INCOMPLETA! NO APAGUE EL ARDUINO MIENTRAS SE ESTA HACIENDO UNA PRUEBA! char: " + currByte);
+                                }
+
                                 // Armamos el string que hay desde: '$' hasta ';'
                                 medicionesCrudas.append((char)currByte);
                                 currByte = getNextByteFromInStream();
 
-                                if(medicionesCrudas.length() > 100){
+                                if(medicionesCrudas.length() > 200){
                                     System.err.println("'$' sin terminacion ';' :`" + medicionesCrudas.toString() + "`");
 
                                     //Print toast
@@ -339,27 +381,32 @@ public class ConectionApi extends AppCompatActivity {
                                 }
                             }
 
+                //{repeticionActual}'|'{tiempoRepeticionAcual}'|'{distanciaRepeticionActual}'|'{velocidadTiempoReal}'|'{temperatura}'|'{ritmo}'|'{oxigeno}';'
                             String[] medicionesSpliteadas = medicionesCrudas.toString().split("\\|");
 
                             // @debug:
-                            System.out.println("Temperatura: " + medicionesSpliteadas[0]);
-                            System.out.println("Ritmo cardiaco: " + medicionesSpliteadas[1]);
-                            System.out.println("Oxigeno: " + medicionesSpliteadas[2]);
+                            System.out.println("Repeticion actual: " + medicionesSpliteadas[0]);
+                            System.out.println("Tiempo repeticion actual: " + medicionesSpliteadas[1]);
+                            System.out.println("Distacion repeticion actual: " + medicionesSpliteadas[2]);
+                            System.out.println("Velocidad: " + medicionesSpliteadas[3]);
+                            System.out.println("Temperatura: " + medicionesSpliteadas[4]);
+                            System.out.println("Ritmo cardiaco: " + medicionesSpliteadas[5]);
+                            System.out.println("Oxigeno: " + medicionesSpliteadas[6]);
 
-                            double temperatura =  Double.parseDouble(medicionesSpliteadas[0]);
-                            double ritmoCardiaco =  Double.parseDouble(medicionesSpliteadas[1]);
-                            double oxigeno =  Double.parseDouble(medicionesSpliteadas[2]);
-                            //medicion proyecto1
-                            int repeticion=Integer.parseInt(medicionesSpliteadas[3]);
-                            double velocidad=Double.parseDouble(medicionesSpliteadas[4]);
-                            double distancia=Double.parseDouble(medicionesSpliteadas[5]);
+                            int repeticion = Integer.parseInt(medicionesSpliteadas[0]);
+                            double tiempo = Integer.parseInt(medicionesSpliteadas[1]) / 1000d;
+                            double distancia = Double.parseDouble(medicionesSpliteadas[2]);
+                            double velocidad = Double.parseDouble(medicionesSpliteadas[3]);
+                            double temperatura = Double.parseDouble(medicionesSpliteadas[4]);
+                            double ritmoCardiaco = Double.parseDouble(medicionesSpliteadas[5]);
+                            double oxigeno = Double.parseDouble(medicionesSpliteadas[6]);
 
-                            double tiempo=Double.parseDouble(medicionesSpliteadas[6]);
-                            int falla=Integer.parseInt(medicionesSpliteadas[7]);
-                            int rindio=Integer.parseInt(medicionesSpliteadas[8]);
+                            int falla = 0;
+                            int rindio = 0;
+                            int aprobo = 0;
 
                             bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(temperatura, ritmoCardiaco, oxigeno,
-                                    repeticion,velocidad,distancia,tiempo,falla,rindio)).sendToTarget();
+                                    repeticion, velocidad, distancia, tiempo, falla, rindio, aprobo)).sendToTarget();
                         }
                     }
                 } catch (IOException e) {

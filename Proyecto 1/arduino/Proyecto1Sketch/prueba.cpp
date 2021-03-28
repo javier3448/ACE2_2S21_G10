@@ -9,6 +9,7 @@ Prueba::Posicion Prueba::posicionInicial;
 Prueba::Repeticion Prueba::repeticionActual;
 
 static long lastTimeBtSent;
+static int8_t countRitmo;
 
 // @TODO: mover aqui temperatura y botones
 
@@ -49,6 +50,9 @@ namespace Bomba{
 }
 
 namespace Buzzer{
+
+    // @TODO: mejor nombre para los diferentes tipos de tono
+
     bool isActive = false;
     long startTime = 0;
 
@@ -75,7 +79,7 @@ namespace Buzzer{
         startTime = millis();
     }
 
-    void empezarCuatroSegundosDeTonoExitoso()
+    void empezarTresSegundosDeTonoExitoso()
     {
         digitalWrite(BUZZER_PIN, HIGH);
         isActiveExitoso = true;
@@ -106,8 +110,8 @@ namespace Buzzer{
 }
 
 static SoftwareSerial btSerial(BT_RX, BT_TX);
-inline void sendPlayPackage(float distanciaTotalPrueba, int8_t numeroDeRepActual, 
-    float distanciaRepeticionActual, float velocidadTiempoReal, float temperatura, 
+inline void sendPlayPackage(int8_t numeroDeRepActual, float distanciaRepeticionActual, 
+    long tiempoRepeticionActual, float velocidadTiempoReal, float temperatura, 
     float ritmoCardiaco, float oxigeno);
 inline void sendStartPackage();
 inline void sendSuccessPackage();
@@ -184,6 +188,9 @@ void Prueba::loop()
 
                     // reiniciar temporizador de 'send playPackage every second'
                     lastTimeBtSent = millis();
+
+                    // reiniciar conteo de ritmo cardiaco
+                    countRitmo = 0;
                 }
                 stateActual = State::PLAY;
                 return;
@@ -217,15 +224,12 @@ void Prueba::loop()
             // Armamos los datos que van a ser enviados:
 
                 // Conseguimos todos los datos de la prueba
-                float distanciaTotalPrueba = TinyGPS::distance_between(
-                    latitudActual, longitudActual, 
-                    Prueba::posicionInicial.latitud, Prueba::posicionInicial.longitud
-                );
-                auto& numeroDeRepActual = Prueba::repeticionActual.numeroDeRep;
+                auto numeroDeRepActual = repeticionActual.numeroDeRep;
                 float distanciaRepeticionActual = TinyGPS::distance_between(
                     latitudActual, longitudActual, 
                     Prueba::repeticionActual.posicionInicial.latitud, Prueba::repeticionActual.posicionInicial.longitud
                 );
+                long tiempoRepeticionActual = millis() - Prueba::repeticionActual.tiempoInicial;
                 float velocidadTiempoReal = MyGps::gps.f_speed_kmph();
 
                 // Conseguimos los datos de los sensores
@@ -233,7 +237,7 @@ void Prueba::loop()
                 float oxigeno = MyMax30102::oxigeno;
                 float ritmoCardiaco = MyMax30102::ritmoCardiaco;
 
-                sendPlayPackage(distanciaTotalPrueba, numeroDeRepActual, distanciaRepeticionActual, velocidadTiempoReal, temperatura, ritmoCardiaco, oxigeno);
+                sendPlayPackage(numeroDeRepActual, distanciaRepeticionActual, tiempoRepeticionActual, velocidadTiempoReal, temperatura, ritmoCardiaco, oxigeno);
 
                 // @TODO
                 // @Mejora: Sacar promedio de los ultimos 4, no que se pasen de
@@ -241,7 +245,6 @@ void Prueba::loop()
 
                 // Revisamos si los ultimos 4 ritmos enviados son muy altos
                 {
-                    static int8_t countRitmo = 0;
                     if(ritmoCardiaco > RITMO_ALTO){
                         countRitmo++;
                         if(countRitmo >= 4){
@@ -266,7 +269,7 @@ void Prueba::loop()
             {
                 if(repeticionActual.numeroDeRep >= 21){
                     // Serial.println("Prueba completad exitosamente");
-                    Buzzer::empezarCuatroSegundosDeTonoExitoso();
+                    Buzzer::empezarTresSegundosDeTonoExitoso();
                     sendSuccessPackage();
                     stateActual = State::STOP;
                     return;
@@ -298,7 +301,7 @@ void Prueba::loop()
 
 // DE AQUI EN ADELANTE TODO LO QUE BLUETOOTH:
 
-// @TODO: organizar lo bluetooth como namespace, igual quei como hicimos con Bomba
+// @TODO: organizar lo bluetooth como namespace, igual que como hicimos con Bomba
 // y Buzzer
 
 
@@ -310,15 +313,15 @@ enum HeaderPaquete : char{
     FIN_FALLO = '&',
 };
 
-inline void sendPlayPackage(float distanciaTotalPrueba, int8_t numeroDeRepActual, 
-    float distanciaRepeticionActual, float velocidadTiempoReal, float temperatura, 
+inline void sendPlayPackage(int8_t numeroDeRepActual, float distanciaRepeticionActual, 
+    long tiempoRepeticionActual, float velocidadTiempoReal, float temperatura, 
     float ritmoCardiaco, float oxigeno)
 {
     //@debug:
     Serial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
-    Serial.print(distanciaTotalPrueba);
-    Serial.print('|');
     Serial.print(numeroDeRepActual);
+    Serial.print('|');
+    Serial.print(tiempoRepeticionActual);
     Serial.print('|');
     Serial.print(distanciaRepeticionActual);
     Serial.print('|');
@@ -333,9 +336,9 @@ inline void sendPlayPackage(float distanciaTotalPrueba, int8_t numeroDeRepActual
     Serial.println();
 
     btSerial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
-    btSerial.print(distanciaTotalPrueba);
-    btSerial.print('|');
     btSerial.print(numeroDeRepActual);
+    btSerial.print('|');
+    btSerial.print(tiempoRepeticionActual);
     btSerial.print('|');
     btSerial.print(distanciaRepeticionActual);
     btSerial.print('|');
@@ -402,10 +405,9 @@ inline void sendQuitPackage()
 // Si estado no es 0 el resto del paquete no tiene datos validos
 // #
 
-// distanciaTotalPrueba|
-
 // repeticionActual|
 // distanciaRepeticionActual|
+// tiempoRepeticionActual|
 // velocidadTiempoReal|
 
 // temperatura|
