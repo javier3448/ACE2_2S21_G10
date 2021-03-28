@@ -10,7 +10,10 @@ Prueba::Repeticion Prueba::repeticionActual;
 
 static long lastTimeBtSent;
 
-// @TODO: mover aqui temperatura
+// @TODO: mover aqui temperatura y botones
+
+// @TODO: integrar a la logica del juego si esta conectado o no el bluetooth:
+// si se perdio la coneccion cancelar la prueba o algo asi
 
 // @Mejora?: poner Bomba y buzzer en su propio archivo, creo que el hecho que 
 // llamemos a Bomba::loop y ::setup desde aqui es algo confuso.
@@ -49,12 +52,20 @@ namespace Buzzer{
     bool isActive = false;
     long startTime = 0;
 
+    bool isActiveExitoso = false;
+    long startTimeExitoso = 0;
+
     void setup()
     {
         isActive = false;
         startTime = 0;
+
+        isActiveExitoso = false;
+        startTimeExitoso = 0;
+
         pinMode(BUZZER_PIN, OUTPUT);
     }
+
     void empezarDosSegundosDeTono()
     {
         tone(BUZZER_PIN, 1000);
@@ -63,14 +74,33 @@ namespace Buzzer{
 
         startTime = millis();
     }
+
+    void empezarCuatroSegundosDeTonoExitoso()
+    {
+        digitalWrite(BUZZER_PIN, HIGH);
+        isActiveExitoso = true;
+
+        startTimeExitoso = millis();
+    }
+
     static void loop()
     {
-        if(!isActive) return;
+        if(isActive)
+        {
+            long deltaTime = millis() - startTime;
+            if(deltaTime > 2000){
+                noTone(BUZZER_PIN);
+                isActive = false;
+            }
+        }
 
-        long deltaTime = millis() - startTime;
-        if(deltaTime > 2000){
-            noTone(BUZZER_PIN);
-            isActive = false;
+        if(isActiveExitoso)
+        {
+            long deltaTime = millis() - startTimeExitoso;
+            if(deltaTime > 4000){
+                digitalWrite(BUZZER_PIN, LOW);
+                isActiveExitoso = false;
+            }
         }
     }
 }
@@ -235,6 +265,8 @@ void Prueba::loop()
             if(deltaTimeRepeticion >= 1000l * 60l)
             {
                 if(repeticionActual.numeroDeRep >= 21){
+                    // Serial.println("Prueba completad exitosamente");
+                    Buzzer::empezarCuatroSegundosDeTonoExitoso();
                     sendSuccessPackage();
                     stateActual = State::STOP;
                     return;
@@ -256,7 +288,7 @@ void Prueba::loop()
                         tiempoInicial : currTimeRepeticion,
                     };
 
-                    Serial.println("siguiente repeticion");
+                    // Serial.println("siguiente repeticion");
                     Buzzer::empezarDosSegundosDeTono();
                 }
             }
@@ -315,8 +347,10 @@ inline void sendPlayPackage(float distanciaTotalPrueba, int8_t numeroDeRepActual
     btSerial.print('|');
     btSerial.print(oxigeno);
     btSerial.print(';');
+
     // @DEBUG:
-    // @NOCHECKIN:
+    // @DEBUG:
+    // @DEBUG:
     btSerial.println();
 }
 

@@ -8,7 +8,6 @@
 #include "prueba.h"
 #include "mygps.h"
 #include "mymax30102.h"
-#include "mybluetooth.h"
 
 // @TODO: Valores sentinela
 
@@ -37,17 +36,11 @@ void setup()
 
     MyGps::setup();
 
-    MyBluetooth::setup();
-
     Prueba::setup();
 }
 
 void loop()
 {  
-    // @DEBUG 
-    // @NOCHECKIN 
-    Prueba::loop();
-    return;
 
     MyGps::loop();
 
