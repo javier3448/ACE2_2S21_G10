@@ -56,6 +56,7 @@ public class ConectionApi extends AppCompatActivity {
     public String tiempoAtleta=" ";
     public String fallaAtleta=" ";
     public String rindioAtleta=" ";
+    public String estadoAprobo=" ";
     //---------------Variables comunicacion. bluetooh----------------------------
     Handler bluetoothIn;
     public static final int handlerState = 0;
@@ -136,7 +137,7 @@ public class ConectionApi extends AppCompatActivity {
                     tiempoAtleta=Double.toString(medicion.tiempo);
                     fallaAtleta=Integer.toString(medicion.falla);
                     rindioAtleta=Double.toString(medicion.rindio);
-
+                    estadoAprobo=Integer.toString(medicion.aprobo);
                     //setear los valores para visualizarl los datos que se mandaran a la api
                     IdBufferIn.setText("Temp: "+temperatura+"\nritmo: "+ritmoCardiaco+"\noxigeno: "+
                             oxigenoSangre+"\nRepeticion: "+repeticionAtleta+
@@ -144,7 +145,8 @@ public class ConectionApi extends AppCompatActivity {
                             "\nDistancia: "+distanciaAleta+
                             "\ntiempo: "+tiempoAtleta+
                             "\nfalla: "+fallaAtleta+
-                            "\nrindio: "+rindioAtleta);
+                            "\nrindio: "+rindioAtleta+
+                            "\nAprobo: "+estadoAprobo);
 
 
                     //los datos obtenidos se enviaran al servidor
@@ -189,6 +191,7 @@ public class ConectionApi extends AppCompatActivity {
           parametros.put("tiempo",tiempoAtleta);
           parametros.put("falla",fallaAtleta);
           parametros.put("rindio",rindioAtleta);
+          parametros.put("aprobo",estadoAprobo);
 
           parametros.put("idUser",MainActivity.ideUser);
           JSONObject objeto=new JSONObject(parametros);
