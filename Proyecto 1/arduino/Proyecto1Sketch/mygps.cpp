@@ -11,8 +11,6 @@ void MyGps::setup()
 // @TODO: better name 
 void MyGps::loop()
 {
-    
-          // Serial.write('a'); // uncomment this line if you want to see the GPS data flowing
     // encode gps sentences, the resulting data is in the MyGps::gps object
     while(gpsSerial.available())
     {
