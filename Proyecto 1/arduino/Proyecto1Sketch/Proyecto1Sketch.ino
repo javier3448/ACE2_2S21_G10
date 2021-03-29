@@ -34,18 +34,22 @@ void setup()
 
     MyMax30102::setup();
 
-    MyGps::setup();
-
     Prueba::setup();
+
+    // [!!!!!!!!]: 
+    // ES MUY MUY IMPORTATE QUE LLAMEMOS A MyGps::setup() DESPUES QUE A Prueba::setup()
+    // Porque Prueba::setup() tabmien crea una instancia de un SoftwareSerial, dicha instancia empieza
+    // a escuchar con .listen(). SOLO PODEMOS TENER UNA DE ESAS INSTANCIAS ESCUCHANDO!!!!
+    // Como en el bluetooth solo enviamos y no escuchamos, no importa que solo MyGps::gpsSerial pueda
+    // escuchar.
+    MyGps::setup();
 }
 
 void loop()
 {  
-
     MyGps::loop();
 
     MyMax30102::loop();
 
     Prueba::loop();
 }
-
