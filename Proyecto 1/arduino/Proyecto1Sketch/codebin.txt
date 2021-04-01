@@ -1,3 +1,6 @@
+
+TEST
+{
 #include <SoftwareSerial.h>
 #include <Wire.h>
 
@@ -13,10 +16,23 @@
 
 // @TODO: traducir todo lo que esta en ingles
 
+//NOCHEKIN:
+SoftwareSerial btSerial(BT_RX, BT_TX);
+SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
+TinyGPS gps;
 
 void setup()
 {
     Serial.begin(9600);
+
+    pinMode(MOTOR_PIN, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
+        pinMode(BT_STATE, INPUT);
+        btSerial = SoftwareSerial(BT_RX, BT_TX);
+        btSerial.begin(38400);
+    gpsSerial = SoftwareSerial(GPS_RX, GPS_TX);
+    gpsSerial.begin(9600); 
+    return;
 
     // setup buttons
     {
@@ -42,21 +58,44 @@ void setup()
     // a escuchar con .listen(). SOLO PODEMOS TENER UNA DE ESAS INSTANCIAS ESCUCHANDO!!!!
     // Como en el bluetooth solo enviamos y no escuchamos, no importa que solo MyGps::gpsSerial pueda
     // escuchar.
-    // [!?!?] D:  (POSIBLE BUG!)
-    // Creo que tampoco podemos escribir al bluetooth mientras gpsSerial.available()
-    // porque cuando probamos imprimir todo lo que recibe el gps atravez del bluetooth
-    // se como que corrompio todo :( (@TODO: ver que esta pasando!)
-    // no nos a afectado en las pruebas porque es poco probable que mandemos por
-    // bluetooth mientras gpsSerial.available() y el gps.encode se repecupera
-    // si se enviamos un ''paquete gps'' corroto
     MyGps::setup();
 }
 
 void loop()
 {  
+    static byte state = LOW;
+    if(state == LOW){
+        state = HIGH;
+    }
+    else{
+        state = LOW;
+    }
+    //btSerial.println("hello");
+    //Serial.println("hello");
+    // digitalWrite(MOTOR_PIN, state);
+    // digitalWrite(LED_BUILTIN, state);
+    // delay(500);
+{
+    // encode gps sentences, the resulting data is in the MyGps::gps object
+    while(gpsSerial.available())
+    {
+        char c = gpsSerial.read();
+
+        // [!] No podemos usar los dos puertos SoftwareSerial asi (como que al mismo tiempo)
+        // se caga en todo no se porque :/
+        // btSerial.write(c); 
+
+        Serial.write(c); // uncomment this line if you want to see the GPS data flowing
+        gps.encode(c);
+    }
+}
+    return;
+
+
     MyGps::loop();
 
     MyMax30102::loop();
 
     Prueba::loop();
+}
 }

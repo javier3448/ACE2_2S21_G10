@@ -1,6 +1,6 @@
 #include "mygps.h"
 
-SoftwareSerial MyGps::gpsSerial(4, 3);
+SoftwareSerial MyGps::gpsSerial(GPS_RX, GPS_TX);
 TinyGPS MyGps::gps;
 
 void MyGps::setup()
