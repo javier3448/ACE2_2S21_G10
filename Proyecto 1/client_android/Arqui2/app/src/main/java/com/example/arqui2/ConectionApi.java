@@ -121,10 +121,10 @@ public class ConectionApi extends AppCompatActivity {
                     Medicion medicion = (Medicion) msg.obj;
 
                     // @debug
-                    System.out.println("Desde handleMessage:");
-                    System.out.println("temperatura" + medicion.temperatura);
-                    System.out.println("ritmoCardiaco" + medicion.ritmoCardiaco);
-                    System.out.println("oxigeno" + medicion.oxigeno);
+//                    System.out.println("Desde handleMessage:");
+//                    System.out.println("temperatura" + medicion.temperatura);
+//                    System.out.println("ritmoCardiaco" + medicion.ritmoCardiaco);
+//                    System.out.println("oxigeno" + medicion.oxigeno);
 
                     temperatura = Double.toString(medicion.temperatura);
                     ritmoCardiaco = Double.toString(medicion.ritmoCardiaco);

@@ -14,9 +14,11 @@
 #define BUTTON_START_PIN 7
 #define BUTTON_QUIT_PIN 8
 
-#define GPS_TX 3
-#define GPS_RX 4
+#define GPS_TX 4
+#define GPS_RX 3
 
 #define TEMPERATURE_PIN A0
 
-// @TODO: Poner los pines del Max30102
+// Para arduino uno
+//#define SDA A4
+//#define SCL A5
