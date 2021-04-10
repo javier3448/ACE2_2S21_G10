@@ -81,7 +81,7 @@ export default function CourseHView() {
           <div className="row">
             <div className={`col-lg-${colLg} col-md-12 col-sm-12 col-xs-12 mb-4`} hidden={sh1}>
               <div className="card">
-                <button className="btn btn-secondary" type="button" onClick={handleClick}>
+                <button className="btn btn-secondary" type="button" onClick={handleClick} data-bs-toggle="tooltip" data-bs-placement="top" title="Expandir">
                   <div className="h4 text-center" id="btn1">
                     Repeticiones por fecha
                   </div>
@@ -100,7 +100,7 @@ export default function CourseHView() {
             </div>
             <div className={`col-lg-${colLg} col-md-12 col-sm-12 col-xs-12 mb-4`} hidden={sh2}>
               <div className="card">
-                <button className="btn btn-secondary" type="button" onClick={handleClick}>
+                <button className="btn btn-secondary" type="button" onClick={handleClick} data-bs-toggle="tooltip" data-bs-placement="top" title="Expandir">
                   <div className="h4 text-center" id="btn2" >
                     Repeticiones antes de fallar
                   </div>
@@ -116,7 +116,7 @@ export default function CourseHView() {
             </div>
             <div className={`col-lg-${colLg} col-md-12 col-sm-12 col-xs-12 mb-4`} hidden={sh3}>
               <div className="card">
-                <button className="btn btn-secondary" type="button" onClick={handleClick}>
+                <button className="btn btn-secondary" type="button" onClick={handleClick} data-bs-toggle="tooltip" data-bs-placement="top" title="Expandir">
                   <div className="h4 text-center" id="btn3">
                     Repeticiones antes de rendirse
                   </div>
