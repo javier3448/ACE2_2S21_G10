@@ -33,7 +33,7 @@ export default function VelHGraph(props) {
         data={data}
         margin={{
           top: 10,
-          right: 30,
+          right: 0,
           left: 0,
           bottom: 0,
         }}
@@ -43,9 +43,9 @@ export default function VelHGraph(props) {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Area type="monotone" dataKey="min" stackId="1" stroke="#F0E68C" fill="#F0E68C" />
-        <Area type="monotone" dataKey="avg" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-        <Area type="monotone" dataKey="max" stackId="1" stroke="#8884d8" fill="#8884d8" />
+        <Area type="monotone" dataKey="min" stackId="1" stroke="#ffc107" fill="#ffc107" />
+        <Area type="monotone" dataKey="avg" stackId="1" stroke="#198754" fill="#198754" />
+        <Area type="monotone" dataKey="max" stackId="1" stroke="#fd7e14" fill="#fd7e14" />
       </AreaChart>
     </ResponsiveContainer>
   );

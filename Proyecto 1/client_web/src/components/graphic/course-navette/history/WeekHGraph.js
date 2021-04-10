@@ -67,9 +67,9 @@ export default function WeekHGraph(props) {
   return (
     <>
       <div className="row">
-        <div className="col-4 text-center h4">Max: {max}</div>
-        <div className="col-4 text-center h4">Min: {min}</div>
-        <div className="col-4 text-center h4">Avg: {avg}</div>
+        <div className="col-4 text-center h5">Max: {max}</div>
+        <div className="col-4 text-center h5">Min: {min}</div>
+        <div className="col-4 text-center h5">Avg: {avg}</div>
       </div>
       <hr></hr>
       <ResponsiveContainer width="100%" height={60}>

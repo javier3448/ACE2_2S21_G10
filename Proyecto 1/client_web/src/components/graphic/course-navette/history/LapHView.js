@@ -6,7 +6,7 @@ export default function LapHView(props) {
       <div className="accordion-item">
         <h2 className="accordion-header" id={"heading_"+props.i}>
           <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={"#collapse_"+props.id} aria-expanded="false" aria-controls={"collapse_"+props.id}>
-            {props.result.hora}
+            {props.result.hora + " hrs"}
       </button>
         </h2>
         <div id={"collapse_"+props.id} className="accordion-collapse collapse" aria-labelledby={"heading_"+props.i} data-bs-parent={"#"+props.parent}>
