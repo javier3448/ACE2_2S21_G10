@@ -11,7 +11,7 @@
 
 namespace Prueba {
 
-    constexpr int8_t RITMO_ALTO = 120;
+    constexpr float RITMO_ALTO = 180;
 
     enum State{
         PLAY,

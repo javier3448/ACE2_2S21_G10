@@ -18,7 +18,7 @@ export default function WeekHView(props) {
 
   return (
     <>
-      <h4 className="text-center">04/04/2021 - 10/04/2021</h4>
+      <h5 className="text-center">04/04/2021 - 10/04/2021</h5>
       <div className="accordion accordion-flush" id="lapWeeks">
         {data ? (
           data.map((result, index) => 
