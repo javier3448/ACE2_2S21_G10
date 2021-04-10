@@ -4,6 +4,7 @@ import TimeView from '../../../nav-bar/TimeView';
 import WeekHView from './WeekHView';
 import WeekHGraph from './WeekHGraph';
 import VelHGraph from './VelHGraph';
+import DistanceHGraph from './DistanceHGraph';
 export default function CourseHView() {
   const params = useParams();
   const id = params.id;
@@ -13,7 +14,7 @@ export default function CourseHView() {
         <div role="main" className="container">
           <div className="row mb-4">
             <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-              <h1>Test Course-Navette - Historial</h1>
+              <h1>Test Course-Navette - Reportes</h1>
             </div>
             <TimeView />
           </div>
@@ -21,7 +22,7 @@ export default function CourseHView() {
           <div className="row">
             <div className="col-lg-8 col-md-12 col-sm-12 col-xs-12 mb-4">
               <div className="card">
-              <div className="card-header h4 text-center">Repeticiones por fecha</div>
+                <div className="card-header h4 text-center">Repeticiones por fecha</div>
                 <div className="card-body">
                   <div className="row">
                     <div className="col-6">
@@ -38,9 +39,9 @@ export default function CourseHView() {
             </div>
           </div>
           <div className="row">
-            <div className="col-lg-8 col-md-12 col-sm-12 col-xs-12 mb-4">
+            <div className="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-4">
               <div className="card">
-                <div className="card-header h4 text-center">Velocidad alcanzada</div>
+                <div className="card-header h4 text-center">Velocidad alcanzada (m/s)</div>
                 <div className="card-body">
                   <div className="row">
                     <div className="col">
@@ -52,10 +53,27 @@ export default function CourseHView() {
                 </div>
               </div>
             </div>
+            <div className="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-4">
+              <div className="card">
+                <div className="card-header h4 text-center">Distancia por repetición (m)</div>
+                <div className="card-body">
+                  <div className="row">
+                    <div className="col">
+                      <div className="overflow-auto">
+                        <DistanceHGraph idUser={id} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+
           </div>
         </div>
       </div>
-    </div >
+    </div>
 
   );
 }
