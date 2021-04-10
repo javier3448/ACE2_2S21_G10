@@ -18,6 +18,8 @@ import SignUpView from "./components/sign-up/SignUpView";
 import HeartHistory from "./components/graphicHistory/HeartView";
 import TemperatureHistory from "./components/graphicHistory/TemperatureView";
 import OxygenHistory from "./components/graphicHistory/OxygenView";
+import CourseView from "./components/graphic/course-navette/CourseView";
+import CourseHView from "./components/graphic/course-navette/history/CourseHView";
 
 /**
  * Vista de login
@@ -74,6 +76,10 @@ function App() {
             <NavBar />
             <OxygenView />
           </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/course-navette/:id">
+            <NavBar />
+            <CourseView />
+          </PrivateRoute>
 
           <PrivateRoute exact path="/athlete/stats-history/heart/:id">
             <NavBar />
@@ -87,7 +93,10 @@ function App() {
             <NavBar />
             <OxygenHistory />
           </PrivateRoute>
-
+          <PrivateRoute exact path="/athlete/stats-history/course-navette/:id">
+            <NavBar />
+            <CourseHView />
+          </PrivateRoute>
           <Route>
             <ErrorView  data={{"error": "404 - Recurso no encontrado"}} />
           </Route>

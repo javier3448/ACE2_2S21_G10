@@ -69,7 +69,8 @@ Campos requeridos
 7. tiempo
 8. falla
 9. rindio
-10. idUser
+10. aprobo
+11. idUser
 
 
 ### Metodo DELETE

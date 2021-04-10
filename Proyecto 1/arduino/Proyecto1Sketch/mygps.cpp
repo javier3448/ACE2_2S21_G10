@@ -15,7 +15,7 @@ void MyGps::loop()
     while(gpsSerial.available())
     {
         char c = gpsSerial.read();
-        // Serial.write(c); // uncomment this line if you want to see the GPS data flowing
+        //Serial.write(c); // uncomment this line if you want to see the GPS data flowing
         gps.encode(c);
     }
 }
