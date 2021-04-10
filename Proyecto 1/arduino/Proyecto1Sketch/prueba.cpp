@@ -414,5 +414,3 @@ inline void sendQuitPackage()
 // ritmo|
 // oxigeno
 //;
-
-
