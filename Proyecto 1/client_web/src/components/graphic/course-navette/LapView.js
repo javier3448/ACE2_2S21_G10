@@ -21,7 +21,7 @@ export default function LapView(props) {
             /// Establece la información
             /// para la repetición más reciente
             setLaps(lastLap.repeticion);
-            setDistance(lastLap.distnacia);
+            setDistance(lastLap.distancia);
             /// Establece la información para 
             /// el acumulado de distancia
             setTotalDistance(data[0].distanciaTotal);

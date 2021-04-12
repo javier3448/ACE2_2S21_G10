@@ -134,7 +134,7 @@ export default function CourseHView() {
           <div className="row">
             <div className="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-4">
               <div className="card">
-                <div className="card-header h4 text-center">Velocidad alcanzada (m/s)</div>
+                <div className="card-header h4 text-center">Velocidad alcanzada (km/h)</div>
                 <div className="card-body">
                   <div className="row">
                     <div className="col">
