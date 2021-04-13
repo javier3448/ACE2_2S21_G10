@@ -1,6 +1,9 @@
 // It has the pin #define s, other useful constexpr/macros and #includes we always need
 // This header should be included everywhere, its kinda like a pch or somethin
 
+#ifndef _PINDEFS_h
+#define _PINDEFS_h
+
 #include <Arduino.h>
 
 #define BT_RX 10
@@ -22,3 +25,5 @@
 // Para arduino uno
 //#define SDA A4
 //#define SCL A5
+
+#endif
