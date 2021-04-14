@@ -117,19 +117,19 @@ export default function CourseView() {
                     <h4>Avg</h4>
                   </div>
                   <div className="col">
-                    <h4>{avg} m/s</h4>
+                    <h4>{avg} km/h</h4>
                   </div>
                   <div className="col text-center border-start border-dark">
                     <h4>Max</h4>
                   </div>
                   <div className="col border-end border-dark">
-                    <h4>{max} m/s</h4>
+                    <h4>{max} km/h</h4>
                   </div>
                   <div className="col text-center">
                     <h4>Min</h4>
                   </div>
                   <div className="col">
-                    <h4>{min} m/s</h4>
+                    <h4>{min} km/h</h4>
                   </div>
                 </div>
               </div>

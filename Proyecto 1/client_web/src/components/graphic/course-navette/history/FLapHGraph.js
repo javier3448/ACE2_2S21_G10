@@ -71,8 +71,8 @@ export default function FLapHGraph(props) {
           <XAxis dataKey="hora" hide={true} />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
-          <Bar dataKey="fallos" fill="#dc3545 " />
           <Bar dataKey="repeticiones" fill="#107dac" />
+          <Bar dataKey="fallos" fill="#dc3545 " />
         </BarChart>
       </ResponsiveContainer>
     </>
