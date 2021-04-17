@@ -12,6 +12,7 @@ JSON
     "tiempo":"4.5",
     "falla":"2",
     "rindio":"3",
+    "aprobo":"1",
     "idUser":"1"
 }
 ```

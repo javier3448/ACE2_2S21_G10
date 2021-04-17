@@ -11,6 +11,8 @@
 
 namespace Prueba {
 
+    constexpr float RITMO_ALTO = 180;
+
     enum State{
         PLAY,
         STOP
@@ -30,7 +32,7 @@ namespace Prueba {
         // 1 a 21
         int8_t numeroDeRep;
         Posicion posicionInicial;
-        unsigned long tiempoInicial;
+        long tiempoInicial;
     };
 
     extern State stateActual;

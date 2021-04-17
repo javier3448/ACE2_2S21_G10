@@ -1,0 +1,101 @@
+
+TEST
+{
+#include <SoftwareSerial.h>
+#include <Wire.h>
+
+#include <TinyGPS.h>
+
+#include "pindefs.h"
+
+#include "prueba.h"
+#include "mygps.h"
+#include "mymax30102.h"
+
+// @TODO: Valores sentinela
+
+// @TODO: traducir todo lo que esta en ingles
+
+//NOCHEKIN:
+SoftwareSerial btSerial(BT_RX, BT_TX);
+SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
+TinyGPS gps;
+
+void setup()
+{
+    Serial.begin(9600);
+
+    pinMode(MOTOR_PIN, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
+        pinMode(BT_STATE, INPUT);
+        btSerial = SoftwareSerial(BT_RX, BT_TX);
+        btSerial.begin(38400);
+    gpsSerial = SoftwareSerial(GPS_RX, GPS_TX);
+    gpsSerial.begin(9600); 
+    return;
+
+    // setup buttons
+    {
+        pinMode(BUTTON_START_PIN, INPUT_PULLUP);
+        pinMode(BUTTON_QUIT_PIN, INPUT_PULLUP);
+    }
+
+    // setup temperatura
+    {
+        // Para el sensor de temperatura (LM45DZ) tome referencia analoga de 0 a 1.1V
+        // Arduino uno:
+        analogReference(INTERNAL);      // Arduino uno
+        //analogReference(INTERNAL1V1); // Arduino mega
+    }
+
+    MyMax30102::setup();
+
+    Prueba::setup();
+
+    // [!!!!!!!!]: 
+    // ES MUY MUY IMPORTATE QUE LLAMEMOS A MyGps::setup() DESPUES QUE A Prueba::setup()
+    // Porque Prueba::setup() tabmien crea una instancia de un SoftwareSerial, dicha instancia empieza
+    // a escuchar con .listen(). SOLO PODEMOS TENER UNA DE ESAS INSTANCIAS ESCUCHANDO!!!!
+    // Como en el bluetooth solo enviamos y no escuchamos, no importa que solo MyGps::gpsSerial pueda
+    // escuchar.
+    MyGps::setup();
+}
+
+void loop()
+{  
+    static byte state = LOW;
+    if(state == LOW){
+        state = HIGH;
+    }
+    else{
+        state = LOW;
+    }
+    //btSerial.println("hello");
+    //Serial.println("hello");
+    // digitalWrite(MOTOR_PIN, state);
+    // digitalWrite(LED_BUILTIN, state);
+    // delay(500);
+{
+    // encode gps sentences, the resulting data is in the MyGps::gps object
+    while(gpsSerial.available())
+    {
+        char c = gpsSerial.read();
+
+        // [!] No podemos usar los dos puertos SoftwareSerial asi (como que al mismo tiempo)
+        // se caga en todo no se porque :/
+        // btSerial.write(c); 
+
+        Serial.write(c); // uncomment this line if you want to see the GPS data flowing
+        gps.encode(c);
+    }
+}
+    return;
+
+
+    MyGps::loop();
+
+    MyMax30102::loop();
+
+    Prueba::loop();
+}
+}

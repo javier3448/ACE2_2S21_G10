@@ -31,6 +31,12 @@
 * Ritmo Cardiaco, es el mismo de la practica1 
 
 ## Proyecto Reportes 
+Reporte 1: Conteo de repeticiones por fecha:
+
+    https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/get-fechas-report/{idUser}
+
+![alt](./img/8.png)
+
 Reporte 2: Velocidad alcanzada aqui devuelvo el siguiente JSON con la siguiente estructura.
     
     https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/get-velocity-report/{idUser}
@@ -64,5 +70,5 @@ Reporte 5: El usuario podrá ver cuántas veces se ha rendido y cuantas repetici
 Nota: idUser es para retornar solo los datos de dicho usuario, puedes obtener el id cuando inicia sesion, ya que aqui retorno todo la informacion del usuario en un JSON y podrias guardarlo por localstorage para que se te facilite manejar esta informacion para las validaciones     
 
 ## Nota 
-1. Falta un reporte el primero xd.
+Backend Terminado 
 

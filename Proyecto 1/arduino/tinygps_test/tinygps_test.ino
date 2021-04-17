@@ -66,8 +66,11 @@ static void smartdelay(unsigned long ms)
   unsigned long start = millis();
   do 
   {
-    while (ss.available())
-      gps.encode(ss.read());
+    while (ss.available()){
+      char c = ss.read();
+      // Serial.print(c);
+      gps.encode(c);
+    }
   } while (millis() - start < ms);
 }
 
