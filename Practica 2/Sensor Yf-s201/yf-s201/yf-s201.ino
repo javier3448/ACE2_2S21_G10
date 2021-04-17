@@ -4,9 +4,10 @@ volatile int NumPulsos; //variable para la cantidad de pulsos recibidos
 int PinSensor = 2;    //Sensor conectado en el pin 2
 float factor_conversion=7.5; //para convertir de frecuencia a caudal
 
-volatile int NumPulsos; //variable para la cantidad de pulsos recibidos
-int PinSensor = 2;    //Sensor conectado en el pin 2
-float factor_conversion=7.11; //para convertir de frecuencia a caudal
+//**VARIABLES DE CONSUMO
+//volatile int NumPulsos; //variable para la cantidad de pulsos recibidos
+//int PinSensor = 2;    //Sensor conectado en el pin 2
+//float factor_conversion=7.11; //para convertir de frecuencia a caudal  *** CAMBIANDO FRECUENCIA
 float volumen=0;
 long dt=0; //variación de tiempo por cada bucle
 long t0=0; //millis() del bucle anterior
@@ -29,7 +30,7 @@ int ObtenerFrecuencia()
   return frecuencia;
 }
 
-************************************CONSUMO
+//************************************CONSUMO
 void setupCalculoConsumo() 
 { 
   
