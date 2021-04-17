@@ -1,3 +1,5 @@
+//SENSOR DE FLUJO DE AGUA, CAMBIAR PARA OBTENER FLUJO DE AIRE
+
 volatile int NumPulsos; //variable para la cantidad de pulsos recibidos
 int PinSensor = 2;    //Sensor conectado en el pin 2
 float factor_conversion=7.5; //para convertir de frecuencia a caudal
