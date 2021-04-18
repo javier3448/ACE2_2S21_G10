@@ -45,18 +45,12 @@ public class ConectionApi extends AppCompatActivity {
     TextView IdBufferIn; //texto donde se visualizaran los valores que se mandaran a la api
     //Variables que se mandaran a la api
     // [?]: No seria mejor pasar estos 3 strings a la funcion `insercionMediciones` por parametro?
-    private String temperatura=" ";
-    private String ritmoCardiaco=" ";
-    private String oxigenoSangre=" ";
-    //Mediciones agregados para proyecto1
-    private String repeticionAtleta=" ";
-    private String velocidadAtleta=" ";
-    private String distanciaAleta=" ";
+    private String exhalacion=" ";
+    private String inhalacion=" ";
+    private String voxigeno2=" ";
 
-    public String tiempoAtleta=" ";
-    public String fallaAtleta=" ";
-    public String rindioAtleta=" ";
-    public String estadoAprobo=" ";
+    private String prubauser=" ";
+
     //---------------Variables comunicacion. bluetooh----------------------------
     Handler bluetoothIn;
     public static final int handlerState = 0;
@@ -72,34 +66,18 @@ public class ConectionApi extends AppCompatActivity {
     RequestQueue requestQueue;
 
     private class Medicion {
-        public double temperatura;
-        public double ritmoCardiaco;
-        public double oxigeno;
-        //mediciones proyecto 1
-        public int repeticion;
-        public double velocidad;
-        public double distancia;
+        public double exhalado;
+        public double inhalado;
+        public double vo2;
 
-        public double tiempo;
+        public int prueba;
 
-        // @TODO cambiar por un enum que indique: corriendo prueba, falla, exito, o rendicion
-        public int falla;
-        public int rindio;
-        // 1 si Termino la prueba con exito
-        public int aprobo;
 
-        public Medicion(double temperatura, double ritmoCardiaco,  double oxigeno, int repeticion, double velocidad, double distancia, double tiempo, int falla, int rindio, int aprobo){
-            this.temperatura = temperatura;
-            this.ritmoCardiaco = ritmoCardiaco;
-            this.oxigeno = oxigeno;
-            this.repeticion=repeticion;
-            this.velocidad=velocidad;
-            this.distancia=distancia;
-
-            this.tiempo=tiempo;
-            this.falla=falla;
-            this.rindio=rindio;
-            this.aprobo=aprobo;
+        public Medicion(double exhalado, double inhalado,  double vo2, int prueba){
+            this.exhalado = exhalado;
+            this.inhalado = inhalado;
+            this.vo2 = vo2;
+            this.prueba=prueba;
         }
     }
 
@@ -115,7 +93,7 @@ public class ConectionApi extends AppCompatActivity {
 
          IdBufferIn=(TextView)findViewById(R.id.IdBufferIn);
 
-         IdBufferIn.setText(MainActivity.pesoUsers);
+
 
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
@@ -129,31 +107,17 @@ public class ConectionApi extends AppCompatActivity {
 //                    System.out.println("ritmoCardiaco" + medicion.ritmoCardiaco);
 //                    System.out.println("oxigeno" + medicion.oxigeno);
 
-                    temperatura = Double.toString(medicion.temperatura);
-                    ritmoCardiaco = Double.toString(medicion.ritmoCardiaco);
-                    oxigenoSangre = Double.toString(medicion.oxigeno);
-                    //mediciones en proyecto1
-                    repeticionAtleta=Integer.toString(medicion.repeticion);
-                    velocidadAtleta=Double.toString(medicion.velocidad);
-                    distanciaAleta=Double.toString(medicion.distancia);
-
-                    tiempoAtleta=Double.toString(medicion.tiempo);
-                    fallaAtleta=Integer.toString(medicion.falla);
-                    rindioAtleta=Double.toString(medicion.rindio);
-                    estadoAprobo=Integer.toString(medicion.aprobo);
+                    inhalacion = Double.toString(medicion.inhalado);
+                    exhalacion = Double.toString(medicion.exhalado);
+                    voxigeno2 = Double.toString(medicion.vo2);
+                    prubauser=Integer.toString(medicion.prueba);
                     //setear los valores para visualizarl los datos que se mandaran a la api
-                    IdBufferIn.setText("Temp: "+temperatura+"\nritmo: "+ritmoCardiaco+"\noxigeno: "+
-                            oxigenoSangre+"\nRepeticion: "+repeticionAtleta+
-                            "\nVelocidad: "+velocidadAtleta+
-                            "\nDistancia: "+distanciaAleta+
-                            "\ntiempo: "+tiempoAtleta+
-                            "\nfalla: "+fallaAtleta+
-                            "\nrindio: "+rindioAtleta+
-                            "\nAprobo: "+estadoAprobo);
+                    IdBufferIn.setText("Exhalacion: "+exhalacion+"\nInhalacion: "+inhalacion+"\nvo2: "+
+                            voxigeno2+"\nPrueba: "+prubauser);
 
 
                     //los datos obtenidos se enviaran al servidor
-                   // insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensors");
+                    insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensorsv2");
 
                 }
             }
@@ -195,18 +159,9 @@ public class ConectionApi extends AppCompatActivity {
      */
       public void insercionMediciones(String url){
           Map<String,String> parametros=new HashMap<String,String>();
-          parametros.put("temperatura",temperatura);
-          parametros.put("ritmo",ritmoCardiaco);
-          parametros.put("oxigeno",oxigenoSangre);
-          //Parametro en proyecto (idUser ya estaba en practica1)
-          parametros.put("repeticion",repeticionAtleta);
-          parametros.put("velocidad",velocidadAtleta);
-          parametros.put("distancia",distanciaAleta);
-
-          parametros.put("tiempo",tiempoAtleta);
-          parametros.put("falla",fallaAtleta);
-          parametros.put("rindio",rindioAtleta);
-          parametros.put("aprobo",estadoAprobo);
+          parametros.put("exhalado",exhalacion);
+          parametros.put("inhalado",inhalacion);
+          parametros.put("vo2",voxigeno2);
 
           parametros.put("idUser",MainActivity.ideUser);
           JSONObject objeto=new JSONObject(parametros);
@@ -327,16 +282,6 @@ public class ConectionApi extends AppCompatActivity {
 
         public void run()
         {
-            //Se va estanr mandando el peso constantemente
-            IdBufferIn.setText(MainActivity.pesoUsers);
-            /*for(int i=0; i<MainActivity.peso.length(); i++){
-                char caracter=MainActivity.peso.charAt(i);
-                IdBufferIn.setText(caracter+"\n");
-                IdBufferIn.setText(MainActivity.peso);
-
-            }*/
-            IdBufferIn.setText("#"); //indica final de carcteres que se mandara
-
             byte[] buffer = new byte[256];
             int bytes;
 
@@ -359,7 +304,7 @@ public class ConectionApi extends AppCompatActivity {
                     outer: while(true){
                         byte currByte = getNextByteFromInStream();
 
-                        if(currByte == (byte) '!'){
+                     /*   if(currByte == (byte) '!'){
                             // Por ahora lo ignoramos porque a la API no le importa cuando empezamos
                             // la prueba tampoco verificamos que venga uno de estos paquetes antes
                             // de empezar a leer paquetes '#'
@@ -369,7 +314,7 @@ public class ConectionApi extends AppCompatActivity {
                         }
                         else if(currByte == (byte) '$'){
                             System.out.println("Se termino la prueba con Exito");
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
+                           bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
                                     0,0,0,0,0, 0, 1)).sendToTarget();
                         }
                         else if(currByte == (byte) '%'){
@@ -435,7 +380,7 @@ public class ConectionApi extends AppCompatActivity {
 
                             bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(temperatura, ritmoCardiaco, oxigeno,
                                     repeticion, velocidad, distancia, tiempo, falla, rindio, aprobo)).sendToTarget();
-                        }
+                        }*/
                     }
                 } catch (IOException e) {
                     break;

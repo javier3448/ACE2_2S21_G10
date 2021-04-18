@@ -104,7 +104,7 @@
                 android:id="@+id/txtPeso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/txtPeso"
+                android:layout_toRightOf="@id/lv"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/poppins_regular"
                 android:hint="Ingrese su peso"
@@ -115,6 +115,13 @@
                 android:paddingBottom="15dp"
                 android:textCursorDrawable="@drawable/cursor_color"
                 android:textSize="12sp"
+                />
+            <ListView
+                android:id="@+id/lv"
+                android:layout_width="50dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="17dp"
                 />
         </RelativeLayout>
        <TextView
