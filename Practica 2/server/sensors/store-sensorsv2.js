@@ -22,6 +22,9 @@ exports.handler = (event, context, callback) => {
       vo2: {
         N: event.vo2,
       },
+      prueba: {
+        N: event.prueba
+      },
       idUser: {
         S: event.idUser,
       },
