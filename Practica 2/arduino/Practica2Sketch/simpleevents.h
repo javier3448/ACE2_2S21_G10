@@ -24,8 +24,8 @@
 // De hecho casi todo es estatico: el puntero de funcion, el numero de 'eventos',
 // el tiempo de delay...
 
-#ifndef _SIMPLEEVENTS_h
-#define _SIMPLEEVENTS_h
+#ifndef SIMPLEEVENTS_h
+#define SIMPLEEVENTS_h
 
 #include "pindefs.h"
 
