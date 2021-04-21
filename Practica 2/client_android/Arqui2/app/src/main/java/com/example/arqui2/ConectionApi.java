@@ -142,12 +142,14 @@ public class ConectionApi extends AppCompatActivity {
         btnEnvio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MyConexionBT.write("!");
                 for(int i=0; i<MainActivity.pesoUsers.length(); i++){
                     char caracter=MainActivity.pesoUsers.charAt(i);
                    // IdBufferIn.setText(String.valueOf(caracter)+"\n");
                    MyConexionBT.write(String.valueOf(caracter));
                 }
-                MyConexionBT.write("#");
+                MyConexionBT.write("!");
+                MyConexionBT.write(";");
             }
         });
 

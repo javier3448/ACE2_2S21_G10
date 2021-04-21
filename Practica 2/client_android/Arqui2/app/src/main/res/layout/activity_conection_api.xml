@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="Enviar peso"/>
+            android:text="Comenzar"/>
         <Button
             style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/IdDesconectar"

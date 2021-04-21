@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -88,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
                 if(s.equals("kg")){
                     bandera=1;
                     double pesoaux=Double.parseDouble(txtPeso.getText().toString());
-                    pesoUsers=String.valueOf(Math.round(pesoaux));
+                    pesoUsers=String.valueOf(pesoaux);//String.valueOf(Math.round(pesoaux));
                     Toast.makeText(getApplicationContext(),"kilogramos: "+pesoUsers,Toast.LENGTH_SHORT).show();
                 }else if(s.equals("lb")){
                     bandera=1;
                     double pesokg=Double.parseDouble(txtPeso.getText().toString())*0.45;
-                    pesoUsers=String.valueOf(Math.round(pesokg));
+                    double formattedNumber = Double.parseDouble(new DecimalFormat("#.##").format(pesokg));
+                    pesoUsers=String.valueOf(formattedNumber);//String.valueOf(Math.round(pesokg));
+
                     Toast.makeText(getApplicationContext(), "en kilogramos: "+pesoUsers, Toast.LENGTH_SHORT).show();
                 }
                 }else{
