@@ -22,6 +22,15 @@ void Yfs201::loop()
     float frecuencia = getFrecuencia(); //la Frecuencia de los pulsos en Hz
     float caudal_L_m = frecuencia/factor_conversion; // el caudal en L/m
     float caudal_L_h = caudal_L_m*60; // el caudal en L/h
+
+    //-----Enviamos por el puerto serie---------------
+    Serial.print("FrecuenciaPulsos: ");
+    Serial.print(frecuencia,0);
+    Serial.print("Hz\tCaudal: ");
+    Serial.print(caudal_L_m,3);
+    Serial.print(" L/m\t");
+    Serial.print(caudal_L_h,3);
+    Serial.println("L/h");
 }
 
 void Yfs201::setupCalculoConsumo()
