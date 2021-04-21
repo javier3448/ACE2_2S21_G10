@@ -1,5 +1,5 @@
-#ifndef _UTIL_h
-#define _UTIL_h
+#ifndef UTIL_h
+#define UTIL_h
 
 #include "pindefs.h"
 
