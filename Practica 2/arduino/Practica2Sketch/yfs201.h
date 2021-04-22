@@ -13,6 +13,14 @@ namespace Yfs201
     extern long t0;
 
     extern float caudal_L_m;
+    // true: inhalando
+    // false: exhalando
+    extern bool direccion;
+    extern float volumenEnPulmones; // L (litros)
+
+    extern long lastTime;
+    extern bool allowFlowChange;
+    boolean botonInicio();
 
     void setup();
     void loop();
