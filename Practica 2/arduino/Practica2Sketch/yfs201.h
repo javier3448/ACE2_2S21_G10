@@ -23,6 +23,7 @@ namespace Yfs201
 
     extern long lastTime;
     extern bool allowFlowChange;
+    boolean botonInicio();
 
     void setup();
     void loop(); 

@@ -13,6 +13,7 @@ bool Yfs201::allowFlowChange = false;
 
 void Yfs201::setup()
 {
+    pinMode(BT_START, INPUT_PULLUP); //boton inicio
     pinMode(YSF201_PIN, INPUT); 
 
     lastTime = millis();
@@ -70,6 +71,15 @@ void Yfs201::loop()
         volumenEnPulmones -= currVolumen;
 
     lastTime = currTime;
+}
+
+//---Función que se ejecuta en interrupción---------------
+boolean Yfs201::botonInicio()
+{
+    if(digitalRead(BT_START)==0){
+      Serial.print("Iniciado");
+      return true;}
+      else return false;
 }
 
 //---Función que se ejecuta en interrupción---------------
