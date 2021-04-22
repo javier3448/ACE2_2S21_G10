@@ -12,13 +12,9 @@ SoftwareSerial btSerial(BT_RX, BT_TX);
 
 SimpleEvents simpleEvents = SimpleEvents();
 
-void printYfs()
-{
-    Serial.print("direccion, volumen: ");
-    Serial.print(Yfs201::direccion);
-    Serial.print(", ");
-    Serial.println(Yfs201::volumenEnPulmones);
-}
+// void printYfs()
+// {
+// }
 
 void setup()
 {
@@ -34,12 +30,15 @@ void setup()
     // setup sensdor flujo YFS-201
     Yfs201::setup();
 
-    simpleEvents.addEvent(0, 100, printYfs);
+    // simpleEvents.addEvent(0, 100, printYfs);
 }
 
 void loop()
 {
     Yfs201::loop();
 
-    simpleEvents.loop();
+    //Serial.print("caudal: ");
+    Serial.println(Yfs201::caudal_L_m, 4);
+
+    // simpleEvents.loop();
 }
