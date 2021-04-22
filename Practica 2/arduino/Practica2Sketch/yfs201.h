@@ -5,22 +5,29 @@
 
 namespace Yfs201 
 {
-    extern volatile int numPulsos; //variable para la cantidad de pulsos recibidos
-    extern float factor_conversion; //para convertir de frecuencia a caudal
+    // Constante de nuestro sensor que se utiliza para obtener el flujo en terminos
+    // de frecuencia de pulsacion. Nos indica cuantos litros de fluido pasan en 
+    // cada pulsacion. La obtuvimos de:
+    // Sensor for Measuring the Volume of Air Supplied to the Lungs of Adult Mannequins in Ventilation Maneuvers during Cardiopulmonary Resuscitation
+    // https://www.mdpi.com/2504-3900/4/1/39
+    // Igual deberia estar en la datasheet o algo asi, no se :/
+    constexpr float VOLUMEN_POR_PULSO = 2.61E-3;
 
-    extern float volumen;
-    extern long dt;
-    extern long t0;
+    //variable para la cantidad de pulsos recibidos
+    extern volatile int numPulsos; 
 
+    // true: inhalando
+    // false: exhalando
+    extern bool direccion;
+    extern float volumenEnPulmones; // L (litros)
+
+    extern long lastTime;
+    extern bool allowFlowChange;
 
     void setup();
-    void loop();
+    void loop(); 
 
-    void setupCalculoConsumo();
-    int getFrecuencia();
-    void calculoConsumo();
-    void contarPulsos();
-    int obetenerFrecuencia();
+    void interruptContarPulsos();
 }
 
 #endif

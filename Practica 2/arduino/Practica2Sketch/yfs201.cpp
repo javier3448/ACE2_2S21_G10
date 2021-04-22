@@ -3,90 +3,77 @@
 // @TODO: limpiar, simplificar y 'personalizar'
 //        preguntar de donde salio el codigo
 
-volatile int Yfs201::numPulsos = 0; //variable para la cantidad de pulsos recibidos
-float Yfs201::factor_conversion = 7.5; //para convertir de frecuencia a caudal
-
-float Yfs201::volumen = 0;
-long Yfs201::dt = 0;
-long Yfs201::t0 = 0;
-
+volatile int Yfs201::numPulsos = 0; 
+// @TODO: en el enunciado dice que se empiza exhalando pero eso haria que nuestra 
+// de volumen adentro de los pulmones empiece en negativo
+bool Yfs201::direccion = true;
+float Yfs201::volumenEnPulmones = 0; // L (litros)
+long Yfs201::lastTime = 0;
+bool Yfs201::allowFlowChange = false;
 
 void Yfs201::setup()
 {
     pinMode(YSF201_PIN, INPUT); 
-    attachInterrupt(0, contarPulsos, RISING); //(Interrupcion 0(Pin2),funcion,Flanco de subida)
+
+    lastTime = millis();
+    numPulsos = 0;
+    direccion = true;
+    volumenEnPulmones = 0; // L (litros)
+    lastTime = 0;
+    allowFlowChange = false;
+
+    attachInterrupt(0, interruptContarPulsos, RISING); //(Interrupcion 0(Pin2),funcion,Flanco de subida)
 }
 
+// Calcular volumen
 void Yfs201::loop()
 {
-    float frecuencia = getFrecuencia(); //la Frecuencia de los pulsos en Hz
-    float caudal_L_m = frecuencia/factor_conversion; // el caudal en L/m
-    float caudal_L_h = caudal_L_m*60; // el caudal en L/h
-
-    //-----Enviamos por el puerto serie---------------
-    Serial.print("FrecuenciaPulsos: ");
-    Serial.print(frecuencia,0);
-    Serial.print("Hz\tCaudal: ");
-    Serial.print(caudal_L_m,3);
-    Serial.print(" L/m\t");
-    Serial.print(caudal_L_h,3);
-    Serial.println("L/h");
-}
-
-void Yfs201::setupCalculoConsumo()
-{
-    Serial.begin(9600); 
-    pinMode(YSF201_PIN, INPUT); 
-    attachInterrupt(0, contarPulsos, RISING);//(Interrupción 0(Pin2),función,Flanco de subida)
-    Serial.println ("Envie 'r' para restablecer el volumen a 0 Litros"); 
-    t0 = millis();
-}
-
-int Yfs201::getFrecuencia()
-{
-    int frecuencia;
-    numPulsos = 0;   //Ponemos a 0 el número de pulsos
-    interrupts();    //Habilitamos las interrupciones
-    delay(100);   //muestra de 1 segundo
-    noInterrupts(); //Deshabilitamos  las interrupciones
-    frecuencia = numPulsos; //Hz(pulsos por segundo)
-    return frecuencia;
-}
-
-void Yfs201::calculoConsumo()
-{
-    if (Serial.available()) {
-        if(Serial.read() == 'r')volumen = 0;//restablecemos el volumen si recibimos 'r'
+    // Talvez no sea necesario quitar los interrupts para acceder al numPulsos
+    long currPulsos;
+    long currTime = millis();
+    noInterrupts();
+    {
+        currPulsos = numPulsos;
+        numPulsos = 0;
     }
-    float frecuencia = getFrecuencia(); //obtenemos la frecuencia de los pulsos en Hz
-    float caudal_L_m = frecuencia/factor_conversion; //calculamos el caudal en L/m
-    dt = millis() - t0; //calculamos la variación de tiempo
-    t0 = millis();
-    volumen = volumen + (caudal_L_m / 60) * (dt / 1000); // volumen(L)=caudal(L/s)*tiempo(s)
+    interrupts();
 
-    //-----Enviamos por el puerto serie---------------
-    Serial.print("Caudal: "); 
-    Serial.print(caudal_L_m,3); 
-    Serial.print("L/min\tVolumen: "); 
-    Serial.print(volumen,3); 
-    Serial.println (" L");
+    // Mejora: NO SABEMOS CUANTO TIEMPO PASO DESDE LA ULTIMA VEZ QUE SE CORRIO 
+    // ESTE loop(), ENTONCES NO SABEMOS QUE  
+    float frecuencia = (float)currPulsos / (float)(currTime - lastTime);
+    float flowRate = frecuencia * VOLUMEN_POR_PULSO; // L/s
+    float currVolumen = currPulsos * VOLUMEN_POR_PULSO; // L
 
+    // [!!!] QUE PASA SI PASAMOS POR AQUI MUCHAS VECES Y VARIAS DE ESAS VECES EL
+    // NUMERO DE PULSOS ES 0 :(
+
+    // @TODO TUNNING: los 
+    // Para determinar la direccioin del flujo no nos queda de otra mas que empezar
+    // en un flujo conocido (exhalar) y cambiar de direccion cada vez que el flujo
+    // sea 0, pero cuando sea 0 por varias 'iteraciones' de este loop() no queremos
+    // que cambie a cada rato. 
+    // Entonces se implemento algo parecido a un schmitt trigger. Que va a cambiar
+    // el flujo solo cuando el flujo baje de cierto umbral(bajo, 0.01) y haya pasado en una
+    // iteracion anterior otro umbral (alto, 0.05)
+    // tambie le llaman: HYSTERESIS
+    if(flowRate > 0.005){
+        allowFlowChange = true;
+    }
+    if(flowRate < 0.001 && allowFlowChange){
+        direccion = direccion ? false : true;
+        allowFlowChange = false;
+    }
+
+    if(direccion)
+        volumenEnPulmones += currVolumen;
+    else
+        volumenEnPulmones -= currVolumen;
+
+    lastTime = currTime;
 }
 
 //---Función que se ejecuta en interrupción---------------
-void Yfs201::contarPulsos()
+void Yfs201::interruptContarPulsos()
 {
     numPulsos++;
-}
-
-//---Función para obtener frecuencia de los pulsos--------
-int Yfs201::obetenerFrecuencia()
-{
-    int frecuencia;
-    numPulsos = 0;   // 0 el número de pulsos
-    interrupts();    //Habilitar  interrupciones
-    delay(100);   //muestra cada 1 segundo
-    noInterrupts(); //Desabilitar las interrupciones
-    frecuencia = numPulsos; //Hz(pulsos por segundo)
-    return frecuencia;
 }
