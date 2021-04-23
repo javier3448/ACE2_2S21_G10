@@ -13,7 +13,6 @@ namespace Prueba {
         WAIT_OK,
         PLAY
     };
-
     extern State stateActual;
 
     extern SoftwareSerial btSerial;
