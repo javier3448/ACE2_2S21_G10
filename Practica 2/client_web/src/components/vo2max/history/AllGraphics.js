@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Exhaled from './Exhaled';
 import Inhaled from './Inhaled';
 import Vo2Max from './Vo2Max';
-import UserInfo from '../../nav-bar/UserInfoView'
+import TimeView from '../../nav-bar/TimeView';
 
 const AllGraphics = () => {
   const [atleta, setAtleta] = useState(JSON.parse(localStorage.getItem('userInfo')).IdUser);
@@ -10,8 +10,12 @@ const AllGraphics = () => {
     <div className="vh-100">
       <div className="h-100">
         <div role="main" className="container">
-          <UserInfo />
-          <hr />
+          <div className="row">
+            <div className="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+              <h1>Vo2Max</h1>
+            </div>
+            <TimeView />
+          </div>
           <div className="row my-4">
             <div className="col">
               <Exhaled idUser={atleta.idUser} />

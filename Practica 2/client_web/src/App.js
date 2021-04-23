@@ -8,12 +8,20 @@ import SignIn from "./components/signin/SignInView";
 import CoachView from "./components/coach-profile/CoachView";
 import ProfileView from "./components/user-profile/ProfileView";
 import DashboardView from "./components/dashboard/DashboardView";
+import OxygenView from "./components/graphic/OxygenView";
+import TemperatureView from "./components/graphic/TemperatureView";
+import HeartView from "./components/graphic/HeartView";
 import NavBar from "./components/nav-bar/NavBarView";
 import { ProvideAuth, useAuth } from "./services/useInfo";
 import ErrorView from "./components/error-page/Error";
 import SignUpView from "./components/sign-up/SignUpView";
-import AllGraphics from "./components/graphics/history/AllGraphics";
-import AllMeasure from "./components/graphics/realtime/AllMeasure";
+import HeartHistory from "./components/graphicHistory/HeartView";
+import TemperatureHistory from "./components/graphicHistory/TemperatureView";
+import OxygenHistory from "./components/graphicHistory/OxygenView";
+import CourseView from "./components/graphic/course-navette/CourseView";
+import CourseHView from "./components/graphic/course-navette/history/CourseHView";
+import AllGraphics from "./components/vo2max/history/AllGraphics";
+import AllMeasure from "./components/vo2max/realtime/AllMeasure";
 
 /**
  * Vista de login
@@ -56,11 +64,52 @@ function App() {
           </PrivateRoute>
           <PrivateRoute exact path="/athlete/stats/vo2max/:id">
             <NavBar />
-            <AllGraphics />
+            <AllMeasure />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/vo2max/:id/:prueba">
+            <NavBar />
+            <AllMeasure />
           </PrivateRoute>
           <PrivateRoute exact path="/athlete/stats-history/vo2max/:id">
             <NavBar />
-            <AllMeasure />
+            <AllGraphics />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/info-user/:id">
+            <NavBar />
+            <ProfileView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/heart/:id">
+            <NavBar />
+            <HeartView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/temp/:id">
+            <NavBar />
+            <TemperatureView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/oxygen/:id">
+            <NavBar />
+            <OxygenView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/course-navette/:id">
+            <NavBar />
+            <CourseView />
+          </PrivateRoute>
+
+          <PrivateRoute exact path="/athlete/stats-history/heart/:id">
+            <NavBar />
+            <HeartHistory />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats-history/temp/:id">
+            <NavBar />
+            <TemperatureHistory />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats-history/oxygen/:id">
+            <NavBar />
+            <OxygenHistory />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats-history/course-navette/:id">
+            <NavBar />
+            <CourseHView />
           </PrivateRoute>
           <Route>
             <ErrorView  data={{"error": "404 - Recurso no encontrado"}} />
