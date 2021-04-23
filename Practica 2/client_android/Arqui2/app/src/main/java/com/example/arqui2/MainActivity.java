@@ -84,18 +84,38 @@ public class MainActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String tmp="";
                 String s = lv.getItemAtPosition(i).toString();
                 if(!txtPeso.getText().toString().equals("")){
                 if(s.equals("kg")){
                     bandera=1;
                     double pesoaux=Double.parseDouble(txtPeso.getText().toString());
-                    pesoUsers=String.valueOf(pesoaux);//String.valueOf(Math.round(pesoaux));
+                    //double formattedNumber = Double.parseDouble(new DecimalFormat("###.##").format(pesoaux));
+                    //String.format("%3d",Math.round(pesoaux));
+                    tmp=String.valueOf(Math.round(pesoaux));//String.valueOf(formattedNumber);//
+
+
+                    if(tmp.length()==1){
+                        pesoUsers="00"+tmp;
+                    }else if(tmp.length()==2){
+                        pesoUsers="0"+tmp;
+                    }else{
+                        pesoUsers=tmp;
+                    }
                     Toast.makeText(getApplicationContext(),"kilogramos: "+pesoUsers,Toast.LENGTH_SHORT).show();
                 }else if(s.equals("lb")){
                     bandera=1;
                     double pesokg=Double.parseDouble(txtPeso.getText().toString())*0.45;
-                    double formattedNumber = Double.parseDouble(new DecimalFormat("#.##").format(pesokg));
-                    pesoUsers=String.valueOf(formattedNumber);//String.valueOf(Math.round(pesokg));
+                    double formattedNumber = Double.parseDouble(new DecimalFormat("###.##").format(pesokg));
+                    tmp=String.valueOf(Math.round(pesokg)); //
+
+                    if(tmp.length()==1){
+                        pesoUsers="00"+tmp;
+                    }else if(tmp.length()==2){
+                        pesoUsers="0"+tmp;
+                    }else{
+                        pesoUsers=tmp;
+                    }
 
                     Toast.makeText(getApplicationContext(), "en kilogramos: "+pesoUsers, Toast.LENGTH_SHORT).show();
                 }
