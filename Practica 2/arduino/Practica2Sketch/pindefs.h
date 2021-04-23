@@ -1,12 +1,20 @@
 // tiene los #define s de los pines, otros constexpr/macros utile y #includes que siempre necesitamos
 // Este header deberia ser incluido en todas partes, similar a un 'pch'
 
+#ifndef PINDEFS_h
+#define PINDEFS_h
+
 #include <Arduino.h>
 
-#define BT_RX 10
-#define BT_TX 11
-#define BT_STATE 12
+// @TRIVIAL TODO: pasar a const expr para que tengamos tipos
 
-// Para arduino uno
-//#define SDA A4
-//#define SCL A5
+#define BT_RX 3
+#define BT_TX 4
+#define BT_STATE 5
+
+#define OK_BUTTON_PIN 7
+
+#define YSF201_PIN 2
+
+
+#endif
