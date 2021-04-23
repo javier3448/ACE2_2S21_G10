@@ -3,6 +3,7 @@
 
 #include "pindefs.h"
 
+// @MEJORA: pasar todo lo direccion, calculo de volumen y todo eso aqui?
 namespace Yfs201 
 {
     extern volatile int numPulsos; //variable para la cantidad de pulsos recibidos
@@ -12,20 +13,15 @@ namespace Yfs201
     extern long dt;
     extern long t0;
 
-    extern float caudal_L_m;
-    // true: inhalando
-    // false: exhalando
-    extern bool direccion;
-    extern float volumenEnPulmones; // L (litros)
-
     extern long lastTime;
     extern bool allowFlowChange;
-    boolean botonInicio();
 
     void setup();
-    void loop();
+    // Bloquea por al menos 100 millis, retorna Litros por minuto
+    float getCaudal();
 
     void setupCalculoConsumo();
+    // Bloquea por al menos 100 millis
     int getFrecuencia();
     void calculoConsumo();
     void contarPulsos();

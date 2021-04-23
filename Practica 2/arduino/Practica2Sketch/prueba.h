@@ -1,18 +1,27 @@
+#ifndef PRUEBA_h
+#define PRUEBA_h
 
-#ifndef _PRUEBA_h
-#define _PRUEBA_h
 #include "pindefs.h"
+
+#include <SoftwareSerial.h>
 
 namespace Prueba {
 
-enum State{
-        PLAY,
-        STOP
+    // @TODO: describir cada estado
+    enum State{
+        INITIAL,
+        WAIT_OK,
+        PLAY
     };
-  
-void setup();
-void loop();
-  extern State stateActual;
+
+    extern State stateActual;
+
+    extern SoftwareSerial btSerial;
+    extern float peso;
+
+    void setup();
+    void loop();
+
+}
 
 #endif
-}
