@@ -12,6 +12,8 @@ import NavBar from "./components/nav-bar/NavBarView";
 import { ProvideAuth, useAuth } from "./services/useInfo";
 import ErrorView from "./components/error-page/Error";
 import SignUpView from "./components/sign-up/SignUpView";
+import AllGraphics from "./components/graphics/history/AllGraphics";
+import AllMeasure from "./components/graphics/realtime/AllMeasure";
 
 /**
  * Vista de login
@@ -51,6 +53,14 @@ function App() {
           <PrivateRoute exact path="/dashboard/:id">
             <NavBar />
             <DashboardView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats/vo2max/:id">
+            <NavBar />
+            <AllGraphics />
+          </PrivateRoute>
+          <PrivateRoute exact path="/athlete/stats-history/vo2max/:id">
+            <NavBar />
+            <AllMeasure />
           </PrivateRoute>
           <Route>
             <ErrorView  data={{"error": "404 - Recurso no encontrado"}} />

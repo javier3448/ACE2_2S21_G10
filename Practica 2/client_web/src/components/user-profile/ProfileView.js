@@ -88,11 +88,11 @@ export default function Profile() {
             </div>
             <div className="row">
               <div className="from-group col-md-6 col-xs-12">
-                <label>Peso</label>
+                <label>Peso (kg.)</label>
                 <input
                   className="form-control"
                   readOnly
-                  value={peso + " lbs."}
+                  value={peso}
                 />
               </div>
               <div className="from-group col-md-6 col-xs-12">
