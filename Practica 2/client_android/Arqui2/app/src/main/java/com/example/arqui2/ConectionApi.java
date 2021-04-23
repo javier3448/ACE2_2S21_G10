@@ -148,7 +148,7 @@ public class ConectionApi extends AppCompatActivity {
                    // IdBufferIn.setText(String.valueOf(caracter)+"\n");
                    MyConexionBT.write(String.valueOf(caracter));
                 }
-                MyConexionBT.write("!");
+               // MyConexionBT.write("!");
                 MyConexionBT.write(";");
             }
         });

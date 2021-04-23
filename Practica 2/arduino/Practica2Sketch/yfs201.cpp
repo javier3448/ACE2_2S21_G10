@@ -10,19 +10,15 @@ float Yfs201::volumen = 0;
 long Yfs201::dt = 0;
 long Yfs201::t0 = 0;
 
-float Yfs201::caudal_L_m = 0;
-
 void Yfs201::setup()
 {
-    pinMode(BT_START, INPUT_PULLUP); //boton inicio
     pinMode(YSF201_PIN, INPUT); 
     attachInterrupt(0, contarPulsos, RISING); //(Interrupcion 0(Pin2),funcion,Flanco de subida)
 }
 
-void Yfs201::loop()
+float Yfs201::getCaudal()
 {
-    float frecuencia = getFrecuencia(); //la Frecuencia de los pulsos en Hz
-    caudal_L_m = frecuencia/factor_conversion; // el caudal en L/m
+    return getFrecuencia() / factor_conversion; // el caudal en L/m
 }
 
 void Yfs201::setupCalculoConsumo()
@@ -63,14 +59,6 @@ void Yfs201::calculoConsumo()
     Serial.print(volumen,3); 
     Serial.println (" L");
 
-}
-
-boolean Yfs201::botonInicio()
-{
-    if(digitalRead(BT_START)==0){
-      Serial.print("Iniciado");
-      return true;}
-      else return false;
 }
 
 //---Función que se ejecuta en interrupción---------------

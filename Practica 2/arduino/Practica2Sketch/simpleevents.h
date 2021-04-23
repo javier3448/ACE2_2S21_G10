@@ -24,6 +24,12 @@
 // De hecho casi todo es estatico: el puntero de funcion, el numero de 'eventos',
 // el tiempo de delay...
 
+// @IDEA: 
+// A veces es util para debuggear que algo se ejecute cada 10 veces que llamamos
+// a su loop, agregar soporte para esos 'eventos'
+// runEvery8Calls(anotherFunc) //cada 8 veces que llamamos a runEvery8Calls se llama
+// una vez a anotherFunc
+
 #ifndef SIMPLEEVENTS_h
 #define SIMPLEEVENTS_h
 

@@ -11,10 +11,10 @@
 #define BT_RX 3
 #define BT_TX 4
 #define BT_STATE 5
-#define BT_START 7
+
+#define OK_BUTTON_PIN 7
 
 #define YSF201_PIN 2
-
 
 
 #endif

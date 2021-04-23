@@ -1,125 +1,101 @@
 #include "prueba.h"
 
-#include "simpleevents.h"
-#include "util.h"
-#include "yfs201.h"
+#include "btinparser.h"
 
+Prueba::State Prueba::stateActual = State::INITIAL;
 
+SoftwareSerial Prueba::btSerial(BT_RX, BT_TX);
+float Prueba::peso = -1;
 
-namespace Sensor{
-    bool isActive;
-    long startTime;
+void Prueba::setup()
+{
+    stateActual = State::INITIAL;
 
-    void setup()
+    // Setup bluetooth
     {
-        isActive = false;
-        startTime = 0;
-        pinMode(BT_START, INPUT_PULLMODE);
-    }
-
-    void empezarPrueba()
-    {
-        
-        isActive = true;
-        startTime = millis();
-    }
-
-    void loop()
-    {
-        if(!isActive) return;
-
-        long deltaTime = millis() - startTime;
-        if(deltaTime > 300000){ // 5 minutos
-           
-            isActive = false;
-        }
+        // btSerial = SoftwareSerial(BT_RX, BT_TX);
+        btSerial.begin(38400);
+        pinMode(BT_STATE, OUTPUT);
     }
 }
-
-
-
-
-static SoftwareSerial btSerial(BT_RX, BT_TX);
-
-inline void sendPlayPackage(int8_t repeticionActual, int8_t direccion, 
-    float weight, float tiempo, float volumen, 
-    float vomax); //ENVIO DE DATOS 
-
-inline void sendStartPackage();
-
-void Prueba::setup(){
-    Prueba::stateActual = State::STOP;
-    posicionInicial = {
-    	numeroDeRep : 0,
-        direccion =0,
-        tiempoInicial : 0,
-        weight=0,
-        volumen=0,
-        vomax=0,
-    };
-    repeticionActual = {
-        numeroDeRep : 0,
-        direccion =0,
-        tiempoInicial : 0,
-        weight=0,
-        volumen=0,
-        vomax=0,
-    };
-
-    // setupBluetooth
-    {
-        pinMode(BT_START, INPUT_PULLMODE);
-        btSerial.begin(38400);
-    }
-
-    Sensor::setup();
-  
 
 void Prueba::loop()
 {
-
- switch(stateActual)
+    switch(stateActual)
     {
-    
-
-    	 case State::STOP:
+        case State::INITIAL:
         {
-            if(!digitalRead(BT_START)){  // espera el boton start
-	            int8_t currNumRep;
-	            int8_t currDireccion;
-	            float currWeight;
-	            float currVolumen;
-	            float currVomax;
-	            float currTiempo;
-	            
-	            //jalar valores de sensor
+            // Por ahora vamos a leer de bluetooth solo en este estado porque
+            // asi podemos facilmente comunicar cuando el parse
+            while(btSerial.available()){
+                char c = btSerial.read();
+                // Serial.write(c);
+                auto result = BtInParser::parse(c);
+                if(result.hasValue == true){
+                    peso = result.value;
+                    stateActual = State::WAIT_OK;
+                    return;
+                }
+            }
 
+            // @debug:
+            {
+                static int count = 0;
+                //call every 8 loops
+                if(count >= 8000){
+                    count = 0;
+                    Serial.println("INITIAL");
+                }
+                else{
+                    count++;
+                }
+            }
+        }break;
 
-
-
-
-           }
-       }
+        case State::WAIT_OK:
+        {
+            if(!digitalRead(OK_BUTTON_PIN)){
+                stateActual = State::PLAY;
+                return;
+            }
+            // @debug:
+            {
+                static long count = 0;
+                //call every 8 loops
+                if(count >= 80000){
+                    count = 0;
+                    Serial.print("WAIT_OK: ");
+                    Serial.println(peso);
+                }
+                else{
+                    count++;
+                }
+            }
+        }break;
 
         case State::PLAY:
         {
-        	if(!digitalRead(BT_START)){ //no deberia de hacer nada 
-           
-           	}
-        }
+            // AQUI AQUI AQUI
+            // @TODO:
+            // correr calculo de volumen y todo eso
+            // cada 500 milis enviar a bt
+            // despues de 5 minutos terminar todo (usar 1 minuto para debugger facil)
+
+            millis();
+
+            // @debug:
+            {
+                static long count = 0;
+                //call every 8 loops
+                if(count >= 80000){
+                    count = 0;
+                    Serial.print("PLAY: ");
+                }
+                else{
+                    count++;
+                }
+            }
+        }break;
     }
 }
-inline void sendStartPackage()
-{
-    // @debug:
-    Serial.println((char)HeaderPaquete::INICIAR_PRUEBA);
 
-    btSerial.print((char)HeaderPaquete::INICIAR_PRUEBA);
-}
-inline void sendSuccessPackage()
-{
-    // @debug:
-    Serial.println((char)HeaderPaquete::FIN_EXITO);
-
-    btSerial.print((char)HeaderPaquete::FIN_EXITO);
-}
