@@ -85,7 +85,18 @@ void Prueba::loop()
     	 case State::STOP:
         {
             if(!digitalRead(BT_START)){  // espera el boton start
-            
+	            int8_t currNumRep;
+	            int8_t currDireccion;
+	            float currWeight;
+	            float currVolumen;
+	            float currVomax;
+	            float currTiempo;
+	            
+	            //jalar valores de sensor
+
+
+
+
 
            }
        }
@@ -97,4 +108,18 @@ void Prueba::loop()
            	}
         }
     }
+}
+inline void sendStartPackage()
+{
+    // @debug:
+    Serial.println((char)HeaderPaquete::INICIAR_PRUEBA);
+
+    btSerial.print((char)HeaderPaquete::INICIAR_PRUEBA);
+}
+inline void sendSuccessPackage()
+{
+    // @debug:
+    Serial.println((char)HeaderPaquete::FIN_EXITO);
+
+    btSerial.print((char)HeaderPaquete::FIN_EXITO);
 }
