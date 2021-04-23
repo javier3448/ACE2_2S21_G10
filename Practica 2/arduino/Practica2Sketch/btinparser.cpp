@@ -49,32 +49,6 @@ BtInParser::BtInResult BtInParser::parse(char c)
 
         case 4:
         {
-            if(c == '.'){
-                msgBuffer[currParseState] = c;
-                currParseState++;
-            }
-            else{
-                printError(currParseState, "'.'", c);
-                currParseState = 0;
-            }
-        }break;
-
-
-        case 5:
-        case 6:
-        {
-            if(c >= '0' && c <= '9'){
-                msgBuffer[currParseState] = c;
-                currParseState++;
-            }
-            else{
-                printError(currParseState, "[0-9]", c);
-                currParseState = 0;
-            }
-        }break;
-
-        case 7:
-        {
             if(c == ';'){
                 msgBuffer[currParseState] = c;
                 currParseState = 0;
