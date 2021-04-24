@@ -50,19 +50,6 @@ void Prueba::loop()
                     return;
                 }
             }
-
-            // @debug:
-            {
-                static int count = 0;
-                //call every 8 loops
-                if(count >= 8000){
-                    count = 0;
-                    Serial.println("INITIAL");
-                }
-                else{
-                    count++;
-                }
-            }
         }break;
 
         case State::WAIT_OK:
@@ -74,30 +61,18 @@ void Prueba::loop()
                     beginTimePlay = currTime;
                     lastTimeFlowSampled = currTime;
                     lastTimeBtSent = currTime;
+                    direccionFlujo = false;
+                    allowFlowChange = false;
                     volumenEnPulmones = 0;
                     volumenMaximoEnPulmones = 0;
                 }
                 stateActual = State::PLAY;
                 return;
             }
-            // @debug:
-            {
-                static long count = 0;
-                //call every 8 loops
-                if(count >= 80000){
-                    count = 0;
-                    Serial.print("WAIT_OK: ");
-                    Serial.println(peso);
-                }
-                else{
-                    count++;
-                }
-            }
         }break;
 
         case State::PLAY:
         {
-            Serial.println("PLAY");
             // @TODO?:
             // que espere tambien el boton
 
@@ -123,23 +98,14 @@ void Prueba::loop()
             // 5 minutos de playTime para terminar
             if(playTime >=  TOTAL_PLAY_TIME){
                 // Send vo2max data and stop signal to bluetooth
-                float vo2max = volumenMaximoEnPulmones * 10 / peso;
+                float myConstant = 24253.21;
+                Serial.println(volumenMaximoEnPulmones, 4);
+                float vo2max = volumenMaximoEnPulmones * myConstant 
+                               / 
+                               (peso * ((float)TOTAL_PLAY_TIME / 60000.0));
                 sendBtVo2max(vo2max);
                 stateActual = State::INITIAL;
                 return;
-            }
-
-            // @debug:
-            {
-                static long count = 0;
-                //call every 8 loops
-                if(count >= 4){
-                    count = 0;
-                    Serial.println("PLAY");
-                }
-                else{
-                    count++;
-                }
             }
         }break;
     }
@@ -196,15 +162,29 @@ void Prueba::sendBtRealTime(long playTime, float volumenEnPulmones)
     btSerial.print('$');
     btSerial.print(playTime_seconds);
     btSerial.print('|');
-    btSerial.print(volumenEnPulmones);
+    btSerial.print(volumenEnPulmones, 4);
     btSerial.print(';');
+
+    // @debug:
+    Serial.print('$');
+    Serial.print(playTime_seconds);
+    Serial.print('|');
+    Serial.print(volumenEnPulmones, 4);
+    Serial.print(';');
+    Serial.println();
 }
 
 void Prueba::sendBtVo2max(float vo2max)
 {
     btSerial.print('#');
-    btSerial.print(vo2max);
+    btSerial.print(vo2max, 4);
     btSerial.print(';');
+
+    // @debug:
+    Serial.print('#');
+    Serial.print(vo2max, 4);
+    Serial.print(';');
+    Serial.println();
 }
 
 

@@ -17,7 +17,8 @@ namespace Prueba {
 
     // 300000 = 5 minutos en milis
     // 60000 = 1 minutos en milis
-    constexpr long TOTAL_PLAY_TIME = 300000;
+    // @NOCHECKIN: cambiar a 5 minutos, 30 segundos es solo para debuggear
+    constexpr long TOTAL_PLAY_TIME = 90000;
     // [!] PORQUE JODIDOS: `constexpr long TOTAL_PLAY_TIME = 5*60*1000;` NO FUNCIONO 
     // talez sea porque los int_literals son de 16 bits, eso seria de lo mas estupido
     // sad
