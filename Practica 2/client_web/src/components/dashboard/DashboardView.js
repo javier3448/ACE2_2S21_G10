@@ -67,7 +67,35 @@ export default function Dashboard() {
           <UserInfo />
           <hr />
           <div className="row my-4">
-            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/heart"}
+                testName={ "Ritmo cardiaco"}
+                textIcon={"fa-heartbeat"}
+                link={`heart/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/oxygen"}
+                testName={"Nivel de oxígeno"}
+                textIcon={"fa-lungs"}
+                link={`oxygen/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/temp"}
+                testName={"Temperatura corporal"}
+                textIcon={"fa-thermometer-empty"}
+                link={`temp/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/temp"} 
+                testName={"Test Course-Navette"}
+                textIcon={"fa-running"}
+                link={`course-navette/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
               <CardTest 
                 key={"stats/vo2max"} 
                 testName={"Vo2Max" }
