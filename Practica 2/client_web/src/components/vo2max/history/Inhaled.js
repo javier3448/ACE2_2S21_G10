@@ -12,7 +12,6 @@ const Inhaled = () => {
   useEffect(() => {
     axios.get(urlServer + `get-all-reports-p2/${params.id}`)
       .then((response) => {
-        console.log(response);
         if (response.data.length) {
           setData(response.data.map((value) => {
             return {
@@ -22,7 +21,6 @@ const Inhaled = () => {
               "prueba": value.prueba + '#' + value.dateTime,
             }
           }));
-          console.log(data);
         }
       }).catch((error) =>{ alert('no se pudo recuperar la información'); console.error(error);})
   }, []);
