@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAthletes } from "../../services/coachInfo";
 import ErrorView from "../error-page/Error";
+import CardTest from './CardTest';
 import UserInfo from "../nav-bar/UserInfoView";
-import CardTest from "./CardTest";
 
 export default function Dashboard() {
   const params = useParams();
@@ -49,7 +49,7 @@ export default function Dashboard() {
   return !viewAllow ? (
     <div className="vh-100">
       <div className="h-100">
-        <div role="main" className="container">          
+        <div role="main" className="container">
           <div className="row">
             <div className="col">
               <h1>Cargando...</h1>
@@ -66,8 +66,43 @@ export default function Dashboard() {
         <div role="main" className="container">
           <UserInfo />
           <hr />
-          <div className="row my-2">
-
+          <div className="row my-4">
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/heart"}
+                testName={ "Ritmo cardiaco"}
+                textIcon={"fa-heartbeat"}
+                link={`heart/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/oxygen"}
+                testName={"Nivel de oxígeno"}
+                textIcon={"fa-lungs"}
+                link={`oxygen/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/temp"}
+                testName={"Temperatura corporal"}
+                textIcon={"fa-thermometer-empty"}
+                link={`temp/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest key={"stats/temp"} 
+                testName={"Test Course-Navette"}
+                textIcon={"fa-running"}
+                link={`course-navette/${atleta}`}
+              />
+            </div>
+            <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-3">
+              <CardTest 
+                key={"stats/vo2max"} 
+                testName={"Vo2Max" }
+                textIcon={"fa-lungs"}
+                link={`vo2max/${atleta}`}
+                />
+            </div>
           </div>
         </div>
       </div>

@@ -12,28 +12,35 @@ export default function UserInfo() {
   // Carga la información del usuario logeado
   // o del atleta al que se accedió su información
   useEffect(async() => {
-    if (params.id === undefined) {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    // if (params.id === undefined) {
       // No viene con params, se debe mostrar la información del
       // usuario logeado
-      const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       setNombreCompleto(userInfo.nombre + " " + userInfo.apellidos);
       setTipoUsuario(userInfo.tipo.toUpperCase());
       setViewAllow(true);
-    } else {
-      // Si viene con params, es la información de un atleta a cargo
-      // de un coach
-      const infoUser = JSON.parse(localStorage.getItem("userInfo"));
-      // Se recupera el listado del atletas
-      const listAthletes = await getAthletes(infoUser.username);
-      // Busca una coincidencia
-      const athlete = listAthletes.find((e) => e.IdUser === params.id);
-      if (athlete) {
-        setNombreCompleto(athlete.nombre + " " + athlete.apellidos);
-        setTipoUsuario(athlete.tipo.toUpperCase());
-        setAtleta(athlete.IdUser);
-        setViewAllow(true);
-      } 
-    }
+    // }
+    // } else {
+    //   // Si viene con params, es la información de un atleta a cargo
+    //   // de un coach
+    //   const infoUser = JSON.parse(localStorage.getItem("userInfo"));
+    //   // Se recupera el listado del atletas
+    //   const listAthletes = await getAthletes(infoUser.username);
+    //   if (listAthletes) {
+    //     // Busca una coincidencia
+    //     const athlete = listAthletes.find((e) => e.IdUser === params.id);
+    //     if (athlete) {
+    //       setNombreCompleto(athlete.nombre + " " + athlete.apellidos);
+    //       setTipoUsuario(athlete.tipo.toUpperCase());
+    //       setAtleta(athlete.IdUser);
+    //       setViewAllow(true);
+    //     }
+    //   } else {
+    //     setNombreCompleto(userInfo.nombre + " " + userInfo.apellidos);
+    //     setTipoUsuario(userInfo.tipo.toUpperCase());
+    //     setViewAllow(true);
+    //   }
+    // }
   },[])
 
   // Determina si colocar o no un link en el nombre del usuario

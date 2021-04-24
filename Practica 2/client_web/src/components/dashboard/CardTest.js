@@ -1,10 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 export default function CardTest(props) {
-  const data = props.data;
-  const testName = data.testName;
-  const textIcon = data.textIcon;
-  const link = data.link;
+  const testName = props.testName;
+  const textIcon = props.textIcon;
+  const link = props.link;
   return (
     <div className="card">
     <div className="card-header">
