@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, Legend, Tooltip, ResponsiveContainer, Ca
 import { useParams } from 'react-router';
 import { urlServer } from '../../../config';
 
-const Vo2History = props => {
+const Vo2RealTime = props => {
   const params = useParams();
   // Número de prueba que se visualizará
   const noTest = props.noTest;
@@ -16,27 +16,22 @@ const Vo2History = props => {
   useEffect(() => {
     axios.get(urlServer + `sensorsv2/${params.id}`)
       .then((response) => {
+        return;
         if (response.data.length) {
           setData(response.data.find(value => {
             if (value.prueba === noTest) {
-              return value;
+              return value.result;
             }
-          }).result);
-          if (data.length) {
+          }));
+          if (data.length > 0) {
             setFecha(new Date(data[0].dateTime).toLocaleDateString());
           }
         } else {
           alert('sin datos')
         }
       })
-      .catch(error => console.error(error));
+      .catch(() => alert('no se pudo recuperar los datos'));
   }, []);
-
-  const tickFormatter = (tick) => {
-    const date = new Date(tick);
-    const noPrueba = date.toLocaleTimeString("es-GT", {hour: '2-digit', hour12: false, minute: '2-digit'});
-    return `${noPrueba}`;
-  }
 
   const CustomToolTip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -52,7 +47,7 @@ const Vo2History = props => {
             </div>
           </div>
           <div className="row">
-            <div className="col text-center">
+            <div className="col">
               <span className="badge bg-secondary text-wrap">
                 {date.toLocaleTimeString()}
               </span>
@@ -86,7 +81,7 @@ const Vo2History = props => {
         <h4>Prueba No. {noTest}</h4>
       </div>
       <div className="card-body">
-        <div className="card-title text-center h5">{fecha ? fecha : ""}</div>
+        <div className="card-title text-center h5">{fecha || ""}</div>
         <ResponsiveContainer width="100%" height={450}>
           <LineChart
             width={1000}
@@ -98,21 +93,23 @@ const Vo2History = props => {
               left: 0,
               bottom: 0
             }}>
-            <XAxis dataKey="dateTime" tickFormatter={tickFormatter} scale="band" />
-            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="dateTime" hide={true} />
+            <CartesianGrid strokeDasharray="2 2" />
             <YAxis />
             <Tooltip content={<CustomToolTip />} />
             <Legend />
-            <Line
+            <Line isAnimationActive={false}
               type="monotone"
               dataKey="inhalado"
               name="Inhalado (ml.)"
-              stroke="#4e8763" />
-            <Line 
+              stroke="#39c7ff"
+              activeDot={{ r: 1 }} />
+            <Line isAnimationActive={false}
               type="monotone"
               dataKey="exhalado"
               name="Exhalado (ml.)"
-              stroke="#537b99" />
+              stroke="#39ffd4"
+              activeDot={{ r: 1 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -120,4 +117,4 @@ const Vo2History = props => {
   );
 }
 
-export default Vo2History;
+export default Vo2RealTime;

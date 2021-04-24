@@ -60,7 +60,7 @@ const Vo2Max = () => {
           <div className="row">
             <div className="col">Vo2Max</div>
             <div className="col text-end">
-              <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap">
+              <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap text-dark">
                 {payload[0].value}
               </span>
             </div>

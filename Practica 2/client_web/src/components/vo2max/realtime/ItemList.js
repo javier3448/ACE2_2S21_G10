@@ -2,16 +2,21 @@ import React, { useCallback } from 'react';
 
 const ItemList = ({ onPruebaChange, prueba, date }) => {
   const handleChange = useCallback(e => {
-    onPruebaChange(e.target.value)
+    onPruebaChange(prueba);
   }, [onPruebaChange]);
 
   return (
     <button
-      key={prueba + '##' + date.getMilliseconds()}
-      value={`${prueba}`}
       onClick={handleChange}
-      className="list-group-item list-group-item-action">
-      {`${prueba}.  ${date}`}
+      className="list-group-item list-group-item-action text-dark">
+        <div className="row">
+          <div className="col-3 text-begin">
+            {prueba > 0 ? prueba : "Actual"}
+          </div>
+          <div className="col-9 text-end">
+            {date.toLocaleString()}
+          </div>
+        </div>
     </button>
   );
 }
