@@ -66,10 +66,6 @@ function App() {
             <NavBar />
             <AllMeasure />
           </PrivateRoute>
-          <PrivateRoute exact path="/athlete/stats/vo2max/:id/:prueba">
-            <NavBar />
-            <AllMeasure />
-          </PrivateRoute>
           <PrivateRoute exact path="/athlete/stats-history/vo2max/:id">
             <NavBar />
             <AllGraphics />
