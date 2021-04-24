@@ -8,6 +8,7 @@ Prueba::State Prueba::stateActual = State::INITIAL;
 SoftwareSerial Prueba::btSerial(BT_RX, BT_TX);
 
 float Prueba::peso = -1;
+int Prueba::numeroPrueba = 0;
 
 long Prueba::beginTimePlay = 0;
 long Prueba::lastTimeBtSent = 0;
@@ -65,6 +66,7 @@ void Prueba::loop()
                     allowFlowChange = false;
                     volumenEnPulmones = 0;
                     volumenMaximoEnPulmones = 0;
+                    numeroPrueba++;
                 }
                 stateActual = State::PLAY;
                 return;
@@ -91,7 +93,7 @@ void Prueba::loop()
             long deltaTimeBtSent = currTime - lastTimeBtSent;
             long playTime = currTime - beginTimePlay;
             if(deltaTimeBtSent >= 500){
-                sendBtRealTime(playTime, volumenEnPulmones);
+                sendBtRealTime(numeroPrueba, playTime, volumenEnPulmones, (int)direccionFlujo);
                 lastTimeBtSent = currTime;
             }
 
@@ -103,7 +105,7 @@ void Prueba::loop()
                 float vo2max = volumenMaximoEnPulmones * myConstant 
                                / 
                                (peso * ((float)TOTAL_PLAY_TIME / 60000.0));
-                sendBtVo2max(vo2max);
+                sendBtVo2max(numeroPrueba, vo2max);
                 stateActual = State::INITIAL;
                 return;
             }
@@ -111,6 +113,8 @@ void Prueba::loop()
     }
 }
 
+// @MEJORA: deberia de retornar la direccion de flujo actual tambien porque eso 
+// se envia por bt tambien
 // Usar el sensor Yfs201 para determinar el flujo de aire y actualizar el 
 // `volumenEnPulmones` dependiendo de la direccion y magnitud del flujo
 // retorna el valor del volumen despues de revisar el flujo actual segun el Yfs201
@@ -156,32 +160,44 @@ float Prueba::updateVolumenEnPulmones()
     return volumenEnPulmones;
 }
 
-void Prueba::sendBtRealTime(long playTime, float volumenEnPulmones)
+void Prueba::sendBtRealTime(int prueba, long playTime, float volumenEnPulmones, int direccion)
 {
     float playTime_seconds = (float)playTime / 1000.0;
     btSerial.print('$');
+    btSerial.print(prueba);
+    btSerial.print('|');
     btSerial.print(playTime_seconds);
     btSerial.print('|');
     btSerial.print(volumenEnPulmones, 4);
+    btSerial.print('|');
+    btSerial.print(direccion);
     btSerial.print(';');
 
     // @debug:
     Serial.print('$');
+    Serial.print(prueba);
+    Serial.print('|');
     Serial.print(playTime_seconds);
     Serial.print('|');
     Serial.print(volumenEnPulmones, 4);
+    Serial.print('|');
+    Serial.print(direccion);
     Serial.print(';');
     Serial.println();
 }
 
-void Prueba::sendBtVo2max(float vo2max)
+void Prueba::sendBtVo2max(int prueba, float vo2max)
 {
     btSerial.print('#');
+    btSerial.print(prueba);
+    btSerial.print('|');
     btSerial.print(vo2max, 4);
     btSerial.print(';');
 
     // @debug:
     Serial.print('#');
+    Serial.print(prueba);
+    Serial.print('|');
     Serial.print(vo2max, 4);
     Serial.print(';');
     Serial.println();
