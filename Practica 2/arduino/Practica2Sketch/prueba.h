@@ -18,7 +18,7 @@ namespace Prueba {
     // 300000 = 5 minutos en milis
     // 60000 = 1 minutos en milis
     // @NOCHECKIN: cambiar a 5 minutos, 30 segundos es solo para debuggear
-    constexpr long TOTAL_PLAY_TIME = 5000;
+    constexpr long TOTAL_PLAY_TIME = 300000;
     // [!] PORQUE JODIDOS: `constexpr long TOTAL_PLAY_TIME = 5*60*1000;` NO FUNCIONO 
     // talez sea porque los int_literals son de 16 bits, eso seria de lo mas estupido
     // sad
@@ -30,6 +30,7 @@ namespace Prueba {
     extern State stateActual;
 
     extern float peso;
+    extern int numeroPrueba;
 
     extern long beginTimePlay;
     extern long lastTimeBtSent;
@@ -45,8 +46,8 @@ namespace Prueba {
 
     // 'private'
     float updateVolumenEnPulmones();
-    void sendBtRealTime(long playTime, float volumenEnPulmones);
-    void sendBtVo2max(float vo2max);
+    void sendBtRealTime(int prueba, long playTime, float volumenEnPulmones, int direccion);
+    void sendBtVo2max(int prueba, float vo2max);
 }
 
 #endif

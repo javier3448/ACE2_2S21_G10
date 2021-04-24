@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, Legend, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useParams } from 'react-router';
@@ -8,7 +8,7 @@ import { useInterval } from '../../../services/interval';
 const Vo2RealTime = () => {
   const params = useParams();
   // Temporizador de la prueba
-  const [milis, setMilis] = useState(0);
+  const [milis, setMilis] = useState('00:00:00');
   // Información de la prueba
   const [data, setData] = useState([]);
   // Fecha de creación de la información
@@ -16,14 +16,14 @@ const Vo2RealTime = () => {
   const [fecha, setFecha] = useState('');
   const [noTest, setNoTest] = useState('');
   // Determina la fecha de la prueba
-  useEffect(async() => {
+  useEffect(async () => {
     try {
       const response = await axios.get(urlServer + `sensorsv2/${params.id}`);
       if (response.data.length) {
         const dataSet = response.data;
-        const lastData = dataSet[dataSet.length-1];
+        const lastData = dataSet[dataSet.length - 1];
         if (lastData.result.length) {
-          //setFecha(lastData.result[0].dateTime);
+          setFecha(new Date(lastData.result[0].dateTime));
           setNoTest(lastData.prueba);
         }
       } else {
@@ -41,11 +41,25 @@ const Vo2RealTime = () => {
   useInterval(() => {
     axios.get(urlServer + `sensorsv2/${params.id}`)
       .then((response) => {
-        if(response.data.length) {
+        if (response.data.length) {
           const dataSet = response.data;
-          const lastData = dataSet[dataSet.length - 1];
+          let lastData = dataSet[dataSet.length - 1];
           if (lastData.result.length) {
-            setData(lastData.result);
+            lastData = lastData.result.map(value => {
+              return {
+                "volumen": value.volumen ? value.volumen : 0,
+                "dateTime": value.dateTime
+              }
+            });
+            setData(lastData);
+            /// Actualiza el contador usando el tiempo del servidor
+            /// Recupera el último dato
+            const actualTime = new Date(lastData[lastData.length - 1].dateTime).getTime();
+            const deltaMilis = actualTime - fecha;
+            const milis = Math.floor((deltaMilis % 1000) / 100);
+            const secs = Math.floor((deltaMilis / 1000) % 60);
+            const minutes = Math.floor((deltaMilis / (1000 * 60)) % 60);
+            setMilis(`${minutes >= 10 ? minutes : "0" + minutes}:${secs >= 10 ? secs : "0" + secs}:${milis >= 10 ? milis : "0" + milis}`);
           }
         }
       })
@@ -54,7 +68,7 @@ const Vo2RealTime = () => {
 
   const tickFormatter = (tick) => {
     const date = new Date(tick);
-    const noPrueba = date.toLocaleTimeString("es-GT", {hour: '2-digit', hour12: false, minute: '2-digit'});
+    const noPrueba = date.toLocaleTimeString("es-GT", { hour: '2-digit', hour12: false, minute: '2-digit' });
     return `${noPrueba}`;
   }
 
@@ -72,22 +86,14 @@ const Vo2RealTime = () => {
             </div>
           </div>
           <div className="row">
-            <div className="col">
+            <div className="col text-center">
               <span className="badge bg-secondary text-wrap">
                 {date.toLocaleTimeString()}
               </span>
             </div>
           </div>
           <div className="row">
-            <div className="col">Exhalado</div>
-            <div className="col">
-              <span style={{ backgroundColor: payload[1].color }} className="badge text-wrap">
-                {payload[1].value}
-              </span>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col">Inhalado</div>
+            <div className="col">Volumen</div>
             <div className="col">
               <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap">
                 {payload[0].value}
@@ -103,10 +109,10 @@ const Vo2RealTime = () => {
   return (
     <div className="card border border-dark">
       <div className="card-header bg-dark text-light text-center ">
-        <h4>Prueba No. {noTest ? noTest : ''}</h4>
+        <h4>Prueba No. {noTest ? noTest : ''} (Actual)</h4>
       </div>
       <div className="card-body">
-        <div className="card-title text-center h5">{ fecha ? new Date(fecha).toLocaleDateString() : ""}</div>
+        <div className="card-title text-center h5">{milis}</div>
         <ResponsiveContainer id="Vo2Realtime_" width="100%" height={450}>
           <LineChart
             width={1000}
@@ -118,21 +124,16 @@ const Vo2RealTime = () => {
               left: 0,
               bottom: 0
             }}>
-            <XAxis dataKey="dateTime" tickFormatter={tickFormatter} scale="band" />
+            <XAxis dataKey="dateTime" tickFormatter={tickFormatter} />
             <CartesianGrid strokeDasharray="2 2" />
             <YAxis />
             <Tooltip content={<CustomToolTip />} />
             <Legend />
             <Line isAnimationActive={false}
               type="monotone"
-              dataKey="inhalado"
-              name="Inhalado (ml.)"
-              stroke="#4e8763"/>
-            <Line isAnimationActive={false}
-              type="monotone"
-              dataKey="exhalado"
-              name="Exhalado (ml.)"
-              stroke="#537b99" />
+              dataKey="volumen"
+              name="Volumen (lt.)"
+              stroke="#4e8763" />
           </LineChart>
         </ResponsiveContainer>
       </div>

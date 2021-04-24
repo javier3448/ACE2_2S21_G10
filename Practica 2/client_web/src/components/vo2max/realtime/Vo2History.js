@@ -10,16 +10,22 @@ const Vo2History = props => {
   const noTest = props.noTest;
   // Información de la prueba
   const [data, setData] = useState([]);
-
   useEffect( async() => {
     try {
       const response = await axios.get(urlServer + `sensorsv2/${params.id}`);
       if (response.data.length) {
-        const dataSet = response.data.find((value) => {
+        let dataSet = response.data.find((value) => {
           if (value.prueba === noTest) {
             return value;
           }
         })
+        dataSet = dataSet.result.map(value => {
+          return {
+            "volumen": value.volumen ? value.volumen : 0,
+            "dateTime": value.dateTime
+          }
+        });
+        console.log(dataSet.result);
         setData(dataSet.result);
       } else {
         alert('sin datos');
@@ -57,15 +63,7 @@ const Vo2History = props => {
             </div>
           </div>
           <div className="row">
-            <div className="col">Exhalado</div>
-            <div className="col">
-              <span style={{ backgroundColor: payload[1].color }} className="badge text-wrap">
-                {payload[1].value}
-              </span>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col">Inhalado</div>
+            <div className="col">Volumen</div>
             <div className="col">
               <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap">
                 {payload[0].value}
@@ -96,21 +94,16 @@ const Vo2History = props => {
               left: 0,
               bottom: 0
             }}>
-            <XAxis dataKey="dateTime" tickFormatter={tickFormatter} scale="band" />
-            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="dateTime" tickFormatter={tickFormatter} />
+            <CartesianGrid strokeDasharray="2 2" />
             <YAxis />
             <Tooltip content={<CustomToolTip />} />
             <Legend />
             <Line
               type="monotone"
-              dataKey="inhalado"
-              name="Inhalado (ml.)"
+              dataKey="volumen"
+              name="Volumen (lt.)"
               stroke="#4e8763" />
-            <Line 
-              type="monotone"
-              dataKey="exhalado"
-              name="Exhalado (ml.)"
-              stroke="#537b99" />
           </LineChart>
         </ResponsiveContainer>
       </div>

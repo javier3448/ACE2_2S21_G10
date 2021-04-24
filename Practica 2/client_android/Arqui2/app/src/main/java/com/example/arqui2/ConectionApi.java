@@ -62,14 +62,18 @@ public class ConectionApi extends AppCompatActivity {
     RequestQueue requestQueue;
 
     private class Medicion {
+        public int numeroPrueba;
         public double tiempo;
         public double volumen;
+        public int direccionFlujo;
         public double vo2max;
 
-        public Medicion(double tiempo, double volumen,  double vo2max){
+        public Medicion(int numerPrueba, double tiempo, double volumen,  int direccionFlujo, double vo2max){
+            this.numeroPrueba = numerPrueba;
             this.tiempo = tiempo;
             this.volumen = volumen;
             this.vo2max = vo2max;
+            this.direccionFlujo = direccionFlujo;
         }
     }
 
@@ -145,9 +149,11 @@ public class ConectionApi extends AppCompatActivity {
      */
       public void insercionMediciones(Medicion medicion){
           Map<String,String> parametros=new HashMap<String,String>();
-          parametros.put("tiempo", Double.toString(medicion.tiempo));
           parametros.put("volumen", Double.toString(medicion.volumen));
-          parametros.put("vo2max", Double.toString(medicion.vo2max));
+          parametros.put("direccion", Integer.toString(medicion.direccionFlujo));
+          parametros.put("vo2", Double.toString(medicion.vo2max));
+          parametros.put("prueba", Integer.toString(medicion.numeroPrueba));
+          parametros.put("tiempo", Double.toString(medicion.tiempo));
 
           parametros.put("idUser",MainActivity.ideUser);
           JSONObject objeto=new JSONObject(parametros);
@@ -318,21 +324,25 @@ public class ConectionApi extends AppCompatActivity {
                                 currByte = getNextByteFromInStream();
                             }
 
-                            //{repeticionActual}'|'{tiempoRepeticionAcual}'|'{distanciaRepeticionActual}'|'{velocidadTiempoReal}'|'{temperatura}'|'{ritmo}'|'{oxigeno}';'
                             String[] medicionesSpliteadas = medicionesCrudas.toString().split("\\|");
 
                             // @debug:
-                            System.out.println("Tiempo: " + medicionesSpliteadas[0]);
-                            System.out.println("Volumen: " + medicionesSpliteadas[1]);
+                            System.out.println("Numero prueba: " + medicionesSpliteadas[0]);
+                            System.out.println("Tiempo: " + medicionesSpliteadas[1]);
+                            System.out.println("Volumen: " + medicionesSpliteadas[2]);
+                            System.out.println("Direccion: " + medicionesSpliteadas[3]);
 
-                            double tiempo = Double.parseDouble(medicionesSpliteadas[0]);
-                            double volumen = Double.parseDouble(medicionesSpliteadas[1]);
+                            int numeroPrueba = Integer.parseInt(medicionesSpliteadas[0]);
+                            double tiempo = Double.parseDouble(medicionesSpliteadas[1]);
+                            double volumen = Double.parseDouble(medicionesSpliteadas[2]);
+                            int direccionFlujo = Integer.parseInt(medicionesSpliteadas[3]);
 
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(tiempo, volumen, -1)).sendToTarget();
+                            // @NOCHECKIN
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(numeroPrueba,  tiempo, volumen, direccionFlujo, -1)).sendToTarget();
                         }
                         else if(currByte == (byte) '#'){
                             currByte = getNextByteFromInStream();
-                            StringBuilder stringVo2Max = new StringBuilder();
+                            StringBuilder medicionesCrudas = new StringBuilder();
                             // parseamos el float
                             while(currByte != (byte) ';'){
 
@@ -345,15 +355,15 @@ public class ConectionApi extends AppCompatActivity {
                                 }
 
                                 // Armamos el string que hay desde: '$' hasta ';'
-                                stringVo2Max.append((char)currByte);
+                                medicionesCrudas.append((char)currByte);
 
-                                if(stringVo2Max.length() > 200){
-                                    System.err.println("'$' sin terminacion ';' :`" + stringVo2Max.toString() + "`");
+                                if(medicionesCrudas.length() > 200){
+                                    System.err.println("'$' sin terminacion ';' :`" + medicionesCrudas.toString() + "`");
 
                                     //Print toast
                                     Toast.makeText(
                                             getApplicationContext(),
-                                            "FATAL:\n '$' sin terminacion ';' :`" + stringVo2Max.toString() + " `",
+                                            "FATAL:\n '$' sin terminacion ';' :`" + medicionesCrudas.toString() + " `",
                                             Toast.LENGTH_LONG
                                     ).show();
 
@@ -363,13 +373,17 @@ public class ConectionApi extends AppCompatActivity {
                                 currByte = getNextByteFromInStream();
                             }
 
+                            String[] medicionesSpliteadas = medicionesCrudas.toString().split("\\|");
+
                             // @debug:
-                            System.out.println("Vo2max: " + stringVo2Max.toString());
+                            System.out.println("Numero prueba: " + medicionesSpliteadas[0]);
+                            System.out.println("vo2max: " + medicionesSpliteadas[1]);
 
-                            double vo2Max = Double.parseDouble(stringVo2Max.toString());
+                            int numeroPrueba = Integer.parseInt(medicionesSpliteadas[0]);
+                            double vo2max = Double.parseDouble(medicionesSpliteadas[1]);
 
-
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(-1, -1, vo2Max)).sendToTarget();
+                            // @NOCHECKIN
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(numeroPrueba,  -1, -1, -1, vo2max)).sendToTarget();
                         }
 
                     }
