@@ -1,35 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { AreaChart, ResponsiveContainer, Area, XAxis, YAxis, CartesianGrid, Legend, Tooltip } from 'recharts'
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { urlServer } from '../../../config';
 import CustomToolTip from './CustomToolTip';
 
-const Inhaled = props => {
-  const [data, setData] = useState([
-    {
-      "max": 40,
-      "min": 25,
-      "avg": 32.5,
-      "prueba": 1 + '#2021-04-20 11:20:21'
-    },
-    {
-      "max": 25,
-      "min": 10,
-      "avg": 12.5,
-      "prueba": 2 + '#2021-04-20 11:20:22'
-    },
-    {
-      "max": 40,
-      "min": 25,
-      "avg": 32.5,
-      "prueba": 3 + '#2021-04-20 11:20:23',
-    }
-  ]);
+const Inhaled = () => {
+  const params = useParams();
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get(urlServer + `get-all-reports-p2/${props.idUser}`)
+    axios.get(urlServer + `get-all-reports-p2/${params.id}`)
       .then((response) => {
-        if (response.data) {
+        console.log(response);
+        if (response.data.length) {
           setData(response.data.map((value) => {
             return {
               "max": value.maxInhalado,
@@ -38,12 +22,14 @@ const Inhaled = props => {
               "prueba": value.prueba + '#' + value.dateTime,
             }
           }));
+          console.log(data);
         }
-      }).catch(() => alert('no se pudo recuperar la información'))
+      }).catch((error) =>{ alert('no se pudo recuperar la información'); console.error(error);})
   }, []);
 
   const pruebaFormatter = (tick) => {
-    return `P.${tick.split('#')[0]}`;
+    const noPrueba = tick.toString().split('#')[0];
+    return `P.${noPrueba}`;
   }
 
   return (
@@ -51,7 +37,7 @@ const Inhaled = props => {
       <div className="card-header bg-dark text-light text-center h4">Oxígeno inhalado</div>
       <div className="card-body">
         <ResponsiveContainer width="100%" height={400}>
-          <AreaChart
+          <BarChart
             width={500}
             height={400}
             data={data}
@@ -62,15 +48,15 @@ const Inhaled = props => {
               bottom: 0,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="prueba" tickFormatter={pruebaFormatter} />
+            <CartesianGrid strokeDasharray="2 2" stroke="#a19f9e" />
+            <XAxis dataKey="prueba" tickFormatter={pruebaFormatter} scale="band" />
             <YAxis />
             <Tooltip content={<CustomToolTip />} />
             <Legend />
-            <Area type="monotone" dataKey="min" stackId="1" name="Mínimo (ml.)" stroke="#ffc107" fill="#ffc107" />
-            <Area type="monotone" dataKey="avg" stackId="1" name="Promedio (ml.)" stroke="#198754" fill="#198754" />
-            <Area type="monotone" dataKey="max" stackId="1" name="Máximo (ml.)" stroke="#fd7e14" fill="#fd7e14" />
-          </AreaChart>
+            <Bar type="linear" dataKey="min" name="Mínimo (ml.)"  fill="#88ebad" />
+            <Bar type="linear" dataKey="avg" name="Promedio (ml.)"  fill="#50d280" />
+            <Bar type="linear" dataKey="max" name="Máximo (ml.)"  fill="#6bb988" />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>

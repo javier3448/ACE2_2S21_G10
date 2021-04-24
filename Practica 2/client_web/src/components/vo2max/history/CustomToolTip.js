@@ -8,7 +8,7 @@ const CustomToolTip = ({ active, payload, label }) => {
         <div className="row">
           <div className="col">Prueba</div>
           <div className="col text-end">
-            <span style={{ backgroundColor: "#107dac" }} className="badge text-wrap">
+            <span  className="badge text-wrap bg-secondary">
               {label.split('#')[0]}
             </span>
           </div>
@@ -16,7 +16,7 @@ const CustomToolTip = ({ active, payload, label }) => {
         <div className="row">
           <div className="col">Fecha</div>
           <div className="col text-end">
-            <span style={{ backgroundColor: "#107dac" }} className="badge text-wrap">
+            <span className="badge text-wrap bg-secondary">
               {date.toLocaleDateString()}
             </span>
           </div>
@@ -24,7 +24,7 @@ const CustomToolTip = ({ active, payload, label }) => {
         <div className="row">
           <div className="col">Hora</div>
           <div className="col text-end">
-            <span style={{ backgroundColor: "#107dac" }} className="badge text-wrap">
+            <span  className="badge text-wrap bg-secondary">
               {date.toLocaleTimeString()}
             </span>
           </div>
@@ -32,7 +32,7 @@ const CustomToolTip = ({ active, payload, label }) => {
         <div className="row">
           <div className="col">Máximo</div>
           <div className="col text-end">
-            <span style={{ backgroundColor: payload[2].color }} className="badge text-wrap">
+            <span style={{ backgroundColor: payload[2].color }} className="badge text-wrap text-dark">
               {payload[2].value}
             </span>
           </div>
@@ -40,7 +40,7 @@ const CustomToolTip = ({ active, payload, label }) => {
         <div className="row">
           <div className="col">Promedio</div>
           <div className="col text-end">
-            <span style={{ backgroundColor: payload[1].color }} className="badge text-wrap">
+            <span style={{ backgroundColor: payload[1].color }} className="badge text-wrap text-dark">
               {payload[1].value}
             </span>
           </div>
@@ -48,7 +48,7 @@ const CustomToolTip = ({ active, payload, label }) => {
         <div className="row">
           <div className="col">Mínimo</div>
           <div className="col text-end">
-            <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap">
+            <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap text-dark">
               {payload[0].value}
             </span>
           </div>
