@@ -3,35 +3,60 @@ import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, Legend, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { useParams } from 'react-router';
 import { urlServer } from '../../../config';
+import { useInterval } from '../../../services/interval';
 
-const Vo2RealTime = props => {
+const Vo2RealTime = () => {
   const params = useParams();
-  // Número de prueba que se visualizará
-  const noTest = props.noTest;
+  // Temporizador de la prueba
+  const [milis, setMilis] = useState(0);
   // Información de la prueba
   const [data, setData] = useState([]);
   // Fecha de creación de la información
-  const [fecha, setFecha] = useState();
-
-  useEffect(() => {
+  // Aquí se almacena la fecha inicial de la prueba
+  const [fecha, setFecha] = useState('');
+  const [noTest, setNoTest] = useState('');
+  // Determina la fecha de la prueba
+  useEffect(async() => {
+    try {
+      const response = await axios.get(urlServer + `sensorsv2/${params.id}`);
+      if (response.data.length) {
+        const dataSet = response.data;
+        const lastData = dataSet[dataSet.length-1];
+        if (lastData.result.length) {
+          //setFecha(lastData.result[0].dateTime);
+          setNoTest(lastData.prueba);
+        }
+      } else {
+        alert('sin datos')
+      }
+    } catch (err) {
+      console.error(err);
+      alert('no se pudo recuperar los datos');
+    }
+  }, []);
+  // Recupera constantemente el último dato
+  // y se únicamente se visualizará en la 
+  // gráfica si la fecha inicial es de hace no más 
+  // de 5 min 2 seg 500 milisegundos
+  useInterval(() => {
     axios.get(urlServer + `sensorsv2/${params.id}`)
       .then((response) => {
-        return;
-        if (response.data.length) {
-          setData(response.data.find(value => {
-            if (value.prueba === noTest) {
-              return value.result;
-            }
-          }));
-          if (data.length > 0) {
-            setFecha(new Date(data[0].dateTime).toLocaleDateString());
+        if(response.data.length) {
+          const dataSet = response.data;
+          const lastData = dataSet[dataSet.length - 1];
+          if (lastData.result.length) {
+            setData(lastData.result);
           }
-        } else {
-          alert('sin datos')
         }
       })
-      .catch(() => alert('no se pudo recuperar los datos'));
-  }, []);
+      .catch(error => console.error(error));
+  }, 800);
+
+  const tickFormatter = (tick) => {
+    const date = new Date(tick);
+    const noPrueba = date.toLocaleTimeString("es-GT", {hour: '2-digit', hour12: false, minute: '2-digit'});
+    return `${noPrueba}`;
+  }
 
   const CustomToolTip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -76,13 +101,13 @@ const Vo2RealTime = props => {
   }
 
   return (
-    <div className="card">
+    <div className="card border border-dark">
       <div className="card-header bg-dark text-light text-center ">
-        <h4>Prueba No. {noTest}</h4>
+        <h4>Prueba No. {noTest ? noTest : ''}</h4>
       </div>
       <div className="card-body">
-        <div className="card-title text-center h5">{fecha || ""}</div>
-        <ResponsiveContainer width="100%" height={450}>
+        <div className="card-title text-center h5">{ fecha ? new Date(fecha).toLocaleDateString() : ""}</div>
+        <ResponsiveContainer id="Vo2Realtime_" width="100%" height={450}>
           <LineChart
             width={1000}
             height={450}
@@ -93,7 +118,7 @@ const Vo2RealTime = props => {
               left: 0,
               bottom: 0
             }}>
-            <XAxis dataKey="dateTime" hide={true} />
+            <XAxis dataKey="dateTime" tickFormatter={tickFormatter} scale="band" />
             <CartesianGrid strokeDasharray="2 2" />
             <YAxis />
             <Tooltip content={<CustomToolTip />} />
@@ -102,14 +127,12 @@ const Vo2RealTime = props => {
               type="monotone"
               dataKey="inhalado"
               name="Inhalado (ml.)"
-              stroke="#39c7ff"
-              activeDot={{ r: 1 }} />
+              stroke="#4e8763"/>
             <Line isAnimationActive={false}
               type="monotone"
               dataKey="exhalado"
               name="Exhalado (ml.)"
-              stroke="#39ffd4"
-              activeDot={{ r: 1 }} />
+              stroke="#537b99" />
           </LineChart>
         </ResponsiveContainer>
       </div>

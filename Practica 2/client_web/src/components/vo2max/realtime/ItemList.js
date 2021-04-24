@@ -14,7 +14,7 @@ const ItemList = ({ onPruebaChange, prueba, date }) => {
             {prueba > 0 ? prueba : "Actual"}
           </div>
           <div className="col-9 text-end">
-            {date.toLocaleString()}
+            {date ? date.toLocaleString() : ""}
           </div>
         </div>
     </button>

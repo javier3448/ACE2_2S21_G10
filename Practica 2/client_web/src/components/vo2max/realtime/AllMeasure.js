@@ -1,19 +1,17 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
 import { urlServer } from '../../../config';
-import { useInterval } from '../../../services/interval';
 import TimeView from '../../nav-bar/TimeView';
-import UserInfo from '../../nav-bar/UserInfoView';
 import ItemList from './ItemList';
 import Vo2History from './Vo2History';
+import Vo2RealTime from './Vo2RealTime';
 
 const AllMeasure = () => {
   const params = useParams();
   const [tests, setTests] = useState([]);
   const [showTest, setShowTest] = useState(-1);
-
+  
   useEffect(() => {
     axios.get(urlServer + `sensorsv2/${params.id}`)
       .then((response) => {
@@ -35,7 +33,7 @@ const AllMeasure = () => {
     } else if (showTest === 0) {
       return <div>Recarge la página.</div>
     } else {
-      return <div>Recarge la página.</div>
+      return <Vo2RealTime />
     } 
   }
 
@@ -51,7 +49,7 @@ const AllMeasure = () => {
             <hr />
           </div>
           <div className="row">
-            <div className="col-lg-3 col-sm-12 col-xs-12">
+            <div className="col-lg-3 col-sm-12 col-xs-12 my-3">
               <div className="list-group border border-dark">
                 <div className="list-group-item bg-dark text-light">
                   <div className="row">
@@ -62,8 +60,7 @@ const AllMeasure = () => {
                 <ItemList
                   key={'_##-1' + Math.random() * 999}
                   onPruebaChange={setShowTest}
-                  prueba={-1}
-                  date={new Date()} />
+                  prueba={-1} />
                 {tests.length ?
                   (tests.map((prueba) =>
                     <ItemList
@@ -74,8 +71,8 @@ const AllMeasure = () => {
                   )) : ("")}
               </div>
             </div>
-            <div className="col-lg-9 col-sm-12 col-xs-12">
-              <WhichTest />
+            <div className="col-lg-9 col-sm-12 col-xs-12 my-3">
+              {<WhichTest />}
             </div>
           </div>
         </div>

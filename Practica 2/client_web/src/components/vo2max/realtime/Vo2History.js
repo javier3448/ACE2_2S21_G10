@@ -10,26 +10,24 @@ const Vo2History = props => {
   const noTest = props.noTest;
   // Información de la prueba
   const [data, setData] = useState([]);
-  // Fecha de creación de la información
-  const [fecha, setFecha] = useState();
 
-  useEffect(() => {
-    axios.get(urlServer + `sensorsv2/${params.id}`)
-      .then((response) => {
-        if (response.data.length) {
-          setData(response.data.find(value => {
-            if (value.prueba === noTest) {
-              return value;
-            }
-          }).result);
-          if (data.length) {
-            setFecha(new Date(data[0].dateTime).toLocaleDateString());
+  useEffect( async() => {
+    try {
+      const response = await axios.get(urlServer + `sensorsv2/${params.id}`);
+      if (response.data.length) {
+        const dataSet = response.data.find((value) => {
+          if (value.prueba === noTest) {
+            return value;
           }
-        } else {
-          alert('sin datos')
-        }
-      })
-      .catch(error => console.error(error));
+        })
+        setData(dataSet.result);
+      } else {
+        alert('sin datos');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('no se pudo mostrar los datos');
+    }
   }, []);
 
   const tickFormatter = (tick) => {
@@ -81,13 +79,13 @@ const Vo2History = props => {
   }
 
   return (
-    <div className="card">
+    <div className="card border border-dark">
       <div className="card-header bg-dark text-light text-center ">
         <h4>Prueba No. {noTest}</h4>
       </div>
       <div className="card-body">
-        <div className="card-title text-center h5">{fecha ? fecha : ""}</div>
-        <ResponsiveContainer width="100%" height={450}>
+        <div className="card-title text-center h5">{props.fecha}</div>
+        <ResponsiveContainer id="Vo2History_" width="100%" height={450}>
           <LineChart
             width={1000}
             height={450}
