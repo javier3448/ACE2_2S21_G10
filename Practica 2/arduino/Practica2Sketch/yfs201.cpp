@@ -34,9 +34,11 @@ int Yfs201::getFrecuencia()
 {
     int frecuencia;
     numPulsos = 0;   //Ponemos a 0 el número de pulsos
-    interrupts();    //Habilitamos las interrupciones
+    // [?] por que el autor original de esto habilita y deshabilita las interrupciones
+    // se que delay no funciona sin interupciones pero porque deshabilitarlas despues?
+    // interrupts();    //Habilitamos las interrupciones
     delay(100);   //muestra de 1 segundo
-    noInterrupts(); //Deshabilitamos  las interrupciones
+    // noInterrupts(); //Deshabilitamos  las interrupciones
     frecuencia = numPulsos; //Hz(pulsos por segundo)
     return frecuencia;
 }
@@ -65,16 +67,4 @@ void Yfs201::calculoConsumo()
 void Yfs201::contarPulsos()
 {
     numPulsos++;
-}
-
-//---Función para obtener frecuencia de los pulsos--------
-int Yfs201::obetenerFrecuencia()
-{
-    int frecuencia;
-    numPulsos = 0;   // 0 el número de pulsos
-    interrupts();    //Habilitar  interrupciones
-    delay(100);   //muestra cada 1 segundo
-    noInterrupts(); //Desabilitar las interrupciones
-    frecuencia = numPulsos; //Hz(pulsos por segundo)
-    return frecuencia;
 }

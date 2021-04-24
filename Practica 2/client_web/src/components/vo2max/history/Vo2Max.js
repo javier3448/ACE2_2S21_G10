@@ -1,28 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { urlServer } from '../../../config';
-import CustomToolTip from './CustomToolTip';
 
-const Vo2Max = props => {
-  const [data, setData] = useState([
-    {
-      "vo2max": 40,
-      "prueba": 1 + '#2021-04-20 11:20:21'
-    },
-    {
-      "vo2max": 25,
-      "prueba": 2 + '#2021-04-20 11:20:22'
-    },
-    {
-      "vo2max": 40,
-      "prueba": 3 + '#2021-04-20 11:20:23',
-    }
-  ]);
+const Vo2Max = () => {
+  const params = useParams();
+  const [data, setData] = useState([]);
   useEffect(() => {
-    axios.get(urlServer + `get-all-reports-p2/${props.idUser}`)
+    axios.get(urlServer + `get-all-reports-p2/${params.id}`)
       .then((response) => {
-        if (response.data) {
+        if (response.data.length) {
           setData(response.data.map((value) => {
             return {
               "vo2max": value.vo2max,
@@ -34,7 +22,8 @@ const Vo2Max = props => {
   }, []);
 
   const pruebaFormatter = (tick) => {
-    return `P.${tick.split('#')[0]}`;
+    const noPrueba = tick.toString().split('#')[0];
+    return `P.${noPrueba}`;
   }
 
   const Vo2MaxTooltip = ({ active, payload }) => {
@@ -71,7 +60,7 @@ const Vo2Max = props => {
           <div className="row">
             <div className="col">Vo2Max</div>
             <div className="col text-end">
-              <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap">
+              <span style={{ backgroundColor: payload[0].color }} className="badge text-wrap text-dark">
                 {payload[0].value}
               </span>
             </div>
@@ -87,16 +76,16 @@ const Vo2Max = props => {
       <div className="card-header bg-dark text-light text-center h4">Vo2Max</div>
       <div className="card-body">
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart width={1000} height={400} data={data}
+          <BarChart width={1000} height={400} data={data}
             margin={{ top: 10, right: 20, left: 0, bottom: 0, }} >
             <XAxis dataKey="prueba" tickFormatter={pruebaFormatter}  />
             <CartesianGrid strokeDasharray="2 2" />
             <YAxis />
             <Tooltip content={< Vo2MaxTooltip/>} />
             <Legend />
-            <Line isAnimationActive={false} type="monotone"
-              dataKey="vo2max" name="VO2MAX" stroke="#4040ff" activeDot={{ r: 1 }} />
-          </LineChart>
+            <Bar type="monotone"
+              dataKey="vo2max" name="VO2MAX" fill="#4491d4" />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>

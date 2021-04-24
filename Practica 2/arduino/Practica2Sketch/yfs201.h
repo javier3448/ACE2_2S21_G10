@@ -3,6 +3,8 @@
 
 #include "pindefs.h"
 
+// @TODO: quitar las variables/funciones del copy-paste que no usamos 
+
 // @MEJORA: pasar todo lo direccion, calculo de volumen y todo eso aqui?
 namespace Yfs201 
 {
@@ -25,7 +27,6 @@ namespace Yfs201
     int getFrecuencia();
     void calculoConsumo();
     void contarPulsos();
-    int obetenerFrecuencia();
 }
 
 #endif

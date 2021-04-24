@@ -40,16 +40,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder; 
 
 public class ConectionApi extends AppCompatActivity {
+
+    public static final String API_URL = "https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensorsv2";
+
     //variables de la interfaz
     Button IdDesconectar,btnEnvio;
     TextView IdBufferIn; //texto donde se visualizaran los valores que se mandaran a la api
-    //Variables que se mandaran a la api
-    // [?]: No seria mejor pasar estos 3 strings a la funcion `insercionMediciones` por parametro?
-    private String exhalacion=" ";
-    private String inhalacion=" ";
-    private String voxigeno2=" ";
-
-    private String prubauser=" ";
 
     //---------------Variables comunicacion. bluetooh----------------------------
     Handler bluetoothIn;
@@ -66,18 +62,14 @@ public class ConectionApi extends AppCompatActivity {
     RequestQueue requestQueue;
 
     private class Medicion {
-        public double exhalado;
-        public double inhalado;
-        public double vo2;
+        public double tiempo;
+        public double volumen;
+        public double vo2max;
 
-        public int prueba;
-
-
-        public Medicion(double exhalado, double inhalado,  double vo2, int prueba){
-            this.exhalado = exhalado;
-            this.inhalado = inhalado;
-            this.vo2 = vo2;
-            this.prueba=prueba;
+        public Medicion(double tiempo, double volumen,  double vo2max){
+            this.tiempo = tiempo;
+            this.volumen = volumen;
+            this.vo2max = vo2max;
         }
     }
 
@@ -101,24 +93,16 @@ public class ConectionApi extends AppCompatActivity {
 
                     Medicion medicion = (Medicion) msg.obj;
 
-                    // @debug
-//                    System.out.println("Desde handleMessage:");
-//                    System.out.println("temperatura" + medicion.temperatura);
-//                    System.out.println("ritmoCardiaco" + medicion.ritmoCardiaco);
-//                    System.out.println("oxigeno" + medicion.oxigeno);
-
-                    inhalacion = Double.toString(medicion.inhalado);
-                    exhalacion = Double.toString(medicion.exhalado);
-                    voxigeno2 = Double.toString(medicion.vo2);
-                    prubauser=Integer.toString(medicion.prueba);
                     //setear los valores para visualizarl los datos que se mandaran a la api
-                    IdBufferIn.setText("Exhalacion: "+exhalacion+"\nInhalacion: "+inhalacion+"\nvo2: "+
-                            voxigeno2+"\nPrueba: "+prubauser);
+                    IdBufferIn.setText(
+                            "tiempo: " + Double.toString(medicion.tiempo) + "\n" +
+                            "volumen: " + Double.toString(medicion.volumen) + "\n" +
+                            "vo2max: " + Double.toString(medicion.vo2max)
+                    );
 
 
                     //los datos obtenidos se enviaran al servidor
-                    insercionMediciones("https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/sensorsv2");
-
+                    insercionMediciones(medicion);
                 }
             }
         };
@@ -159,16 +143,16 @@ public class ConectionApi extends AppCompatActivity {
      * -------------------COMUNICACON DE LOS DATOS A LA API----------------------------------------
      *
      */
-      public void insercionMediciones(String url){
+      public void insercionMediciones(Medicion medicion){
           Map<String,String> parametros=new HashMap<String,String>();
-          parametros.put("exhalado",exhalacion);
-          parametros.put("inhalado",inhalacion);
-          parametros.put("vo2",voxigeno2);
+          parametros.put("tiempo", Double.toString(medicion.tiempo));
+          parametros.put("volumen", Double.toString(medicion.volumen));
+          parametros.put("vo2max", Double.toString(medicion.vo2max));
 
           parametros.put("idUser",MainActivity.ideUser);
           JSONObject objeto=new JSONObject(parametros);
 
-          JsonObjectRequest respuesta=new JsonObjectRequest(Request.Method.POST, url, objeto, new Response.Listener<JSONObject>() {
+          JsonObjectRequest respuesta=new JsonObjectRequest(Request.Method.POST, API_URL, objeto, new Response.Listener<JSONObject>() {
               @Override
               public void onResponse(JSONObject response) {
                   Toast.makeText(getApplicationContext(), "Registro exitoso de mediciones", Toast.LENGTH_SHORT).show();
@@ -306,30 +290,7 @@ public class ConectionApi extends AppCompatActivity {
                     outer: while(true){
                         byte currByte = getNextByteFromInStream();
 
-                     /*   if(currByte == (byte) '!'){
-                            // Por ahora lo ignoramos porque a la API no le importa cuando empezamos
-                            // la prueba tampoco verificamos que venga uno de estos paquetes antes
-                            // de empezar a leer paquetes '#'
-                            System.out.println("Se empezo la prueba");
-//                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
-//                                    0,0,,tiempo,falla,rindio)).sendToTarget();
-                        }
-                        else if(currByte == (byte) '$'){
-                            System.out.println("Se termino la prueba con Exito");
-                           bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
-                                    0,0,0,0,0, 0, 1)).sendToTarget();
-                        }
-                        else if(currByte == (byte) '%'){
-                            System.out.println("Se termino la prueba Rindiendose");
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
-                                    0,0,0,0,0, 1, 0)).sendToTarget();
-                        }
-                        else if(currByte == (byte) '&'){
-                            System.out.println("Se termino la prueba fallando");
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(0, 0, 0,
-                                    0,0,0,0,1, 0, 0)).sendToTarget();
-                        }
-                        else if(currByte == (byte) '#'){
+                        if(currByte == (byte) '$'){
                             currByte = getNextByteFromInStream();
                             StringBuilder medicionesCrudas = new StringBuilder();
                             while (currByte != ';'){
@@ -340,7 +301,6 @@ public class ConectionApi extends AppCompatActivity {
 
                                 // Armamos el string que hay desde: '$' hasta ';'
                                 medicionesCrudas.append((char)currByte);
-                                currByte = getNextByteFromInStream();
 
                                 if(medicionesCrudas.length() > 200){
                                     System.err.println("'$' sin terminacion ';' :`" + medicionesCrudas.toString() + "`");
@@ -354,35 +314,64 @@ public class ConectionApi extends AppCompatActivity {
 
                                     continue outer;
                                 }
+
+                                currByte = getNextByteFromInStream();
                             }
 
-                //{repeticionActual}'|'{tiempoRepeticionAcual}'|'{distanciaRepeticionActual}'|'{velocidadTiempoReal}'|'{temperatura}'|'{ritmo}'|'{oxigeno}';'
+                            //{repeticionActual}'|'{tiempoRepeticionAcual}'|'{distanciaRepeticionActual}'|'{velocidadTiempoReal}'|'{temperatura}'|'{ritmo}'|'{oxigeno}';'
                             String[] medicionesSpliteadas = medicionesCrudas.toString().split("\\|");
 
                             // @debug:
-                            System.out.println("Repeticion actual: " + medicionesSpliteadas[0]);
-                            System.out.println("Tiempo repeticion actual: " + medicionesSpliteadas[1]);
-                            System.out.println("Distacion repeticion actual: " + medicionesSpliteadas[2]);
-                            System.out.println("Velocidad: " + medicionesSpliteadas[3]);
-                            System.out.println("Temperatura: " + medicionesSpliteadas[4]);
-                            System.out.println("Ritmo cardiaco: " + medicionesSpliteadas[5]);
-                            System.out.println("Oxigeno: " + medicionesSpliteadas[6]);
+                            System.out.println("Tiempo: " + medicionesSpliteadas[0]);
+                            System.out.println("Volumen: " + medicionesSpliteadas[1]);
 
-                            int repeticion = Integer.parseInt(medicionesSpliteadas[0]);
-                            double tiempo = Integer.parseInt(medicionesSpliteadas[1]) / 1000d;
-                            double distancia = Double.parseDouble(medicionesSpliteadas[2]);
-                            double velocidad = Double.parseDouble(medicionesSpliteadas[3]);
-                            double temperatura = Double.parseDouble(medicionesSpliteadas[4]);
-                            double ritmoCardiaco = Double.parseDouble(medicionesSpliteadas[5]);
-                            double oxigeno = Double.parseDouble(medicionesSpliteadas[6]);
+                            double tiempo = Double.parseDouble(medicionesSpliteadas[0]);
+                            double volumen = Double.parseDouble(medicionesSpliteadas[1]);
 
-                            int falla = 0;
-                            int rindio = 0;
-                            int aprobo = 0;
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(tiempo, volumen, -1)).sendToTarget();
+                        }
+                        else if(currByte == (byte) '#'){
+                            currByte = getNextByteFromInStream();
+                            StringBuilder stringVo2Max = new StringBuilder();
+                            // parseamos el float
+                            while(currByte != (byte) ';'){
 
-                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(temperatura, ritmoCardiaco, oxigeno,
-                                    repeticion, velocidad, distancia, tiempo, falla, rindio, aprobo)).sendToTarget();
-                        }*/
+                                // @TODO: hacer que ambos errores solo sean toast, y poner el reporte
+                                //        de error en una funcion
+
+                                // Caso especial de mensajes incompletos
+                                if(currByte == '!' || currByte == '#'){
+                                    throw new IOException("EROR: PRUEBA INCOMPLETA! NO APAGUE EL ARDUINO MIENTRAS SE ESTA HACIENDO UNA PRUEBA! char: " + currByte);
+                                }
+
+                                // Armamos el string que hay desde: '$' hasta ';'
+                                stringVo2Max.append((char)currByte);
+
+                                if(stringVo2Max.length() > 200){
+                                    System.err.println("'$' sin terminacion ';' :`" + stringVo2Max.toString() + "`");
+
+                                    //Print toast
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "FATAL:\n '$' sin terminacion ';' :`" + stringVo2Max.toString() + " `",
+                                            Toast.LENGTH_LONG
+                                    ).show();
+
+                                    continue outer;
+                                }
+
+                                currByte = getNextByteFromInStream();
+                            }
+
+                            // @debug:
+                            System.out.println("Vo2max: " + stringVo2Max.toString());
+
+                            double vo2Max = Double.parseDouble(stringVo2Max.toString());
+
+
+                            bluetoothIn.obtainMessage(handlerState, -1, -1, new Medicion(-1, -1, vo2Max)).sendToTarget();
+                        }
+
                     }
                 } catch (IOException e) {
                     break;
