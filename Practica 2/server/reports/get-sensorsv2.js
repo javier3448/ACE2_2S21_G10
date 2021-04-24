@@ -24,13 +24,15 @@ exports.handler = (event, context, callback) => {
       for (let index = 0; index < length; index++) {
         if (event.idUser === array[index].idUser.S) {
           dataSensors.push({
-            exhalado: +array[index].exhalado.N,
-            inhalado: +array[index].inhalado.N,
+            volumen: +array[index].volumen.N,
+            direccion: +array[index].direccion.N,
+            tiempo: +array[index].tiempo.N,
             prueba: +array[index].prueba.N,
             dateTime: array[index].dateTime.S,
           });
         }
       }
+      console.log(dataSensors);
       let items = null;
       dataSensors.sort(dynamicSort("dateTime"));
       let result = calculateData(dataSensors);
@@ -47,32 +49,56 @@ function calculateData(dataSensors) {
   let index = 0;
   let temporal = [];
   let dataTempo = null;
+ 
   let result = [];
   while (true) {
+     let inhalado = null;
+     let exhalado = null;
     if (index > dataSensors.length - 1) {
       break;
     }
 /******************************************************* ********************************************************************************/
     if (index + 1 > dataSensors.length - 1) {
       if (dataSensors.length === 1) {
-        dataTempo = {inhalado: dataSensors[index].inhalado,
-          exhalado: dataSensors[index].exhalado,
-          dateTime: dataSensors[index].dateTime};
+        if(dataSensors[index].direccion === 0){
+            exhalado = dataSensors[index].volumen;
+          }else{
+            inhalado = dataSensors[index].volumen;
+          }
+        dataTempo = {inhalado: inhalado,
+                   exhalado: exhalado,
+                   tiempo: dataSensors[index].tiempo,
+                   volumen: dataSensors[index].volumen,
+                   dateTime: dataSensors[index].dateTime};
         temporal.push(dataTempo);
         result.push({result: temporal, prueba: dataSensors[index].prueba});
         break;
       } else {
         if (dataSensors[index - 1].prueba === dataSensors[index].prueba) {
-          dataTempo = {inhalado: dataSensors[index].inhalado,
-            exhalado: dataSensors[index].exhalado,
-            dateTime: dataSensors[index].dateTime};
+          if(dataSensors[index].direccion === 0){
+            exhalado = dataSensors[index].volumen;
+          }else{
+            inhalado = dataSensors[index].volumen;
+          }
+          dataTempo = {inhalado: inhalado,
+                   exhalado: exhalado,
+                   tiempo: dataSensors[index].tiempo,
+                   volumen: dataSensors[index].volumen,
+                   dateTime: dataSensors[index].dateTime};
           temporal.push(dataTempo);
           result.push({result: temporal, prueba: dataSensors[index].prueba});
           break;
         } else {
-          dataTempo = {inhalado: dataSensors[index].inhalado,
-            exhalado: dataSensors[index].exhalado,
-            dateTime: dataSensors[index].dateTime};
+          if(dataSensors[index].direccion === 0){
+            exhalado = dataSensors[index].volumen;
+          }else{
+            inhalado = dataSensors[index].volumen;
+          }
+          dataTempo = {inhalado: inhalado,
+                   exhalado: exhalado,
+                   tiempo: dataSensors[index].tiempo,
+                   volumen: dataSensors[index].volumen,
+                   dateTime: dataSensors[index].dateTime};
           temporal.push(dataTempo);
           result.push({result: temporal, prueba: dataSensors[index].prueba});
           break;
@@ -81,13 +107,27 @@ function calculateData(dataSensors) {
     }
 /******************************************************** ********************************************************************************/
     if (dataSensors[index].prueba === dataSensors[index + 1].prueba) {
-      dataTempo = {inhalado: dataSensors[index].inhalado,
-                   exhalado: dataSensors[index].exhalado,
+      if(dataSensors[index].direccion === 0){
+            exhalado = dataSensors[index].volumen;
+      }else{
+            inhalado = dataSensors[index].volumen;
+      }
+      dataTempo = {inhalado: inhalado,
+                   exhalado: exhalado,
+                   tiempo: dataSensors[index].tiempo,
+                   volumen: dataSensors[index].volumen,
                    dateTime: dataSensors[index].dateTime};
       temporal.push(dataTempo);
     } else if (dataSensors[index].prueba != dataSensors[index + 1].prueba) {
-      dataTempo = {inhalado: dataSensors[index].inhalado,
-                   exhalado: dataSensors[index].exhalado,
+          if(dataSensors[index].direccion === 0){
+            exhalado = dataSensors[index].volumen;
+          }else{
+            inhalado = dataSensors[index].volumen;
+          }
+      dataTempo = {inhalado: inhalado,
+                   exhalado: exhalado,
+                   tiempo: dataSensors[index].tiempo,
+                   volumen: dataSensors[index].volumen,
                    dateTime: dataSensors[index].dateTime};
 
       temporal.push(dataTempo);

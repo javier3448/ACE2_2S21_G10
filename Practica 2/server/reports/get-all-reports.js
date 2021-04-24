@@ -24,8 +24,9 @@ exports.handler = (event, context, callback) => {
       for (let index = 0; index < length; index++) {
         if (event.idUser === array[index].idUser.S) {
           dataSensors.push({
-            exhalado: +array[index].exhalado.N,
-            inhalado: +array[index].inhalado.N,
+            volumen: +array[index].volumen.N,
+            direccion: +array[index].direccion.N,
+            tiempo: +array[index].tiempo.N,
             vo2max: +array[index].vo2.N,
             prueba: +array[index].prueba.N,
             dateTime: array[index].dateTime.S,
@@ -57,9 +58,17 @@ function calculateData(dataSensors) {
 /******************************************************* ********************************************************************************/
     if (index + 1 > dataSensors.length - 1) {
       if (dataSensors.length === 1) {
-        inhalados.push(dataSensors[index].inhalado);
-        exhalados.push(dataSensors[index].exhalado);
-        let vo2max = dataSensors[index].vo2max;
+        let vo2max = null;
+        if(dataSensors[index].direccion === 0){
+            exhalados.push(dataSensors[index].volumen);
+        }else if (dataSensors[index].direccion === 1){
+            inhalados.push(dataSensors[index].volumen);
+        }
+        if(dataSensors[index-1].vo2max != -1){
+            vo2max  = dataSensors[index-1].vo2max;
+        }else if (dataSensors[index].vo2max != -1){
+            vo2max = dataSensors[index].vo2max;
+        }
         let dateTime = dataSensors[index].dateTime;
         let prueba = dataSensors[index].prueba;
         dataTempo = getResults(inhalados,exhalados,vo2max,prueba,dateTime);
@@ -67,18 +76,34 @@ function calculateData(dataSensors) {
         break;
       } else {
         if (dataSensors[index - 1].prueba === dataSensors[index].prueba) {
-          inhalados.push(dataSensors[index].inhalado);
-          exhalados.push(dataSensors[index].exhalado);
-          let vo2max = dataSensors[index].vo2max;
+          let vo2max = null;
+          if(dataSensors[index].direccion === 0){
+            exhalados.push(dataSensors[index].volumen);
+          }else if (dataSensors[index].direccion === 1){
+            inhalados.push(dataSensors[index].volumen);
+          }
+          if(dataSensors[index-1].vo2max != -1){
+            vo2max  = dataSensors[index-1].vo2max;
+          }else if (dataSensors[index].vo2max != -1){
+            vo2max = dataSensors[index].vo2max;
+          }
           let dateTime = dataSensors[index].dateTime;
           let prueba = dataSensors[index].prueba;
           dataTempo = getResults(inhalados,exhalados,vo2max,prueba,dateTime);
           result.push(dataTempo);
           break;
         } else {
-          inhalados.push(dataSensors[index].inhalado);
-          exhalados.push(dataSensors[index].exhalado);
-          let vo2max = dataSensors[index].vo2max;
+          let vo2max = null;
+          if(dataSensors[index].direccion === 0){
+            exhalados.push(dataSensors[index].volumen);
+          }else if (dataSensors[index].direccion === 1){
+            inhalados.push(dataSensors[index].volumen);
+          }
+          if(dataSensors[index-1].vo2max != -1){
+            vo2max  = dataSensors[index-1].vo2max;
+          }else if (dataSensors[index].vo2max != -1){
+            vo2max = dataSensors[index].vo2max;
+          }
           let dateTime = dataSensors[index].dateTime;
           let prueba = dataSensors[index].prueba;
           dataTempo = getResults(inhalados,exhalados,vo2max,prueba,dateTime);
@@ -89,13 +114,23 @@ function calculateData(dataSensors) {
     }
 /******************************************************** ********************************************************************************/
     if (dataSensors[index].prueba === dataSensors[index + 1].prueba) {
-      inhalados.push(dataSensors[index].inhalado);
-      exhalados.push(dataSensors[index].exhalado);
+      if(dataSensors[index].direccion === 0){
+            exhalados.push(dataSensors[index].volumen);
+      }else if (dataSensors[index].direccion === 1){
+            inhalados.push(dataSensors[index].volumen);
+      }
     } else if (dataSensors[index].prueba != dataSensors[index + 1].prueba) {
-
-      inhalados.push(dataSensors[index].inhalado);
-      exhalados.push(dataSensors[index].exhalado);
-      let vo2max = dataSensors[index].vo2max;
+      let vo2max = null;
+      if(dataSensors[index].direccion === 0){
+            exhalados.push(dataSensors[index].volumen);
+      }else if (dataSensors[index].direccion === 1){
+            inhalados.push(dataSensors[index].volumen);
+      }
+      if(dataSensors[index-1].vo2max != -1){
+            vo2max  = dataSensors[index-1].vo2max;
+      }else if (dataSensors[index].vo2max != -1){
+            vo2max = dataSensors[index].vo2max;
+      }
       let dateTime = dataSensors[index].dateTime;
       let prueba = dataSensors[index].prueba;
       dataTempo = getResults(inhalados,exhalados,vo2max,prueba,dateTime);
@@ -119,12 +154,12 @@ function getResults(inhalados, exhalados, vo2max, prueba, dateTime) {
     sumInhalado += inhalados[index];
   }
   let avgInhalado = sumInhalado/inhalados.length;
-  avgInhalado = avgInhalado.toFixed(2);
+  avgInhalado = parseFloat(avgInhalado.toFixed(2));
   for (let index = 0; index < exhalados.length; index++) {
     sumExhalado += exhalados[index];
   }
   let avgExhalado = sumExhalado/exhalados.length;
-  avgExhalado = avgExhalado.toFixed(2);
+  avgExhalado = parseFloat(avgExhalado.toFixed(2));
   let result = {minInhalado: minInhalado, 
                 maxInhalado: maxInhalado,
                 minExhalado: minExhalado,
