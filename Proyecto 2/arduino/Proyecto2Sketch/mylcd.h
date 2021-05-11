@@ -27,6 +27,15 @@ namespace MyLcd {
 	extern int8_t OX_SYMBOL2;
 	extern uint8_t OX_SYMBOL_MAP2[8];
 
+	extern int8_t RD_SYMBOL;
+	extern uint8_t RD_SYMBOL_MAP[8];
+
+	extern int8_t RT_SYMBOL;
+	extern uint8_t RT_SYMBOL_MAP[8];
+
+	extern int8_t R_SYMBOL;
+	extern uint8_t R_SYMBOL_MAP[8];
+
     void setup();
     void loop();
 }
