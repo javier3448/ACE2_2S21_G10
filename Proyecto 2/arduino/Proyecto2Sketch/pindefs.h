@@ -23,7 +23,7 @@
 #define TEMPERATURE_PIN A0
 
 // Para arduino uno
-//#define SDA A4
-//#define SCL A5
+//#define SDA A4 // MAX301005 y lcd_i2c
+//#define SCL A5 // MAX301005 y lcd_i2c
 
 #endif
