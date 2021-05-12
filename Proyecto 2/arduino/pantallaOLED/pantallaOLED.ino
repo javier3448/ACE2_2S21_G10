@@ -39,10 +39,16 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //Start the OLED display
   
 }
 
+//CALCULO DE CALORIAS
+
+void calorias(){
+  }
+
+
 void loop() {
-  long irValue = particleSensor.getIR();    //Reading the IR value it will permit us to know if there's a finger on the sensor or not
+ 
                                            //Also detecting a heartbeat
-if(irValue > 7000){                                           //If a finger is detected
+                                        //If a finger is detected
     display.clearDisplay();                                   //Clear the display
     display.drawBitmap(5, 5, logo2_bmp, 24, 21, WHITE);       //Draw the first bmp picture (little heart)
     display.setTextSize(2);                                   //Near it display the average BPM you can display the BPM if you want
@@ -50,10 +56,10 @@ if(irValue > 7000){                                           //If a finger is d
     display.setCursor(50,0);                
     display.println("BPM");             
     display.setCursor(50,18);                
-    display.println(beatAvg); 
+//    display.println(beatAvg); 
     display.display();
     
-  if (checkForBeat(irValue) == true)                        //If a heart beat is detected
+                   //If a heart beat is detected
   {
     display.clearDisplay();                                //Clear the display
     display.drawBitmap(0, 0, logo3_bmp, 32, 32, WHITE);    //Draw the second picture (bigger heart)
@@ -62,33 +68,33 @@ if(irValue > 7000){                                           //If a finger is d
     display.setCursor(50,0);                
     display.println("BPM");             
     display.setCursor(50,18);                
-    display.println(beatAvg); 
+  //  display.println(beatAvg); 
     display.display();
     tone(3,1000);                                        //And tone the buzzer for a 100ms you can reduce it it will be better
     delay(100);
     noTone(3);                                          //Deactivate the buzzer to have the effect of a "bip"
     //We sensed a beat!
-    long delta = millis() - lastBeat;                   //Measure duration between two beats
-    lastBeat = millis();
+//    long delta = millis() - lastBeat;                   //Measure duration between two beats
+//    lastBeat = millis();
 
-    beatsPerMinute = 60 / (delta / 1000.0);           //Calculating the BPM
+//    beatsPerMinute = 60 / (delta / 1000.0);           //Calculating the BPM
 
-    if (beatsPerMinute < 255 && beatsPerMinute > 20)               //To calculate the average we strore some values (4) then do some math to calculate the average
+//    if (beatsPerMinute < 255 && beatsPerMinute > 20)               //To calculate the average we strore some values (4) then do some math to calculate the average
     {
-      rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
-      rateSpot %= RATE_SIZE; //Wrap variable
+//      rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
+//      rateSpot %= RATE_SIZE; //Wrap variable
 
       //Take average of readings
-      beatAvg = 0;
-      for (byte x = 0 ; x < RATE_SIZE ; x++)
-        beatAvg += rates[x];
-      beatAvg /= RATE_SIZE;
+  //    beatAvg = 0;
+//      for (byte x = 0 ; x < RATE_SIZE ; x++)
+ //       beatAvg += rates[x];
+  //    beatAvg /= RATE_SIZE;
     }
   }
 
-}
-  if (irValue < 7000){       //If no finger is detected it inform the user and put the average BPM to 0 or it will be stored for the next measure
-     beatAvg=0;
+
+      //If no finger is detected it inform the user and put the average BPM to 0 or it will be stored for the next measure
+//     beatAvg=0;
      display.clearDisplay();
      display.setTextSize(1);                    
      display.setTextColor(WHITE);             
@@ -98,6 +104,6 @@ if(irValue > 7000){                                           //If a finger is d
      display.println("your finger ");  
      display.display();
      noTone(3);
-     }
+     
 
 }
