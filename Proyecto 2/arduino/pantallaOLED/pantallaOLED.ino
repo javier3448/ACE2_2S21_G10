@@ -41,6 +41,15 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //Start the OLED display
 
 //CALCULO DE CALORIAS
 
+//REFERENCIA
+//https://www.revistagq.com/cuidados/articulo/ejercicios-que-mas-calorias-queman
+
+int FreMin= 117;
+int FreMax= 146;
+double Calmin =9.5 //CALORIAS POR MINUTO arriba de 117 //promedio segun guia
+double tiempo=0;
+
+
 void calorias(){
   }
 
