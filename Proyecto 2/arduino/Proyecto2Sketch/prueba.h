@@ -36,7 +36,7 @@ namespace Prueba {
     };
 
     extern State stateActual;
-
+ 
     // @Mejora: esta posicionInicial es algo confusa con la de la repeticion actual
     // usar otro nombre
     extern Posicion posicionInicial;

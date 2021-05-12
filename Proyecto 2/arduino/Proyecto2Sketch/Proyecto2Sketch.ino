@@ -14,6 +14,20 @@
 #include "mylcd.h"
 #include <LiquidCrystal_I2C.h>
 
+// @Mejora?: tener una global donde estan todos los datos medidos 
+// {
+//     int8_t numeroDeRepActual, 
+//     float distanciaRepeticionActual, 
+//     long tiempoRepeticionActual, 
+//     float velocidadTiempoReal, 
+//     float temperatura, 
+//     float ritmoCardiaco, 
+//     float oxigeno, 
+//     float calories
+// }
+// y que las diferentes partes del codigo solo lean o escriban ahi
+// y poner un par de valores sentinela ahi para que se sepa el dato no es valido/no esta disponible
+
 void setup()
 {
     Serial.begin(9600);
@@ -52,6 +66,8 @@ void setup()
     // bluetooth mientras gpsSerial.available() y el gps.encode se repecupera
     // si se enviamos un ''paquete gps'' corroto
     MyGps::setup();
+
+    MyLcd::lcd.print("Welcome!");
 }
 
 void loop()

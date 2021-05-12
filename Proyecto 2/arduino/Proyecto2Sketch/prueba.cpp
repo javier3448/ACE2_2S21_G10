@@ -3,6 +3,7 @@
 
 #include "mygps.h"
 #include "mymax30102.h"
+#include "mylcd.h"
 
 Prueba::State Prueba::stateActual;
 Prueba::Posicion Prueba::posicionInicial;
@@ -112,7 +113,7 @@ namespace Buzzer{
 static SoftwareSerial btSerial(BT_RX, BT_TX);
 inline void sendPlayPackage(int8_t numeroDeRepActual, float distanciaRepeticionActual, 
     long tiempoRepeticionActual, float velocidadTiempoReal, float temperatura, 
-    float ritmoCardiaco, float oxigeno);
+    float ritmoCardiaco, float oxigeno, float calories);
 inline void sendStartPackage();
 inline void sendSuccessPackage();
 inline void sendFailPackage();
@@ -207,8 +208,8 @@ void Prueba::loop()
                 return;
             }
 
-            // cada segundo enviamos por bluetooth y revisamos que no falle la 
-            // prueba por ritmo cardiaco
+            // cada segundo enviamos por bluetooth, revisamos que no falle la 
+            // prueba por ritmo cardiaco e imprimimos los datos en la lcd
             long currTimeBtSent = millis();
             long deltaTimeBtSent = currTimeBtSent - lastTimeBtSent;
             if(deltaTimeBtSent >= 1000l)
@@ -237,7 +238,10 @@ void Prueba::loop()
                 float oxigeno = MyMax30102::oxigeno;
                 float ritmoCardiaco = MyMax30102::ritmoCardiaco;
 
-                sendPlayPackage(numeroDeRepActual, distanciaRepeticionActual, tiempoRepeticionActual, velocidadTiempoReal, temperatura, ritmoCardiaco, oxigeno);
+                // @TODO:
+                float calories = (float)tiempoRepeticionActual * 0.0000321f;
+
+                sendPlayPackage(numeroDeRepActual, distanciaRepeticionActual, tiempoRepeticionActual, velocidadTiempoReal, temperatura, ritmoCardiaco, oxigeno, calories);
 
                 // @TODO
                 // @Mejora: Sacar promedio de los ultimos 4, no que se pasen de
@@ -259,6 +263,9 @@ void Prueba::loop()
                         countRitmo = 0;
                     }
                 }
+
+                // enviar a lcd
+                MyLcd::printRealtimeMessage(numeroDeRepActual, distanciaRepeticionActual, tiempoRepeticionActual, velocidadTiempoReal, temperatura, ritmoCardiaco, oxigeno, calories);
             }
 
 
@@ -315,7 +322,7 @@ enum HeaderPaquete : char{
 
 inline void sendPlayPackage(int8_t numeroDeRepActual, float distanciaRepeticionActual, 
     long tiempoRepeticionActual, float velocidadTiempoReal, float temperatura, 
-    float ritmoCardiaco, float oxigeno)
+    float ritmoCardiaco, float oxigeno, float calories)
 {
     //@debug:
     Serial.print((char)HeaderPaquete::CORRIENDO_PRUEBA);
@@ -332,6 +339,8 @@ inline void sendPlayPackage(int8_t numeroDeRepActual, float distanciaRepeticionA
     Serial.print(ritmoCardiaco);
     Serial.print('|');
     Serial.print(oxigeno);
+    Serial.print('|');
+    Serial.print(calories);
     Serial.print(';');
     Serial.println();
 
@@ -349,8 +358,11 @@ inline void sendPlayPackage(int8_t numeroDeRepActual, float distanciaRepeticionA
     btSerial.print(ritmoCardiaco);
     btSerial.print('|');
     btSerial.print(oxigeno);
+    btSerial.print('|');
+    btSerial.print(calories);
     btSerial.print(';');
 
+    // @NOCHECKIN
     // @DEBUG:
     // @DEBUG:
     // @DEBUG:

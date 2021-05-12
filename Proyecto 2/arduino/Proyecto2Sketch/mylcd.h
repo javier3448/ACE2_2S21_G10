@@ -41,6 +41,13 @@ namespace MyLcd {
 
     void setup();
     void loop();
+
+    void print2Digits(int number);
+    void print3Digits(int number);
+
+    void printRealtimeMessage(int8_t numeroDeRepActual, float distanciaRepeticionActual, 
+    	long tiempoRepeticionActual, float velocidadTiempoReal, float temperatura, 
+    	float ritmoCardiaco, float oxigeno, float calories);
 }
 
 
