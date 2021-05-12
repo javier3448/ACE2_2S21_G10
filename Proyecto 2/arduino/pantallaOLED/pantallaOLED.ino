@@ -44,16 +44,39 @@ display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //Start the OLED display
 //REFERENCIA
 //https://www.revistagq.com/cuidados/articulo/ejercicios-que-mas-calorias-queman
 
-int FreMin= 117;
-int FreMax= 146;
-double Calmin =9.5 //CALORIAS POR MINUTO arriba de 117 //promedio segun guia
+int FreMin= 115;
+int FreMed= 146;
+int FreMax= 180;
 double tiempo=0;
+double ritmo=0;
+double totalCalorias=0;
+double SumaTotal=0;
+double segundoMili=1000; //Cambiar por el tiempo que van contando 
+double CalsegundoMin = 0.152;
+double CalsegundoMax = 0.183;
 
+
+
+//****************************************** *****************************//
+// Hacer la rutina cada segundo
+//Llevar el ritmo cardiaco a valores aproximados
 
 void calorias(){
+ if (ritmo > FreMin  && ritmo <FreMed){              //frecuencia cardiaca minima para quemar calorias
+  SumaTotal=+ SumaTotal + CalsegundoMin; 
+ }
+
+  else if (ritmo >= FreMed  && ritmo <FreMax){      // si es una frecuencia cardiaca mas alta quema mas calorias
+    SumaTotal=+ SumaTotal + CalsegundoMax;
   }
 
+  totalCalorias=SumaTotal; // calorias Quemadas en total 
+}
 
+
+
+
+//******************************************MAIN  LOOP *****************************//
 void loop() {
  
                                            //Also detecting a heartbeat
