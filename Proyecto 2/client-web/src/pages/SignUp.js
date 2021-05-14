@@ -2,6 +2,7 @@ import axios from "axios";
 import { urlServer } from "config";
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
+import './auth.css'
 
 const SignUp = () => {
   const history = useHistory();
@@ -38,7 +39,7 @@ const SignUp = () => {
     console.info(user);
     // Solicita al servidor registrar un nuevo usuario
     const endpoint = urlServer + "users";
-    /*axios.post(endpoint, user)
+    axios.post(endpoint, user)
       .then((response) => {
         if (response.status === 200) {
           alert("Usuario creado exitosamente");
@@ -46,138 +47,139 @@ const SignUp = () => {
         }
       }).catch((e) => {
         alert("No se pudo crear el usuario");
-      });*/
+      });
   };
   return (
-    <div className="col border-0 rounded p-4 shadow-lg bg-light">
-      <div className="row">
-        <div className="col-lg-12 align-center text-center">
-          <h3>Crear cuenta</h3>
+      <div className="border rounded p-4 shadow-lg bg-mesh">
+        <div className="row">
+          <div className="col-lg-12 align-center text-center">
+            <h3>Crear cuenta</h3>
           ¿Ya tienes cuenta?{" "}
-          <Link className="text-dark" to="/signin">
-            inicia sesión
+            <Link className="text-dark" to="/signin">
+              inicia sesión
           </Link>
-        </div>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="row">
-          <div className="col mb-2">
-            <label>Usuario</label>
-            <input
-              className="form-control"
-              id="username"
-              name="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required />
           </div>
         </div>
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
-            <label>Contraseña</label>
-            <input
-              className="form-control"
-              type="password"
-              value={password0}
-              onChange={(e) => setPassword0(e.target.value)}
-              required
-            />
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
-            <label>Confirme su contraseña</label>
-            <input
-              className="form-control"
-              type="password"
-              value={password1}
-              onChange={(e) => setPassword1(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
-            <label>Nombre</label>
-            <input
-              className="form-control"
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
-          </div>
-          <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
-            <label>Apellido</label>
-            <input
-              className="form-control"
-              type="text"
-              value={apellidos}
-              onChange={(e) => setApellido(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
-            <label>Edad</label>
-            <input
-              className="form-control"
-              type="number" min="1"
-              value={edad}
-              onChange={(e) => setEdad(e.target.value)}
-              required />
-          </div>
-          <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
-            <label>Sexo</label>
-            <div className="btn-group d-flex" role="group" aria-label="sex-group">
+        <form onSubmit={handleSubmit}>
+          <div className="row">
+            <div className="col mb-2">
+              <label>Usuario</label>
               <input
-                type="radio"
-                name="radio-sex-group"
-                className="btn-check"
-                id="btnXX"
-                onChange={() => setSexo('F')}
-                required
-                autoComplete="off" />
-              <label className="btn btn-outline-dark" htmlFor="btnXX">Mujer</label>
-              <input
-                type="radio"
-                name="radio-sex-group"
-                className="btn-check"
-                id="btnXY"
-                required
-                onChange={() => setSexo('M')}
-                autoComplete="off" />
-              <label className="btn btn-outline-dark" htmlFor="btnXY">Hombre</label>
+                className="form-control"
+                id="username"
+                name="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required />
             </div>
           </div>
-          <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
-            <label>Peso</label>
-            <input
-              className="form-control"
-              type="number" min="1" step="0.001"
-              value={peso}
-              onChange={(e) => setPeso(e.target.value)}
-              required />
+          <div className="row">
+            <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
+              <label>Contraseña</label>
+              <input
+                className="form-control"
+                type="password"
+                value={password0}
+                onChange={(e) => setPassword0(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
+              <label>Confirme su contraseña</label>
+              <input
+                className="form-control"
+                type="password"
+                value={password1}
+                onChange={(e) => setPassword1(e.target.value)}
+                required
+              />
+            </div>
           </div>
-          <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
-            <label>Altura</label>
-            <input
-              className="form-control"
-              type="number" min="1" step="0.001"
-              value={altura}
-              onChange={(e) => setAltura(e.target.value)}
-              required />
+          <div className="row">
+            <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
+              <label>Nombre</label>
+              <input
+                className="form-control"
+                type="text"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 mb-2">
+              <label>Apellido</label>
+              <input
+                className="form-control"
+                type="text"
+                value={apellidos}
+                onChange={(e) => setApellido(e.target.value)}
+                required
+              />
+            </div>
           </div>
-        </div>
-        <div className="d-flex justify-content-center mt-2">
-          <button type="submit" className="btn btn-outline-dark shadow">
-            Registrar usuario
+          <div className="row">
+            <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
+              <label>Edad</label>
+              <input
+                className="form-control"
+                type="number" min="1"
+                value={edad}
+                onChange={(e) => setEdad(e.target.value)}
+                required />
+            </div>
+            <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
+              <label>Sexo</label>
+              <div className="btn-group d-flex" role="group" aria-label="sex-group">
+                <input
+                  type="radio"
+                  name="radio-sex-group"
+                  className="btn-check"
+                  id="btnXX"
+                  onChange={() => setSexo('F')}
+                  required
+                  autoComplete="off" />
+                <label className="btn btn-outline-dark" htmlFor="btnXX">Mujer</label>
+                <input
+                  type="radio"
+                  name="radio-sex-group"
+                  className="btn-check"
+                  id="btnXY"
+                  required
+                  onChange={() => setSexo('M')}
+                  autoComplete="off" />
+                <label className="btn btn-outline-dark" htmlFor="btnXY">Hombre</label>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
+              <label>Peso</label>
+              <input
+                className="form-control"
+                type="number" min="1" step="0.001"
+                value={peso}
+                onChange={(e) => setPeso(e.target.value)}
+                required />
+            </div>
+            <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
+              <label>Altura</label>
+              <input
+                className="form-control"
+                type="number" min="1" step="0.001"
+                value={altura}
+                onChange={(e) => setAltura(e.target.value)}
+                required />
+            </div>
+          </div>
+          <div className="d-flex justify-content-center mt-2">
+            <button type="submit" className="btn btn-outline-dark shadow">
+              Registrar usuario
           </button>
-        </div>
-      </form>
-    </div>
+          </div>
+        </form>
+      </div>
   );
 };
 
 export default SignUp;
+
 

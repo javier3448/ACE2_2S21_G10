@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Auth from 'views/Auth';
 import SignUp from 'pages/SignUp';
+import SignIn from 'pages/singin/SignIn';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Switch>
           <Route exact path='/signin'>
             <Auth>
-              <SignUp />
+              <SignIn />
             </Auth>
           </Route>
           <Route exact path='/signup'>
@@ -60,3 +61,4 @@ const PrivateRoute = ({ children, rest }) => {
 }
 
 export default App;
+

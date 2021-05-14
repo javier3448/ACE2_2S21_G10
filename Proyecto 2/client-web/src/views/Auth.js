@@ -11,7 +11,7 @@ const Auth = ({ children }) => {
   }
   return (
     <div className="grad">
-      <div className="container vh-100">
+      <div className="container vh-100 overflow-auto">
         <div className="row align-items-center h-100">
           {children}
         </div>
