@@ -1,9 +1,10 @@
 import React from 'react';
 import io from 'assets/aerobic-exercise1.jpg'
+import './carousel.css'
 
-const About = () => {
+const Carousel = () => {
   return (
-    <div id="carouselExampleCaptions" class="carousel carousel-dark slide carousel-fade" data-bs-ride="carousel">
+    <div id="carouselExampleCaptions" class="carousel carousel-dark slide" data-bs-ride="carousel">
       <div class="carousel-indicators">
         <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
         <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -12,8 +13,12 @@ const About = () => {
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img src={io} 
-            class="d-block w-100" alt="..." />
-          <div class="carousel-caption d-none d-md-block">
+            class="d-block rounded-start" 
+            alt="..." 
+            width={"100%"}
+            
+            />
+          <div class="carousel-caption d-none d-sm-block">
             <h5>Visualiza los avances de tu entrenamiento</h5>
             <p>
               Con la tecnología de WristSmart podrás conocer datos sobre tu ritmo
@@ -24,19 +29,23 @@ const About = () => {
         </div>
         <div class="carousel-item">
           <img src={io} 
-            class="d-block w-100" alt="..." />
-          <div class="carousel-caption d-none d-md-block">
+            class="d-block rounded-start" 
+            alt="..." 
+            width={"100%"}/>
+          <div class="carousel-caption d-none d-sm-block">
             <h5>¿Quieres saber qué tanto has avanzado?</h5>
             <p>
-              Todos los datos de tus entrenamientos se guardan para que
-              desde tu computadora puedas comparar tus datos actuales con los anteriores
+              Todos los datos de los entrenamientos se guardan.
+              Desde tu computadora puedes comparar tus datos actuales con los anteriores
             </p>
           </div>
         </div>
         <div class="carousel-item">
           <img src={io} 
-            class="d-block w-100" alt="..." />
-          <div class="carousel-caption d-none d-md-block">
+            class="d-block rounded-start" 
+            alt="..." 
+            width={"100%"}/>
+          <div class="carousel-caption d-none d-sm-block">
             <h5>Solo debes ver tu muñeca</h5>
             <p>
               No es necesario que monitorees tu entrenamiento desde una computadora,
@@ -57,4 +66,4 @@ const About = () => {
   );
 }
 
-export default About;
+export default Carousel;
