@@ -1,11 +1,20 @@
+import Alert from 'components/alerts/Alert';
 import { useAuth } from 'hooks/useAuth';
 import React, { useState } from 'react';
 import { Link, Redirect } from "react-router-dom";
 
 const SignIn = () => {
   const auth = useAuth();
+  /// Hooks para guardar las credenciales
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+  /// Hook para mostrar un alerta
+  const [alert, setAlert] = useState();
+  /// Esta función se pasa al componente
+  /// alerta para "esconder" la alerta
+  const handleClick = () => {
+    setAlert();
+  }
   /// Maneja la acción de onSubmit
   /// para el formulario de inicio de sesión
   const handleSubmit = async (e) => {
@@ -15,7 +24,14 @@ const SignIn = () => {
       password
     });
     if (!user) {
-      alert('no se pudo iniciar sesión. Verifique sus credenciales')
+      setAlert(
+        <Alert 
+          title={"No se pudo iniciar sesión"} 
+          variant={"danger"}
+          message={"Verifique sus credenciales"}
+          onStateChange={handleClick}
+        />
+      )
     } else {
       <Redirect to='/dashboard' />
     }
@@ -31,10 +47,10 @@ const SignIn = () => {
             </Link>
         </div>
       </div>
+      {alert}
       <form onSubmit={handleSubmit} >
         <div className="row">
-          <div className="col">
-            <label htmlFor="username"></label>
+          <div className="col my-2">
             <input
               onChange={(e) => setUsername(e.target.value)}
               type="text"
@@ -48,8 +64,7 @@ const SignIn = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col">
-            <label htmlFor="password"></label>
+          <div className="col my-2">
             <input
               onChange={(e) => setPassword(e.target.value)}
               type="password"

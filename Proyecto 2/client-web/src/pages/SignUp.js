@@ -44,7 +44,7 @@ const SignUp = () => {
           alert("Usuario creado exitosamente");
           history.push("/signin");
         }
-      }).catch((e) => {
+      }).catch(() => {
         alert("No se pudo crear el usuario");
       });
   };
