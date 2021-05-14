@@ -6,6 +6,8 @@ import {
   Route,
   Switch
 } from 'react-router-dom';
+import Auth from 'views/Auth';
+import SignUp from 'pages/SignUp';
 
 function App() {
   return (
@@ -13,8 +15,14 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/signin'>
+            <Auth>
+              <SignUp />
+            </Auth>
           </Route>
           <Route exact path='/signup'>
+            <Auth>
+              <SignUp />
+            </Auth>
           </Route>
           <PrivateRoute exact path='/profile'>
           </PrivateRoute>
