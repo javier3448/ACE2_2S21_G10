@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import Auth from 'views/Auth';
 import SignUp from 'pages/SignUp';
-import SignIn from 'pages/singin/SignIn';
+import SignIn from 'pages/SignIn';
 
 function App() {
   return (
