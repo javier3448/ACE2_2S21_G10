@@ -1,14 +1,24 @@
 import { useAuth } from 'hooks/useAuth';
-import React from 'react';
-import { useState } from 'react';
-import { Link, useHistory } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, Redirect } from "react-router-dom";
 
 const SignIn = () => {
   const auth = useAuth();
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+  /// Maneja la acción de onSubmit
+  /// para el formulario de inicio de sesión
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const user = await auth.signIn({
+      username,
+      password
+    });
+    if (!user) {
+      alert('no se pudo iniciar sesión. Verifique sus credenciales')
+    } else {
+      <Redirect to='/dashboard' />
+    }
   }
   return (
     <>
@@ -28,6 +38,7 @@ const SignIn = () => {
             <input
               onChange={(e) => setUsername(e.target.value)}
               type="text"
+              value={username}
               className="form-control shadow-sm"
               id="username"
               name="username"
@@ -42,6 +53,7 @@ const SignIn = () => {
             <input
               onChange={(e) => setPassword(e.target.value)}
               type="password"
+              value={password}
               className="form-control shadow-sm"
               id="password"
               name="password"

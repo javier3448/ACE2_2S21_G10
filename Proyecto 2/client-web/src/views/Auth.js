@@ -1,8 +1,8 @@
+import Carousel from 'components/carousel/Carousel';
+import { useAuth } from "hooks/useAuth";
 import React from 'react';
 import { Redirect, useLocation } from "react-router-dom";
-import { useAuth } from "hooks/useAuth";
-import './auth.css'
-import Carousel from 'components/carousel/Carousel';
+import './auth.css';
 
 const Auth = ({ children }) => {
   const auth = useAuth();
