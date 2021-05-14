@@ -1,0 +1,1 @@
+export const urlServer = 'https://anvw15k3m7.execute-api.us-east-2.amazonaws.com/ace2-dev/';
