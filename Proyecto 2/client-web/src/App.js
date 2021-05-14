@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProvideAuth, useAuth } from './hooks/useAuth';
+import { ProvideAuth, useAuth } from 'hooks/useAuth';
 import {
   BrowserRouter as Router,
   Redirect,
