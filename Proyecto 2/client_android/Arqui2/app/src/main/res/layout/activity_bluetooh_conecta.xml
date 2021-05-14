@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_marginTop="48dp"
-                android:text="PROYECTO1 ARQUI2"
+                android:text="PROYECTO2 ARQUI2"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_width="wrap_content"
