@@ -22,10 +22,12 @@ export const useProvideAuth = () => {
     const { username, password } = credentials;
     const endpoint = urlServer + `login/${username}/${password}`;
     axios.get(endpoint).then((response) => {
-      if (response.data) {
+      if (response.status===200 && response.data[0] !== undefined) {
         localStorage.setItem("userInfo", JSON.stringify(response.data[0]));
         setUser(true);
         return true;
+      } else {
+        return false;
       }
     }).catch(() => {
       return false
