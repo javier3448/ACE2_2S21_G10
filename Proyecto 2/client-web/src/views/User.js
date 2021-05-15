@@ -1,11 +1,18 @@
-import React from 'react';
-import Dashboard from 'pages/Dashboard';
-import Profile from 'pages/Profile';
 import NavBar from 'components/navbar/NavBar';
+import React from 'react';
 
-const User = () => {
+const User = ({ children }) => {
   return (
-    <NavBar />
+    <>
+      <NavBar />
+      <div className="vh-100">
+        <div className="h-100">
+          <div role="main" className="container">
+            {children}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

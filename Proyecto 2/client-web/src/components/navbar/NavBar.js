@@ -7,7 +7,7 @@ const NavBar = () => {
   const auth = useAuth();
 
   return (
-    <nav className="navbar border-bottom fixed-top navbar-expand-lg navbar-dark">
+    <nav className="navbar border-bottom navbar-expand-lg navbar-dark">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
           WristSmart

@@ -10,6 +10,8 @@ import Auth from 'views/Auth';
 import SignUp from 'pages/SignUp';
 import SignIn from 'pages/SignIn';
 import User from 'views/User';
+import Profile from 'pages/Profile';
+import Dashboard from 'pages/Dashboard';
 
 function App() {
   return (
@@ -31,12 +33,12 @@ function App() {
           </Route>
           <PrivateRoute exact path='/profile'>
             <User>
-
-            </User>
+              <Profile />
+            </User>           
           </PrivateRoute>
           <PrivateRoute exact path='/dashboard'>
             <User>
-              
+              <Dashboard />
             </User>
           </PrivateRoute>
           <Route>
