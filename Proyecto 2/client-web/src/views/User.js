@@ -7,7 +7,7 @@ const User = ({ children }) => {
       <NavBar />
       <div className="vh-100">
         <div className="h-100">
-          <div role="main" className="container">
+          <div role="main" className="container mt-2">
             {children}
           </div>
         </div>

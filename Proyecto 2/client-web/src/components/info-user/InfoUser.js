@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 const InfoUser = () => {
   const [user, setUser] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState('Cargando...');
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem('userInfo'));
     setUser(userInfo.nombre + " " + userInfo.apellidos);
@@ -16,8 +16,8 @@ const InfoUser = () => {
   }, 1000);
 
   return (
-    <div>
-      <h4 className="text-center">{user}</h4>
+    <div className="text-center">
+      <h4>{user}</h4>
       <span className="badge rounded-pill bg-dark">
         {date}
       </span>
