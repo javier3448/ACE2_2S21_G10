@@ -1,6 +1,6 @@
 import React from "react";
 import { useTable, usePagination } from "react-table";
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 /**
  *
  * @param {{
@@ -44,7 +44,9 @@ const StatTable = ({ columns, data }) => {
       {page.map((row, i) => {
         prepareRow(row);
         return (
-          <Link 
+          <NavLink 
+            activeClassName="list-group-item-dark"
+            id={row.values.lap}
             to={`/stats/${row.values.lap}`}
             key={i}
             className="list-group-item list-group-item-action text-dark">
@@ -56,7 +58,7 @@ const StatTable = ({ columns, data }) => {
                 </div>
               })}
             </div>
-          </Link>
+          </NavLink>
         )
       })}
     </div>

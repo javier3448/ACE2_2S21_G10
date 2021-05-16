@@ -15,13 +15,13 @@ const Alert = ({variant, title, message, onStateChange}) => {
       icon = 'exclamation-triangle';
       break;
     case 'info':
-      icon = 'info';
+      icon = 'info-circle';
       break;
     case 'success':
-      icon = 'check';
+      icon = 'check-circle';
       break;
     default:
-      icon = 'info'
+      icon = 'info-circle'
       break;
   }
   /// Al hacer click ejecuta la función onStateChange
@@ -31,7 +31,8 @@ const Alert = ({variant, title, message, onStateChange}) => {
   return (
     <div className={`alert alert-${variant} alert-dismissible fade show my-1`} role="alert">
       <i className={`fa fa-${icon}`}></i>{" "}
-      <strong>{title}</strong>{" "+message}
+      <strong>{title}</strong>&nbsp;
+      {message}
       <button 
         type="button"
         className="btn-close"
