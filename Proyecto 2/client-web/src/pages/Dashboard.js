@@ -1,49 +1,116 @@
-//import axios from 'axios';
-
-//import { urlServer } from 'config';
-//import { useInterval } from 'hooks/useInterval';
-import React from 'react';
+import axios from 'axios';
+import Alert from 'components/alerts/Alert';
+import HeartBeat from 'components/cards/stats/HeartBeat';
+import Oxygen from 'components/cards/stats/Oxygen';
+import Temperature from 'components/cards/stats/Temperature';
+import Loader from 'components/loader/Loader';
+import StatTable from 'components/tables/stats/StatTable';
+import { urlServer } from 'config';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-//import { getUser } from 'services/user';
+import { getUser } from 'services/user';
+
 
 const Dashboard = () => {
+  const [laps, setLaps] = useState(0);
+  const [calories, setCalories] = useState(0);
+  const [data, setData] = useState([]);
+  /// Hook para mostrar un alerta
+  const [alert, setAlert] = useState(
+    <Alert
+      onStateChange={() => { setAlert() }}
+      title="¿Cómo funciona?"
+      variant="info"
+      message={<ul className="m-0 fs-6">
+        <li>Selecciona una fila de la tabla y visualiza las estadísticas para ese entrenamiento en las tarjetas de <strong>Ritmo cardíaco, Temperatura y Oxígeno</strong></li>
+        <li>Limpia la selección presionando <strong>Deshacer selección</strong></li>
+        <li>Visualiza las estadísticas en tiempo real presionando <strong>Entrenamiento actual</strong></li>
+      </ul>}
+    />
+  );
+
+  useEffect(() => {
+    const userInfo = getUser();
+    const endpoint = urlServer + `obtener-calorias/${userInfo.IdUser}`;
+    axios.get(endpoint)
+      .then((response) => {
+        if (response.data.length) {
+          const data = response.data;
+          setCalories(data.reduce((n0, n1) => {
+            return n0 + n1.calperminute;
+          }, 0));
+          setLaps(data.length);
+          const dataMap = data.map((value) => {
+            const arrCal = value.arrayCaloriasPorSegundo;
+            return {
+              lap: arrCal[0].repeticion,
+              totalCal: value.calperminute,
+            };
+          });
+          setData(dataMap);
+        }
+      })
+      .catch((e) => { console.error(e) });
+  }, []);
   return (
     <>
       <div className="row gap-0">
-        <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
-          <div className="card rounded">
+        <div className="col-lg-4 col-md-12 col-sm-12 col-xs-12 mb-2">
+          <div className="card rounded mb-2">
             <div className="card-body">
-              <div className="card-title h2">
-                Entrenamientos
-              </div>
+              {alert}
               <div className="d-grid gap-2">
+                <Link to="/dashboard" className="btn btn-outline-dark">
+                  <i className="fa fa-undo"></i>{' '}
+                    Deshacer selección
+                  </Link>
                 <Link to='/realtime' className="btn btn-outline-dark">
-                  Actual{' '}
-                  <i className="fa fa-arrow-alt-circle-right"></i>
-                </Link>
-                <Link to='/stats' className="btn btn-outline-dark">
-                  Anteriores{' '}
+                  Entrenamiento actual{' '}
                   <i className="fa fa-arrow-alt-circle-right"></i>
                 </Link>
               </div>
             </div>
           </div>
-        </div>
-        <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
-          <div className="card rounded bg-primary">
+          <div className="card rounded bg-lap mb-2">
             <div className="card-body text-light">
-              <div className="card-title h2">24</div>
-              Entrenamientos
-            </div>
+              <div className="card-title h3">
+                {laps + ' '}
+                <i className="fa fa-running"></i>
+              </div>
+                  Entrenamientos
+                </div>
+          </div>
+          <div className="card rounded mb-2 bg-calories">
+            <div className="card-body text-light">
+              <div className="card-title h3">
+                {calories + ' '}
+                <i className="fa fa-fire-alt"></i>
+              </div>
+                  Calorías quemadas
+                </div>
           </div>
         </div>
-        <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
-          <div className="card rounded bg-secondary">
-            <div className="card-body text-light">
-              <div className="card-title h2">1953</div>
-              Calorías quemadas
-            </div>
-          </div>
+        <div className="col-lg-5 col-md-6 col-sm-12 col-xs-12 mb-2">
+          {data.length ?
+            <StatTable
+              data={data}
+              columns={
+                [
+                  {
+                    Header: 'Entrenamiento No.',
+                    accessor: 'lap'
+                  },
+                  {
+                    Header: 'Calorías quemadas',
+                    accessor: 'totalCal'
+                  }
+                ]
+              } /> : <Loader />}
+        </div>
+        <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 ">
+          <Oxygen />
+          <HeartBeat />
+          <Temperature />
         </div>
       </div>
     </>
