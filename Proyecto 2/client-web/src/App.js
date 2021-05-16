@@ -53,6 +53,11 @@ function App() {
               <Stats />
             </User>
           </PrivateRoute>
+          <PrivateRoute exact path='/stats/:lap'>
+            <User>
+              <Stats />
+            </User>
+          </PrivateRoute>
           <Route>
           </Route>
         </Switch>

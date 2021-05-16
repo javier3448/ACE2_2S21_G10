@@ -1,12 +1,21 @@
-//import axios from 'axios';
-
-//import { urlServer } from 'config';
-//import { useInterval } from 'hooks/useInterval';
-import React from 'react';
+import axios from 'axios';
+import { urlServer } from 'config';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-//import { getUser } from 'services/user';
+import { getUser } from 'services/user';
 
 const Dashboard = () => {
+  useEffect(()=> {
+    const userInfo = getUser();
+    const endpoint = urlServer + `obtener-calorias/${userInfo.IdUser}`;
+    axios.get(endpoint)
+      .then((response) => {
+        if (response.data) {
+
+        }
+      })
+      .catch((e) => {console.error(e)});
+  }, []);
   return (
     <>
       <div className="row gap-0">
