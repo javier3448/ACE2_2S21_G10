@@ -16,7 +16,6 @@ const Stats = () => {
     axios.get(urlServer + `obtener-calorias/${userInfo.IdUser}`)
       .then((response) => {
         if (response.data.length) {
-          console.info(response.data);
           const dataMap = response.data.map((value) => {
             const arrCal = value.arrayCaloriasPorSegundo;
             return {

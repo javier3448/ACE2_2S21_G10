@@ -35,7 +35,7 @@ const StatTable = ({ columns, data }) => {
       <div className="list-group-item bg-dark text-light">
         <div className="row">
           {headerGroups[0].headers.map((column,i) => {
-            return <div className="col textcemter" key={i}>
+            return <div className="col text-center" key={i}>
               {column.render('Header')}
             </div>
           })}
