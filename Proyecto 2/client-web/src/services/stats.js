@@ -16,7 +16,8 @@ const getOxygen = async (lap = -1) => {
     const response = await axios.get(urlServer + `proyecto2/obtener-oxigenov2/${IdUser}`);
     if (response.data.length) {
       if (lap > -1) {
-        const lapSet = response.data.find(e => e.repeticion == lap);
+        const lapNumber = Number(lap);
+        const lapSet = response.data.find(e => e.repeticion === lapNumber);
         if (lapSet) {
           return {
             min: lapSet.minOxigeno,
@@ -66,7 +67,8 @@ const getTemperature = async (lap = -1) => {
     const response = await axios.get(urlServer + `proyecto2/obtener-temperaturav2/${IdUser}`);
     if (response.data.length) {
       if (lap > -1) {
-        const lapSet = response.data.find(e => e.repeticion == lap);
+        const lapNumber = Number(lap);
+        const lapSet = response.data.find(e => e.repeticion === lapNumber);
         if (lapSet) {
           return {
             min: lapSet.minTemperatura,
@@ -116,7 +118,8 @@ const getHeart = async (lap = -1) => {
     const response = await axios.get(urlServer + `proyecto2/obtener-ritmov2/${IdUser}`);
     if (response.data.length) {
       if (lap > -1) {
-        const lapSet = response.data.find(e => e.repeticion == lap);
+        const lapNumber = Number(lap);
+        const lapSet = response.data.find(e => e.repeticion === lapNumber);
         if (lapSet) {
           return {
             min: lapSet.minRitmo,
