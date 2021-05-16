@@ -12,6 +12,8 @@ import SignIn from 'pages/SignIn';
 import User from 'views/User';
 import Profile from 'pages/Profile';
 import Dashboard from 'pages/Dashboard';
+import RealTime from 'pages/RealTime';
+import Stats from 'pages/Stats';
 
 function App() {
   return (
@@ -39,6 +41,16 @@ function App() {
           <PrivateRoute exact path='/dashboard'>
             <User>
               <Dashboard />
+            </User>
+          </PrivateRoute>
+          <PrivateRoute exact path='/realtime'>
+            <User>
+              <RealTime />
+            </User>
+          </PrivateRoute>
+          <PrivateRoute exact path='/stats'>
+            <User>
+              <Stats />
             </User>
           </PrivateRoute>
           <Route>

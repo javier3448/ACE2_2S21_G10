@@ -1,4 +1,3 @@
-import InfoUser from 'components/info-user/InfoUser';
 import React, { useEffect, useState } from 'react';
 
 const Profile = () => {
@@ -22,50 +21,42 @@ const Profile = () => {
   }, []);
 
   return (
-    <>
-      <div className="d-flex justify-content-between align-items-center">
-        <h1>
-          Perfil
-        </h1>
-        <InfoUser />
-      </div>
-      <div className="card mt-2">
-        <div className="card-body">
-          <div className="row">
-            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
-              <label>Usuario</label>
-              <input className="form-control" readOnly value={username} />
-            </div>
-            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
-              <label>Nombre</label>
-              <input className="form-control" readOnly value={nombre} />
-            </div>
-            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
-              <label>Apellidos</label>
-              <input className="form-control" readOnly value={apellido} />
-            </div>
+    <div className="card mt-2">
+      <div className="card-body">
+        <div className="row">
+          <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <label>Usuario</label>
+            <input className="form-control" readOnly value={username} />
           </div>
-          <div className="row">
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
-              <label>Edad</label>
-              <input className="form-control" readOnly value={edad} />
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
-              <label>Sexo</label>
-              <input className="form-control" readOnly value={sexo} />
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
-              <label>Altura</label>
-              <input className="form-control" readOnly value={altura + ' m.'} />
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
-              <label>Peso</label>
-              <input className="form-control" readOnly value={peso +' kg.'} />
-            </div>
+          <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <label>Nombre</label>
+            <input className="form-control" readOnly value={nombre} />
+          </div>
+          <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12 mb-2">
+            <label>Apellidos</label>
+            <input className="form-control" readOnly value={apellido} />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
+            <label>Edad</label>
+            <input className="form-control" readOnly value={edad} />
+          </div>
+          <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
+            <label>Sexo</label>
+            <input className="form-control" readOnly value={sexo} />
+          </div>
+          <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
+            <label>Altura</label>
+            <input className="form-control" readOnly value={altura + ' m.'} />
+          </div>
+          <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
+            <label>Peso</label>
+            <input className="form-control" readOnly value={peso + ' kg.'} />
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -1,35 +1,49 @@
-import InfoUser from 'components/info-user/InfoUser';
-import Chart from 'components/chart/Chart';
-import React, { useEffect, useState } from 'react';
+//import axios from 'axios';
+
+//import { urlServer } from 'config';
+//import { useInterval } from 'hooks/useInterval';
+import React from 'react';
+import { Link } from 'react-router-dom';
+//import { getUser } from 'services/user';
 
 const Dashboard = () => {
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center">
-        <h1>
-          WristSmart
-        </h1>
-        <InfoUser />
-      </div>
-      <div className="row">
-        <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 my-2">
-          <div className="list-group border border-dark">
-            <div className="list-group-item bg-dark text-light">
-              <div className="row">
-                <div className="col-3 text-begin">Entrenamientos</div>
-                <div className="col-9 text-end">Marca de tiempo</div>
+      <div className="row gap-0">
+        <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12 mb-2">
+          <div className="card rounded">
+            <div className="card-body">
+              <div className="card-title h2">
+                Entrenamientos
               </div>
-            </div>
-            <div className="list-group-item list-group-item-action text-dark">
-              <div className="row">
-                <div className="col-3 text-begin">1</div>
-                <div className="col-9 text-end">14/05/2021 19:38</div>
+              <div className="d-grid gap-2">
+                <Link to='/realtime' className="btn btn-outline-dark">
+                  Actual{' '}
+                  <i className="fa fa-arrow-alt-circle-right"></i>
+                </Link>
+                <Link to='/stats' className="btn btn-outline-dark">
+                  Anteriores{' '}
+                  <i className="fa fa-arrow-alt-circle-right"></i>
+                </Link>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-lg-9 col-md-6 col-sm-12 col-xs-12 my-2">
-          <Chart />
+        <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
+          <div className="card rounded bg-primary">
+            <div className="card-body text-light">
+              <div className="card-title h2">24</div>
+              Entrenamientos
+            </div>
+          </div>
+        </div>
+        <div className="col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
+          <div className="card rounded bg-secondary">
+            <div className="card-body text-light">
+              <div className="card-title h2">1953</div>
+              Calorías quemadas
+            </div>
+          </div>
         </div>
       </div>
     </>
