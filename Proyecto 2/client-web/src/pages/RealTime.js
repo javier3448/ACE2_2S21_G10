@@ -4,6 +4,7 @@ import { useInterval } from 'hooks/useInterval';
 import React, { useState } from 'react';
 import { getUser } from 'services/user';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import Loader from 'components/loader/Loader';
 
 const RealTime = () => {
   /// Data set para gráfica
@@ -77,7 +78,7 @@ const RealTime = () => {
         </div>
       </div>
       <div className="col-lg-10 col-md-12 col-sm-12 col-xs-12">
-        <div className="card border border-dark">
+        {data.length ? <div className="card border border-dark">
           <div className="card-body">
             <div className="card-title text-center">
               <h3>{context}</h3>
@@ -104,7 +105,7 @@ const RealTime = () => {
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </div> : <Loader />}
       </div>
     </div>
   )
