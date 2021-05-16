@@ -47,7 +47,7 @@ const StatTable = ({ columns, data }) => {
           <NavLink 
             activeClassName="list-group-item-dark"
             id={row.values.lap}
-            to={`/stats/${row.values.lap}`}
+            to={`/dashboard/${row.values.lap}`}
             key={i}
             className="list-group-item list-group-item-action text-dark">
             <div 
