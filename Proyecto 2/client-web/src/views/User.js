@@ -6,10 +6,10 @@ const User = ({ children }) => {
   return (
     <>
       <NavBar />
-      <div className="vh-100">
+      <div className="vh-100 bg-mesh">
         <div className="h-100">
           <div role="main" className="container">
-            <div className="d-flex justify-content-between align-items-center my-2">
+            <div className="d-flex justify-content-between align-items-center py-2">
               <h1>WristSmart</h1>
               <InfoUser />
             </div>

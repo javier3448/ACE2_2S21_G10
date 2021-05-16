@@ -56,7 +56,7 @@ const RealTime = () => {
     <div className="row mb-2">
       <div className="col-lg-2 col-md-12 col-sm-12 col-xs-12 mb-2">
         <div className="card mb-2">
-          <div className="card-body rounded text-light bg-primary">
+          <div className="card-body rounded text-light bg-lap">
             <div className="card-title h2">
               <i className="fa fa-running"></i>
               {" " + lap + (lap === 1 ? 'er' : 'º')}
@@ -65,13 +65,13 @@ const RealTime = () => {
           </div>
         </div>
         <div className="card mb-2 ">
-          <div className="card-body rounded text-light" style={{ backgroundColor: 'orange' }}>
+          <div className="card-body rounded text-light bg-calories">
             <div className="card-title h2"><i className="fa fa-fire-alt"></i>{' ' + calPerMinute}</div>
             Calorías quemadas
           </div>
         </div>
         <div className="card mb-2">
-          <div className="card-body rounded text-light bg-danger">
+          <div className="card-body rounded text-light bg-heart">
             <div className="card-title h2"><i className="fa fa-heartbeat"></i>{' ' + ritmo}</div>
             Ritmo cardíaco
           </div>

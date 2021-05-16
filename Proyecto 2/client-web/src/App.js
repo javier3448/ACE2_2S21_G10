@@ -13,7 +13,6 @@ import User from 'views/User';
 import Profile from 'pages/Profile';
 import Dashboard from 'pages/Dashboard';
 import RealTime from 'pages/RealTime';
-import Stats from 'pages/Stats';
 
 function App() {
   return (
@@ -48,14 +47,9 @@ function App() {
               <RealTime />
             </User>
           </PrivateRoute>
-          <PrivateRoute exact path='/stats'>
+          <PrivateRoute exact path='/dashboard/:lap'>
             <User>
-              <Stats />
-            </User>
-          </PrivateRoute>
-          <PrivateRoute exact path='/stats/:lap'>
-            <User>
-              <Stats />
+              <Dashboard />
             </User>
           </PrivateRoute>
           <Route>

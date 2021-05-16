@@ -45,3 +45,17 @@
     rgba(50, 163, 133, 1) 100%
   );
 }
+
+.bg-calories {
+  background: rgb(218,212,32);
+  background: radial-gradient(
+    circle, 
+    rgba(218,212,32,1) 0%, 
+    rgba(218,165,32,1) 50%, 
+    rgba(218,119,32,1) 100%);
+}
+
+.bg-lap {
+  background: rgb(128,0,64);
+  background: radial-gradient(circle, rgba(128,0,64,1) 0%, rgba(128,0,128,1) 50%, rgba(64,0,128,1) 100%);
+}
