@@ -9,6 +9,11 @@ import {
 import Auth from 'views/Auth';
 import SignUp from 'pages/SignUp';
 import SignIn from 'pages/SignIn';
+import User from 'views/User';
+import Profile from 'pages/Profile';
+import Dashboard from 'pages/Dashboard';
+import RealTime from 'pages/RealTime';
+import Stats from 'pages/Stats';
 
 function App() {
   return (
@@ -25,9 +30,28 @@ function App() {
               <SignUp />
             </Auth>
           </Route>
+          <Route exact path='/'>
+            <Redirect to='/dashboard'/>
+          </Route>
           <PrivateRoute exact path='/profile'>
+            <User>
+              <Profile />
+            </User>           
           </PrivateRoute>
           <PrivateRoute exact path='/dashboard'>
+            <User>
+              <Dashboard />
+            </User>
+          </PrivateRoute>
+          <PrivateRoute exact path='/realtime'>
+            <User>
+              <RealTime />
+            </User>
+          </PrivateRoute>
+          <PrivateRoute exact path='/stats'>
+            <User>
+              <Stats />
+            </User>
           </PrivateRoute>
           <Route>
           </Route>
@@ -45,7 +69,7 @@ function App() {
  * @returns 
  */
 const PrivateRoute = ({ children, rest }) => {
-  let auth = useAuth
+  let auth = useAuth();
   return (
     <Route
       {...rest}
