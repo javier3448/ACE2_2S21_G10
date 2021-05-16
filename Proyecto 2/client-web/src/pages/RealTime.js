@@ -16,6 +16,9 @@ const RealTime = () => {
   const [ritmo, setRitmo] = useState(0);
   /// Tiempo en minutos y segundos
   const [milis, setMilis] = useState('0 min 00 secs');
+  /// Determina si la gráfica es tiempo real o 
+  /// solo muestra el último entrenamiento
+  const [context, setContext] = useState('Último entrenamiento');
   useInterval(() => {
     const userInfo = getUser();
     const endpoint = urlServer + `obtener-calorias/${userInfo.IdUser}`;
@@ -24,6 +27,14 @@ const RealTime = () => {
         if (response.data.length) {
           /// Recupera la data del entrenamiento más reciente
           const lastSet = response.data[0];
+          /// Determina el contexto
+          if (data.length) {
+            if (lastSet.length > data.length) {
+              setContext('Entrenamiento actual');
+            } else {
+              setContext('Último entrenamiento');
+            }
+          }
           /// Recupera el item más reciente, desde lastSet
           const dataSet = lastSet.arrayCaloriasPorSegundo;
           const lastItem = dataSet[dataSet.length - 1];
@@ -44,28 +55,34 @@ const RealTime = () => {
     <div className="row mb-2">
       <div className="col-lg-2 col-md-12 col-sm-12 col-xs-12 mb-2">
         <div className="card mb-2">
-          <div className="card-body text-light bg-primary">
-            <div className="card-title h2"><i className="fa fa-running"></i>{" " + lap}</div>
+          <div className="card-body rounded text-light bg-primary">
+            <div className="card-title h2">
+              <i className="fa fa-running"></i>
+              {" " + lap + (lap === 1 ? 'er' : 'º')}
+            </div>
             Entrenamiento
           </div>
         </div>
-        <div className="card mb-2">
-          <div className="card-body text-light" style={{ backgroundColor: 'orange' }}>
+        <div className="card mb-2 ">
+          <div className="card-body rounded text-light" style={{ backgroundColor: 'orange' }}>
             <div className="card-title h2"><i className="fa fa-fire-alt"></i>{' ' + calPerMinute}</div>
             Calorías quemadas
           </div>
         </div>
         <div className="card mb-2">
-          <div className="card-body text-light bg-danger">
+          <div className="card-body rounded text-light bg-danger">
             <div className="card-title h2"><i className="fa fa-heartbeat"></i>{' ' + ritmo}</div>
             Ritmo cardíaco
           </div>
         </div>
       </div>
       <div className="col-lg-10 col-md-12 col-sm-12 col-xs-12">
-        <div className="card border">
+        <div className="card border border-dark">
           <div className="card-body">
-            <div className="card-title text-center h5">{milis}</div>
+            <div className="card-title text-center">
+              <h3>{context}</h3>
+              <span className="badge bg-dark">{milis}</span>
+            </div>
             <ResponsiveContainer id="graphic" width="100%" height={450}>
               <LineChart
                 width={1000}
