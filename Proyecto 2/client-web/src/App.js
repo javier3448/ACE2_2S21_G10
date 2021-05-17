@@ -13,6 +13,7 @@ import User from 'views/User';
 import Profile from 'pages/Profile';
 import Dashboard from 'pages/Dashboard';
 import RealTime from 'pages/RealTime';
+import Advice from 'pages/Advice';
 
 function App() {
   return (
@@ -50,6 +51,11 @@ function App() {
           <PrivateRoute exact path='/dashboard/:lap'>
             <User>
               <Dashboard />
+            </User>
+          </PrivateRoute>
+          <PrivateRoute exact path='/advice'>
+            <User>
+              <Advice />
             </User>
           </PrivateRoute>
           <Route>

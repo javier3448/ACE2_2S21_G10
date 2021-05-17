@@ -1,16 +1,18 @@
 import axios from 'axios';
+import Alert from 'components/alerts/Alert';
+import Loader from 'components/loader/Loader';
 import { urlServer } from 'config';
 import { useInterval } from 'hooks/useInterval';
-import React, { useState } from 'react';
-import { getUser } from 'services/user';
+import React, { useEffect, useState } from 'react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import Loader from 'components/loader/Loader';
+import { getUser } from 'services/user';
 
 const RealTime = () => {
   /// Data set para gráfica
   const [data, setData] = useState([]);
   /// No. de entrenamiento
   const [lap, setLap] = useState(0);
+  const [lastLap, setLastLap] = useState();
   /// Calorías por minuto
   const [calPerMinute, setCalPerMinute] = useState(0);
   /// Ritmo por segundo
@@ -20,6 +22,28 @@ const RealTime = () => {
   /// Determina si la gráfica es tiempo real o 
   /// solo muestra el último entrenamiento
   const [context, setContext] = useState('Último entrenamiento');
+  /// Declara dos alertas
+  const [alert, setAlert] = useState();
+  useEffect(() => {
+    if (lastLap) {
+      if (lastLap.calpersecond < 0) {
+        setAlert(<Alert
+          onStateChange={() => { setAlert() }}
+          title="¡Esfuerzate un poco más!"
+          variant="warning"
+          message={<p className="m-0">Con ese ritmo cardíaco no puedes quemar calorías</p>}
+        />)
+      } else {
+        setAlert(
+          <Alert
+            onStateChange={() => { setAlert() }}
+            title="¡Sigue así!"
+            variant="success"
+            message={<p className="m-0">Mantén ese ritmo para seguir quemando calorías</p>}
+          />)
+      }
+    }
+  }, [lastLap]);
   useInterval(() => {
     const userInfo = getUser();
     const endpoint = urlServer + `obtener-calorias/${userInfo.IdUser}`;
@@ -40,6 +64,7 @@ const RealTime = () => {
           const dataSet = lastSet.arrayCaloriasPorSegundo;
           const lastItem = dataSet[dataSet.length - 1];
           /// Recupera el total de calorías por minuto
+          setLastLap(lastItem);
           setData(dataSet);
           setLap(lastItem.repeticion);
           setCalPerMinute(lastSet.calperminute);
@@ -54,7 +79,8 @@ const RealTime = () => {
   }, 990);
   return (
     <div className="row mb-2">
-      <div className="col-lg-2 col-md-12 col-sm-12 col-xs-12 mb-2">
+      <div className="col-lg-3 col-md-12 col-sm-12 col-xs-12 mb-2">
+        {alert}
         <div className="card mb-2">
           <div className="card-body rounded text-light bg-lap">
             <div className="card-title h2">
@@ -77,7 +103,7 @@ const RealTime = () => {
           </div>
         </div>
       </div>
-      <div className="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+      <div className="col-lg-9 col-md-12 col-sm-12 col-xs-12">
         {data.length ? <div className="card border border-dark">
           <div className="card-body">
             <div className="card-title text-center">

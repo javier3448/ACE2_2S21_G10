@@ -15,9 +15,7 @@ const Carousel = () => {
           <img src={io} 
             className="d-block rounded-start" 
             alt="..." 
-            width={"100%"}
-            
-            />
+            width={"100%"}/>
           <div className="carousel-caption d-none d-sm-block">
             <h5>Visualiza los avances de tu entrenamiento</h5>
             <p>

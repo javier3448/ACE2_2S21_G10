@@ -2,8 +2,6 @@ import axios from 'axios';
 import { getUser } from 'services/user';
 import { urlServer } from 'config';
 
-const IdUser = getUser().IdUser;
-
 /**
  * Recupera el mínimo, máximo y promedio de oxigeno.
  * Si lap se especifica calculara únicamente para
@@ -13,6 +11,7 @@ const IdUser = getUser().IdUser;
  */
 const getOxygen = async (lap = -1) => {
   try {
+    const IdUser = getUser().IdUser;
     const response = await axios.get(urlServer + `proyecto2/obtener-oxigenov2/${IdUser}`);
     if (response.data.length) {
       if (lap > -1) {
@@ -64,6 +63,7 @@ const getOxygen = async (lap = -1) => {
  */
 const getTemperature = async (lap = -1) => {
   try {
+    const IdUser = getUser().IdUser;
     const response = await axios.get(urlServer + `proyecto2/obtener-temperaturav2/${IdUser}`);
     if (response.data.length) {
       if (lap > -1) {
@@ -115,6 +115,7 @@ const getTemperature = async (lap = -1) => {
  */
 const getHeart = async (lap = -1) => {
   try {
+    const IdUser = getUser().IdUser;
     const response = await axios.get(urlServer + `proyecto2/obtener-ritmov2/${IdUser}`);
     if (response.data.length) {
       if (lap > -1) {

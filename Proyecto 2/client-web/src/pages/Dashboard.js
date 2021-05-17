@@ -9,11 +9,14 @@ import { urlServer } from 'config';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUser } from 'services/user';
+import { netBurn } from 'services/calories';
+import Calculator from 'components/modal/stats/Calculator';
 
 
 const Dashboard = () => {
   const [laps, setLaps] = useState(0);
   const [calories, setCalories] = useState(0);
+  const [netCalories, setNetCalories] = useState(0);
   const [data, setData] = useState([]);
   /// Hook para mostrar un alerta
   const [alert, setAlert] = useState(
@@ -45,13 +48,15 @@ const Dashboard = () => {
             return {
               lap: arrCal[0].repeticion,
               totalCal: value.calperminute,
+              netBurn: netBurn(value.calperminute)
             };
           });
           setData(dataMap);
+          setNetCalories(dataMap.reduce((n0, n1) => n0 + n1.netBurn, 0));
         }
       })
       .catch((e) => { console.error(e) });
-  }, []);
+  }, [calories]);
   return (
     <>
       <div className="row gap-0">
@@ -65,9 +70,16 @@ const Dashboard = () => {
                     Deshacer selección
                   </Link>
                 <Link to='/realtime' className="btn btn-outline-dark">
-                  Entrenamiento actual{' '}
-                  <i className="fa fa-arrow-alt-circle-right"></i>
+                  <i className="fa fa-running"></i>{' '}
+                  Entrenamiento actual
                 </Link>
+                <button type="button" 
+                  className="btn btn-outline-dark"
+                  data-bs-toggle="modal" data-bs-target="#modalCalculator" >
+                  <i className="fa fa-calculator"></i>{' '}
+                  Calculadora
+                </button>
+                <Calculator id={"modalCalculator"}/>
               </div>
             </div>
           </div>
@@ -77,17 +89,32 @@ const Dashboard = () => {
                 {laps + ' '}
                 <i className="fa fa-running"></i>
               </div>
-                  Entrenamientos
-                </div>
+               Entrenamientos
+            </div>
           </div>
-          <div className="card rounded mb-2 bg-calories">
-            <div className="card-body text-light">
-              <div className="card-title h3">
-                {calories + ' '}
-                <i className="fa fa-fire-alt"></i>
+          <div className="row gap-0">
+            <div className="col me-0">
+              <div className="card rounded mb-2 bg-calories">
+                <div className="card-body text-dark">
+                  <div className="card-title h3">
+                    {calories + ' '}
+                    <i className="fa fa-fire-alt"></i>
+                  </div>
+              Calorías quemadas
               </div>
-                  Calorías quemadas
-                </div>
+              </div>
+            </div>
+            <div className="col ms-0">
+              <div className="card rounded mb-2 bg-calories">
+                <div className="card-body text-dark">
+                  <div className="card-title h3">
+                    {netCalories + ' '}
+                    <i className="fa fa-fire-alt"></i>
+                  </div>
+              Calorías netas
+              </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="col-lg-5 col-md-6 col-sm-12 col-xs-12 mb-2">
@@ -103,6 +130,10 @@ const Dashboard = () => {
                   {
                     Header: 'Calorías quemadas',
                     accessor: 'totalCal'
+                  },
+                  {
+                    Header: 'Calorías netas',
+                    accessor: 'netBurn'
                   }
                 ]
               } /> : <Loader />}
