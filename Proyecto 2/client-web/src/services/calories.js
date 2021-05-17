@@ -23,11 +23,33 @@ const bmr = () => {
  * @param {number} gross calorías brutas
  * @returns 
  */
- const netBurn = (gross) => {
+const netBurn = (gross) => {
   /// Actividad por minuto
   const rmrcb = ((bmr() * 1.1) / 1440);
   const netBurn = gross - rmrcb;
   return Math.round(netBurn > 0 ? netBurn : 0);
 }
 
-export {netBurn};
+/**
+ * Determina cuantos entrenamientos deberá
+ * realizar para alcanzar cierta meta
+ * @param {number} avg promedio de latido de corazón
+ * @param {number} calExpected calorías que se esperan quemar
+ */
+const getLaps = (avg, calExpected) => {
+  /// Recupera la edad, el sexo y el peso del usuario
+  const userInfo = getUser();
+  /// Peso en kilogramos
+  const peso = userInfo.peso / 2.205;
+  const edad = userInfo.edad;
+  if (userInfo.sexo === "M") {
+    const calories = (-55.0969 + (0.6309 * avg) + (0.1988 * peso) + (0.2017 * edad)) / 4.184
+    return Math.round(calExpected / calories);
+  } else if (userInfo.sexo === "F") {
+    const calories = (-20.4022 + (0.4472 * avg) - (0.1263 * peso) + (0.074 * edad)) / 4.184;
+    return Math.round(calExpected / calories);
+  }
+  return 0;
+}
+
+export { netBurn, getLaps };

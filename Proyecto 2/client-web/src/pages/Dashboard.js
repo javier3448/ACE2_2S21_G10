@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUser } from 'services/user';
 import { netBurn } from 'services/calories';
+import Calculator from 'components/modal/stats/Calculator';
 
 
 const Dashboard = () => {
@@ -51,7 +52,7 @@ const Dashboard = () => {
             };
           });
           setData(dataMap);
-          setNetCalories(dataMap.reduce((n0,n1) => n0 + n1.netBurn,0));
+          setNetCalories(dataMap.reduce((n0, n1) => n0 + n1.netBurn, 0));
         }
       })
       .catch((e) => { console.error(e) });
@@ -69,9 +70,16 @@ const Dashboard = () => {
                     Deshacer selección
                   </Link>
                 <Link to='/realtime' className="btn btn-outline-dark">
-                  Entrenamiento actual{' '}
-                  <i className="fa fa-arrow-alt-circle-right"></i>
+                  <i className="fa fa-running"></i>{' '}
+                  Entrenamiento actual
                 </Link>
+                <button type="button" 
+                  className="btn btn-outline-dark"
+                  data-bs-toggle="modal" data-bs-target="#modalCalculator" >
+                  <i className="fa fa-calculator"></i>{' '}
+                  Calculadora
+                </button>
+                <Calculator id={"modalCalculator"}/>
               </div>
             </div>
           </div>
