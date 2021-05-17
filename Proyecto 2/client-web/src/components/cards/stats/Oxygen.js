@@ -4,10 +4,13 @@ import { getOxygen } from 'services/stats';
 
 const Oxygen = () => {
   const params = useParams();
-  const [avg, setAvg] = useState(0);
-  const [min, setMin] = useState(0);
-  const [max, setMax] = useState(0);
+  const [avg, setAvg] = useState();
+  const [min, setMin] = useState();
+  const [max, setMax] = useState();
   useEffect(() => {
+    setAvg('...');
+    setMin('...');
+    setMax('...');   
     getOxygen(params.lap).then((data) => {
       setAvg(data.avg);
       setMin(data.min);
