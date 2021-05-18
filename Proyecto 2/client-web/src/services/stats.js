@@ -164,7 +164,7 @@ const getHeart = async (lap = -1) => {
  * su resistencia
  * @param {number} lap
  */
-const getArray = (lap) => {
+const getArray = async (lap) => {
   const IdUser = getUser().IdUser;
   const lapNumber = Number(lap);
   try {

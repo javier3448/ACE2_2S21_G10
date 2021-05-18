@@ -10,7 +10,7 @@ import { getUser } from 'services/user';
 const RealTime = () => {
   /// Data set para gráfica
   const [data, setData] = useState([]);
-  /// No. de entrenamiento
+  /// No. de repetición
   const [lap, setLap] = useState(0);
   const [lastLap, setLastLap] = useState();
   /// Calorías por minuto
@@ -20,13 +20,13 @@ const RealTime = () => {
   /// Tiempo en minutos y segundos
   const [milis, setMilis] = useState('0 min 00 secs');
   /// Determina si la gráfica es tiempo real o 
-  /// solo muestra el último entrenamiento
-  const [context, setContext] = useState('Último entrenamiento');
+  /// solo muestra la última repetición
+  const [context, setContext] = useState('Última repetición');
   /// Declara dos alertas
   const [alert, setAlert] = useState();
   useEffect(() => {
     if (lastLap) {
-      if (lastLap.calpersecond < 0) {
+      if (lastLap.calpersecond <= 0) {
         setAlert(<Alert
           onStateChange={() => { setAlert() }}
           title="¡Esfuerzate un poco más!"
@@ -50,14 +50,15 @@ const RealTime = () => {
     axios.get((endpoint))
       .then((response) => {
         if (response.data.length) {
-          /// Recupera la data del entrenamiento más reciente
-          const lastSet = response.data[0];
+          /// Recupera la data de la repetición más reciente
+          var lastSet = response.data;
+          lastSet = lastSet[lastSet.length - 1];
           /// Determina el contexto
           if (data.length) {
             if (lastSet.length > data.length) {
-              setContext('Entrenamiento actual');
+              setContext('Repetición actual');
             } else {
-              setContext('Último entrenamiento');
+              setContext('Última repetición');
             }
           }
           /// Recupera el item más reciente, desde lastSet
@@ -67,8 +68,8 @@ const RealTime = () => {
           setLastLap(lastItem);
           setData(dataSet);
           setLap(lastItem.repeticion);
-          setCalPerMinute(lastSet.calperminute);
-          setRitmo(lastItem.ritmo);
+          setCalPerMinute(lastSet.calperminute.toFixed(2));
+          setRitmo(lastItem.ritmo.toFixed(2));
           /// Establece la marca de tiempo
           const min = Math.floor(lastItem.tiempo / 60);
           const secs = (lastItem.tiempo - min * 60);
@@ -87,7 +88,7 @@ const RealTime = () => {
               <i className="fa fa-running"></i>
               {" " + lap + (lap === 1 ? 'er' : 'º')}
             </div>
-            Entrenamiento
+            Repetición
           </div>
         </div>
         <div className="card mb-2 ">
@@ -116,7 +117,7 @@ const RealTime = () => {
                 height={450}
                 data={data}
                 margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                <XAxis dataKey="tiempo" name="seg."></XAxis>
+                <XAxis dataKey="tiempo" hide={true} name="seg."></XAxis>
                 <CartesianGrid strokeDasharray="1 1" />
                 <YAxis />
                 <Tooltip />

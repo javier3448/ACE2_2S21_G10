@@ -8,7 +8,7 @@ const Calculator = ({ id, actualLaps, actualCal }) => {
   const [avg, setAvg] = useState(0);
   /// Guarda la meta de calorías
   const [cal, setCal] = useState(0);
-  /// Almacenará la cantidad de entrenamientos a realizar
+  /// Almacenará la cantidad de repeticiones a realizar
   const [laps, setLaps] = useState(0);
   useEffect(() => {
     /// Recupera el promedio del corazón
@@ -18,11 +18,11 @@ const Calculator = ({ id, actualLaps, actualCal }) => {
   }, []);
   /// Maneja el evento del click para el botón
   /// Almacenará en localStorage el número 
-  /// de entrenamientos actuales y la meta
+  /// de repeticiones actuales y la meta
   // const handleClick = (e) => {
   //   e.preventDefault();
   //   if (laps === 0) {
-  //     alert('No se puede establecer una meta de 0 entrenamientos');
+  //     alert('No se puede establecer una meta de 0 repeticiones');
   //     return;
   //   }
   //   /// Recupera una posible meta ya establecida
@@ -50,16 +50,16 @@ const Calculator = ({ id, actualLaps, actualCal }) => {
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Calculadora de entrenamientos</h5>
+            <h5 className="modal-title">Calculadora de repeticiones</h5>
             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div className="modal-body">
             <p className="lh-sm" style={{textAlign: 'justify'}}>
-              La calculadora toma por defecto tu promedio de ritmo cardiaco para todos los entrenamientos.
+              La calculadora toma por defecto tu promedio de ritmo cardiaco para todos los repeticiones.
             </p>
             <p className="lh-sm" style={{textAlign: 'justify'}}>
               Especifíca tu meta de calorías, y si quieres, modifica el ritmo cardíaco para averiguar
-              cuantos entrenamientos deberás realizar para alcanzar tu meta.
+              cuantos repeticiones deberás realizar para alcanzar tu meta.
             </p>
             <div className="row">
               <div className="col-7">
@@ -83,7 +83,7 @@ const Calculator = ({ id, actualLaps, actualCal }) => {
                   <div className="card-body bg-lap text-light">
                     <div className="d-flex align-items-start flex-column bd-highlight">
                       <div className="mb-auto p-2 bd-highlight h2">{laps + ' '}<i className="fa fa-running"></i></div>
-                      <p className="p-2 bd-highlight">Entrenamientos</p>
+                      <p className="p-2 bd-highlight">Repeticiones</p>
                     </div>
                   </div>
                 </div>

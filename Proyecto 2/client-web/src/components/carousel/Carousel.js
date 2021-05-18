@@ -17,7 +17,7 @@ const Carousel = () => {
             alt="..." 
             width={"100%"}/>
           <div className="carousel-caption d-none d-sm-block">
-            <h5>Visualiza los avances de tu entrenamiento</h5>
+            <h5>Visualiza los avances de tu repetición</h5>
             <p>
               Con la tecnología de WristSmart podrás conocer datos sobre tu ritmo
               cardíaco, temperatura, nivel de oxígeno y calorías quemadas en
@@ -33,7 +33,7 @@ const Carousel = () => {
           <div className="carousel-caption d-none d-sm-block">
             <h5>¿Quieres saber qué tanto has avanzado?</h5>
             <p>
-              Todos los datos de los entrenamientos se guardan.
+              Todos los datos de las repeticiones se guardan.
               Desde tu computadora puedes comparar tus datos actuales con los anteriores
             </p>
           </div>
@@ -46,7 +46,7 @@ const Carousel = () => {
           <div className="carousel-caption d-none d-sm-block">
             <h5>Solo debes ver tu muñeca</h5>
             <p>
-              No es necesario que monitorees tu entrenamiento desde una computadora,
+              No es necesario que monitorees tu repetición desde una computadora,
               bastará con ver la pantalla LCD que WristSmart tiene integrada.
             </p>
           </div>

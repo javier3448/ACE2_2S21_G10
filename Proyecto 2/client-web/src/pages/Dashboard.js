@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { netBurn } from 'services/calories';
 import { getUser } from 'services/user';
+import Advice from 'components/modal/stats/Advice';
 //import { getGoal, getUser, removeGoal } from 'services/user';
 
 
@@ -20,7 +21,6 @@ const Dashboard = () => {
   const [calories, setCalories] = useState(0);
   const [netCalories, setNetCalories] = useState(0);
   const [data, setData] = useState([]);
-  /// const [goal, setGoal] = useState();
   /// Hook para mostrar un alerta
   const [alert, setAlert] = useState(
     <Alert
@@ -28,9 +28,9 @@ const Dashboard = () => {
       title="¿Cómo funciona?"
       variant="info"
       message={<ul className="m-0 fs-6">
-        <li>Selecciona una fila de la tabla y visualiza las estadísticas para ese entrenamiento en las tarjetas de <strong>Ritmo cardíaco, Temperatura y Oxígeno</strong></li>
+        <li>Selecciona una fila de la tabla y visualiza las estadísticas para ese repeticiones en las tarjetas de <strong>Ritmo cardíaco, Temperatura y Oxígeno</strong></li>
         <li>Limpia la selección presionando <strong>Deshacer selección</strong></li>
-        <li>Visualiza las estadísticas en tiempo real presionando <strong>Entrenamiento actual</strong></li>
+        <li>Visualiza las estadísticas en tiempo real presionando <strong>Repeticiones actual</strong></li>
       </ul>}
     />
   );
@@ -45,44 +45,28 @@ const Dashboard = () => {
       .then((response) => {
         if (response.data.length) {
           const data = response.data;
-          setCalories(data.reduce((n0, n1) => {
+          /// Calcula las calorías de todas las
+          /// repeticioens
+          const cal = data.reduce((n0, n1) => {
             return n0 + n1.calperminute;
-          }, 0));
+          }, 0);
+          setCalories(Math.round(cal));
+          /// Recupera el número de repeticiones
           setLaps(data.length);
+          /// Recupera y compone la información
+          /// a mostrar en la tabla
           const dataMap = data.map((value) => {
             const arrCal = value.arrayCaloriasPorSegundo;
             return {
               lap: arrCal[0].repeticion,
               totalCal: value.calperminute,
+              /// Calcula las calorías netas
               netBurn: netBurn(value.calperminute)
             };
           });
           setData(dataMap);
+          /// Suma las calorías netas
           setNetCalories(dataMap.reduce((n0, n1) => n0 + n1.netBurn, 0));
-          // if (goalUser) {
-          //   /// Calcula si ya terminó su meta
-          //   var goalSet = {};
-          //   const goalYet = goalUser.goal - (data.length - goalUser.actualLaps);
-          //   if (goalYet > 0) {
-          //     /// Aún no lo ha logrado
-          //     goalSet.remain = goalYet;
-          //     goalSet.reached = data.length - goalUser.actualLaps;
-          //     goalSet.goal = goalUser.goal;
-          //     goalSet.prevCals = goalUser.actualCal;
-          //     goalSet.goalCals = goalUser.calories;
-          //     goalSet.actualCals = calories;
-          //   } else {
-          //     /// Ya lo superó
-          //     goalSet.remain = 0;
-          //     goalSet.reached = goalUser.goal;
-          //     goalSet.goal = goalUser.goal;
-          //     goalSet.prevCals = goalUser.actualCal;
-          //     goalSet.goalCals = goalUser.calories;
-          //     goalSet.actualCals = calories;
-          //     removeGoal();
-          //   }
-          //   setGoal(goalSet);
-          // }
         }
       })
       .catch((e) => { console.error(e) });
@@ -101,13 +85,13 @@ const Dashboard = () => {
                   </Link>
               <Link to='/realtime' className="btn btn-outline-dark">
                 <i className="fa fa-running"></i>{' '}
-                  Entrenamiento actual
+                  Repetición actual
                 </Link>
               <button type="button"
                 className="btn btn-outline-dark"
                 data-bs-toggle="modal" data-bs-target="#modalCalculator" >
                 <i className="fa fa-crosshairs"></i>{' '}
-                  Calculadora de entrenamientos
+                  Calculadora de repeticiones
                 </button>
               <Calculator id={"modalCalculator"} actualLaps={laps} actualCal={calories} />
             </div>
@@ -121,7 +105,7 @@ const Dashboard = () => {
                   {laps + ' '}
                   <i className="fa fa-running"></i>
                 </div>
-                  Entrenamientos
+                  Repeticiones
                 </div>
             </div>
           </div>
@@ -158,7 +142,7 @@ const Dashboard = () => {
             columns={
               [
                 {
-                  Header: 'Entrenamiento No.',
+                  Header: 'Repetición No.',
                   accessor: 'lap'
                 },
                 {
@@ -173,6 +157,7 @@ const Dashboard = () => {
             } /> : <Loader />}
       </div>
       <div className="col-lg-3 col-md-6 col-sm-12 col-xs-12 ">
+        <Advice />
         <Oxygen />
         <HeartBeat />
         <Temperature />

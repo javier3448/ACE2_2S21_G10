@@ -38,7 +38,7 @@ const Goal = ({ goal, id }) => {
               </thead>
               <tbody>
                 <tr>
-                  <td className="fw-bold border-end border-bottom-0 border-dark">Entrenamientos</td>
+                  <td className="fw-bold border-end border-bottom-0 border-dark">Repeticiones</td>
                   <td className="border-0">{goal.goal}</td>
                   <td className="border-0">{goal.reached}</td>
                   <td className="border-0">{goal.remain}</td>

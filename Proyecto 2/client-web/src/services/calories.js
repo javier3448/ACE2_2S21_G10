@@ -31,7 +31,7 @@ const netBurn = (gross) => {
 }
 
 /**
- * Determina cuantos entrenamientos deberá
+ * Determina cuantos repeticiones deberá
  * realizar para alcanzar cierta meta
  * @param {number} avg promedio de latido de corazón
  * @param {number} calExpected calorías que se esperan quemar
