@@ -38,14 +38,6 @@ const NavBar = () => {
                 Perfil
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink
-                type="button"
-                id="toAdvices" to="/advice"
-                className="nav-link">
-                Consejos
-              </NavLink>
-            </li>
           </ul>
           <div className="d-flex">
             <button

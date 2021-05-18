@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { getArray } from 'services/stats';
-import { std, mean, min, max } from 'mathjs'
-import { useParams } from 'react-router';
 import QSD from 'components/modal/stats/QSD';
+import { max, mean, min, std } from 'mathjs';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+import { getArray } from 'services/stats';
+import Dispersion from './Dispersion';
 
 /**
  * Modal que desplegará recomendaciones basado en el 
@@ -42,21 +43,27 @@ const Advice = () => {
       }).catch((e) => console.error(e));
     }
   }, [lap]);
-  /// 
+  /// Controla la acción para el click de la etiqueta anchor
+  const handleClick = (url) => {
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
   if (!lap) return <></>;
   return (
-    <> 
-      <button type="button"
-        className="btn btn-outline-dark"
-        data-bs-toggle="modal" data-bs-target="#adviceModal">
-        <i className="fa fa-crosshairs"></i>{' '}
+    <>
+      <div className="d-grid gap-2 mb-2">
+        <button type="button"
+          className="btn btn-outline-dark"
+          data-bs-toggle="modal" data-bs-target="#adviceModal">
+          <i className="fa fa-check"></i>{' '}
         Recomendaciones
       </button>
+      </div>
       <div className="modal fade" tabIndex="-1" id="adviceModal" aria-hidden="false">
-        <div className="modal-dialog">
+        <div className="modal-dialog modal-lg">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Recomendaciones</h5>
+              <h5 className="modal-title">Recomendaciones (repetición no. {lap})</h5>
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
@@ -71,19 +78,32 @@ const Advice = () => {
                         <th>Promedio</th>
                         <th>Máximo</th>
                         <th>Mínimo</th>
-                        <th>Coeficiente<br/> de desviación</th>
+                        <th>Coeficiente<br /> de desviación</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="text-center">
                         <td>{avg ? avg.toFixed(2) : ''}</td>
                         <td>{maxV ? maxV.toFixed(2) : ''}</td>
-                        <td>{minV ? minV.toFixed(2): ''}</td>
+                        <td>{minV ? minV.toFixed(2) : ''}</td>
                         <td>{qSd ? qSd.toFixed(2) : ''}</td>
                       </tr>
                     </tbody>
                   </table>
-                  <QSD lap={lap} qSd={qSd} />
+                  <div className="row">
+                    <div className="col">
+                      <QSD lap={lap} qSd={qSd} />
+                    </div>
+                    <div className="col">
+                      <Dispersion avg={avg} />
+                      <div className="d-grid gap-2 mt-2">
+                        <button
+                          className="btn btn-info"
+                          onClick={() => handleClick('https://www.mayoclinic.org/es-es/healthy-lifestyle/fitness/in-depth/exercise-intensity/art-20046887#:~:text=C%C3%B3mo%20elegir%20la%20intensidad%20del%20ejercicio')}
+                          type="button">Más info</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

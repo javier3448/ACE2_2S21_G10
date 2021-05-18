@@ -4,10 +4,16 @@ import Loader from 'components/loader/Loader';
 import { urlServer } from 'config';
 import { useInterval } from 'hooks/useInterval';
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { getUser } from 'services/user';
 
 const RealTime = () => {
+  /// Recupera toda la info del usuario
+  const userInfo = getUser();
+  /// Calcula el limite inferior y mayor para
+  /// el ritmo cardíaco
+  const maxhrtanaka = 208 - (0.7*userInfo.edad);
+  const minThreshold = Math.round(0.64*(maxhrtanaka));
   /// Data set para gráfica
   const [data, setData] = useState([]);
   /// No. de repetición
@@ -31,7 +37,7 @@ const RealTime = () => {
           onStateChange={() => { setAlert() }}
           title="¡Esfuerzate un poco más!"
           variant="warning"
-          message={<p className="m-0">Con ese ritmo cardíaco no puedes quemar calorías</p>}
+          message={<p className="m-0">Necesitas un ritmo cardíaco de {minThreshold} para quemar calorías</p>}
         />)
       } else {
         setAlert(
@@ -43,9 +49,9 @@ const RealTime = () => {
           />)
       }
     }
-  }, [lastLap]);
+  }, [lastLap, minThreshold]);
+
   useInterval(() => {
-    const userInfo = getUser();
     const endpoint = urlServer + `obtener-calorias/${userInfo.IdUser}`;
     axios.get((endpoint))
       .then((response) => {
@@ -80,11 +86,11 @@ const RealTime = () => {
   }, 990);
   return (
     <div className="row mb-2">
-      <div className="col-lg-3 col-md-12 col-sm-12 col-xs-12 mb-2">
+      <div className="col-lg-2 col-md-12 col-sm-12 col-xs-12 mb-2">
         {alert}
         <div className="card mb-2">
           <div className="card-body rounded text-light bg-lap">
-            <div className="card-title h2">
+            <div className="card-title h3">
               <i className="fa fa-running"></i>
               {" " + lap + (lap === 1 ? 'er' : 'º')}
             </div>
@@ -93,44 +99,73 @@ const RealTime = () => {
         </div>
         <div className="card mb-2 ">
           <div className="card-body rounded text-light bg-calories">
-            <div className="card-title h2"><i className="fa fa-fire-alt"></i>{' ' + calPerMinute}</div>
+            <div className="card-title h3"><i className="fa fa-fire-alt"></i>{' ' + calPerMinute}</div>
             Calorías quemadas
           </div>
         </div>
         <div className="card mb-2">
           <div className="card-body rounded text-light bg-heart">
-            <div className="card-title h2"><i className="fa fa-heartbeat"></i>{' ' + ritmo}</div>
+            <div className="card-title h3"><i className="fa fa-heartbeat"></i>{' ' + ritmo}</div>
             Ritmo cardíaco
           </div>
         </div>
       </div>
-      <div className="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-        {data.length ? <div className="card border border-dark">
-          <div className="card-body">
+      <div className="col-lg-10 col-md-12 col-sm-12 col-xs-12">
+        {data.length ? <div className="card">
+          <div className="card-body m-0 p-1">
             <div className="card-title text-center">
               <h3>{context}</h3>
               <span className="badge bg-dark">{milis}</span>
             </div>
-            <ResponsiveContainer id="graphic" width="100%" height={450}>
-              <LineChart
-                width={1000}
-                height={450}
-                data={data}
-                margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                <XAxis dataKey="tiempo" hide={true} name="seg."></XAxis>
-                <CartesianGrid strokeDasharray="1 1" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  isAnimationActive={false}
-                  type="monotone"
-                  dataKey="calpersecond"
-                  name="Calorias"
-                  stroke="#de7647"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="row">
+              <div className="col-lg-6 col-md-12 mb-2">
+                <ResponsiveContainer id="graphic" width="100%" height={400}>
+                  <LineChart
+                    width={1000}
+                    height={450}
+                    data={data}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="tiempo" hide={true} name="seg."></XAxis>
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      isAnimationActive={false}
+                      type="monotone"
+                      dataKey="calpersecond"
+                      name="Calorias"
+                      stroke="orange"
+                      activeDot={false}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="col-lg-6 col-md-12 mb-2">
+                <ResponsiveContainer id="graphic" className="m-0" width="100%" height={400}>
+                  <LineChart
+                    width={1000}
+                    height={450}
+                    data={data}
+                    margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="tiempo" hide={true} name="seg."></XAxis>
+                    <YAxis domain={[0,200]}/>
+                    <Tooltip />
+                    <Legend />
+                    <ReferenceLine y={minThreshold} stroke="black" />
+                    <Line
+                      isAnimationActive={false}
+                      type="monotone"
+                      dataKey="ritmo"
+                      name="Ritmo cardíaco"
+                      stroke="red"
+                      activeDot={false}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
         </div> : <Loader />}
       </div>

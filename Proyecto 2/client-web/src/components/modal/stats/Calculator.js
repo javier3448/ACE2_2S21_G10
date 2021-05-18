@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getLaps } from 'services/calories';
 import { getHeart } from 'services/stats';
-/// import { setGoal } from 'services/user';
 
 const Calculator = ({ id, actualLaps, actualCal }) => {
   /// Guarda el promedio de ritmo cardíaco
@@ -16,34 +15,6 @@ const Calculator = ({ id, actualLaps, actualCal }) => {
       setAvg(data.avg);
     }).catch((e) => console.error(e));
   }, []);
-  /// Maneja el evento del click para el botón
-  /// Almacenará en localStorage el número 
-  /// de repeticiones actuales y la meta
-  // const handleClick = (e) => {
-  //   e.preventDefault();
-  //   if (laps === 0) {
-  //     alert('No se puede establecer una meta de 0 repeticiones');
-  //     return;
-  //   }
-  //   /// Recupera una posible meta ya establecida
-  //   if (localStorage.getItem('goal')) {
-  //     alert('Ya hay una meta establecida');
-  //     return;
-  //   }
-  //   /// Establece una nueva meta
-  //   const goal = {
-  //     actualLaps,
-  //     goal: laps,
-  //     calories: cal,
-  //     actualCal
-  //   }
-  //   if (setGoal(goal)) {
-  //     alert('Meta establecida');
-  //   } else {
-  //     alert('No se pudo establecer la meta');
-  //   }
-  //   window.location.reload();
-  // }
 
   return (
     <div className="modal fade" tabIndex="-1" id={id} aria-hidden="true">
@@ -55,11 +26,11 @@ const Calculator = ({ id, actualLaps, actualCal }) => {
           </div>
           <div className="modal-body">
             <p className="lh-sm" style={{textAlign: 'justify'}}>
-              La calculadora toma por defecto tu promedio de ritmo cardiaco para todos los repeticiones.
+              La calculadora toma por defecto tu promedio de ritmo cardiaco para todos las repeticiones.
             </p>
             <p className="lh-sm" style={{textAlign: 'justify'}}>
               Especifíca tu meta de calorías, y si quieres, modifica el ritmo cardíaco para averiguar
-              cuantos repeticiones deberás realizar para alcanzar tu meta.
+              cuantas repeticiones deberás realizar para alcanzar tu meta.
             </p>
             <div className="row">
               <div className="col-7">

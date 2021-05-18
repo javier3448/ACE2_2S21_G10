@@ -4,17 +4,14 @@ import HeartBeat from 'components/cards/stats/HeartBeat';
 import Oxygen from 'components/cards/stats/Oxygen';
 import Temperature from 'components/cards/stats/Temperature';
 import Loader from 'components/loader/Loader';
+import Advice from 'components/modal/stats/Advice';
 import Calculator from 'components/modal/stats/Calculator';
-//import Goal from 'components/modal/stats/Goal';
 import StatTable from 'components/tables/stats/StatTable';
 import { urlServer } from 'config';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { netBurn } from 'services/calories';
 import { getUser } from 'services/user';
-import Advice from 'components/modal/stats/Advice';
-//import { getGoal, getUser, removeGoal } from 'services/user';
-
 
 const Dashboard = () => {
   const [laps, setLaps] = useState(0);
@@ -28,9 +25,9 @@ const Dashboard = () => {
       title="¿Cómo funciona?"
       variant="info"
       message={<ul className="m-0 fs-6">
-        <li>Selecciona una fila de la tabla y visualiza las estadísticas para ese repeticiones en las tarjetas de <strong>Ritmo cardíaco, Temperatura y Oxígeno</strong></li>
+        <li>Selecciona una fila de la tabla y visualiza las estadísticas y recomendaciones para esa repetición.</li>
         <li>Limpia la selección presionando <strong>Deshacer selección</strong></li>
-        <li>Visualiza las estadísticas en tiempo real presionando <strong>Repeticiones actual</strong></li>
+        <li>Visualiza las estadísticas en tiempo real presionando <strong>Repetición actual</strong></li>
       </ul>}
     />
   );
@@ -59,7 +56,7 @@ const Dashboard = () => {
             const arrCal = value.arrayCaloriasPorSegundo;
             return {
               lap: arrCal[0].repeticion,
-              totalCal: value.calperminute,
+              totalCal: Math.round(value.calperminute),
               /// Calcula las calorías netas
               netBurn: netBurn(value.calperminute)
             };
