@@ -158,4 +158,26 @@ const getHeart = async (lap = -1) => {
   }
 }
 
-export { getHeart, getOxygen, getTemperature };
+/**
+ * Desde acá se pueden obtener medidas de dispersión
+ * para determinar si el usuario necesita mejorar 
+ * su resistencia
+ * @param {number} lap
+ */
+const getArray = (lap) => {
+  const IdUser = getUser().IdUser;
+  const lapNumber = Number(lap);
+  try {
+    const response = await axios.get(urlServer + `proyecto2/obtener-ritmov2/${IdUser}`);
+    const data = response.data;
+    if (data.length) {
+      const lapSet = data.find(e => e.repeticion === lapNumber);
+      return lapSet.arrayRitmo;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
+}
+
+export { getHeart, getOxygen, getTemperature, getArray };
