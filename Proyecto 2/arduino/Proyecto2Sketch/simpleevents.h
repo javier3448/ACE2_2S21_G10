@@ -1,34 +1,35 @@
-// solo un monton de funciones para ejecutar otras funciones ""concurrentemente""
+// Solo un monton de funciones para ejecutar otras funciones ""concurrentemente""
 // Cosas sencillas como ejecutar una funcion cada 2 segundos.
 // HAY QUE LLAMAR A loop CONSTANTEMENTE PARA QUE FUNCIONE y la funcionalidad depende 
 // que llamen a loop constantemente y frecuentemente
 
-// EL NUMERO DE EVENTOS SE TIENEN QUE SAVER EN TIEMPO DE COMPILACION AUNQUE PARESCA
-// QUE NO.
-
-// The way we time things is pretty mediocre, when we execute the function we are
-// always a bit late, ideally we would be late sometimes and some other early.
-// Example of current timming for an event that happens every second:
-// execution 1: millis=0;
-// execution 2: millis=1005;
-// execution 3: millis=2033;
-// execution 4: millis=3062;
-// execution 5: millis=4081;
-// execution 6: millis=5101;
-// execution 7: millis=6130;
-// execution 8: millis=7156;
+// @Improvement?:
+// We are almost always exactly on time in our test. But when we are late, the next
+// exectution of func is on time, not early. 
+// Example of what we have:
+//     execution 1: millis=0;
+//     execution 2: millis=1000;
+//     execution 3: millis=2000;
+//     execution 4: millis=3002; <--- its inevitable that we will be late sometimes
+//     execution 5: millis=4000; <--- but the next one should be early 
+//     execution 6: millis=5000;
+//     execution 7: millis=6000;
+//     execution 8: millis=7000;
+// Example of what we want:
+//     execution 1: millis=0;
+//     execution 2: millis=1000;
+//     execution 3: millis=2000;
+//     execution 4: millis=3002; <---
+//     execution 5: millis=3998; <---
+//     execution 6: millis=5000;
+//     execution 7: millis=6000;
+//     execution 8: millis=7000;
 
 // @TODO:
 // @MEJORA!!!!: USAR TEMPLATES O ALGO ASI PARA EXPRESAR QUE `events` NO ES REALMENTE
 // UNA ESTRUCTURA DINAMICA. 
 // De hecho casi todo es estatico: el puntero de funcion, el numero de 'eventos',
 // el tiempo de delay...
-
-// @IDEA: 
-// A veces es util para debuggear que algo se ejecute cada 10 veces que llamamos
-// a su loop, agregar soporte para esos 'eventos'
-// runEvery8Calls(anotherFunc) //cada 8 veces que llamamos a runEvery8Calls se llama
-// una vez a anotherFunc
 
 #ifndef SIMPLEEVENTS_h
 #define SIMPLEEVENTS_h
@@ -45,14 +46,15 @@ struct Event{
     // private-ish: shouldnt be touched by anyone but the SimpleEvents class methods
     // ie: by SimpleEvents::loop()
 
-    long lastTime;
+    // The value that millis() has to return in order to execute func again.
+    long nextTime;
 };
 
 struct SimpleEvents{
     // 
-    static constexpr int8_t EVENTS_CAPACITY = 8;
+    static constexpr int8_t EVENTS_SIZE = 8;
 
-    Event events[EVENTS_CAPACITY];
+    Event events[EVENTS_SIZE];
 
     SimpleEvents();
 
