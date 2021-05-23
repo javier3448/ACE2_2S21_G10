@@ -4,10 +4,13 @@ import { getTemperature } from 'services/stats';
 
 const Temperature = () => {
   const params = useParams();
-  const [avg, setAvg] = useState(0);
-  const [min, setMin] = useState(0);
-  const [max, setMax] = useState(0);
+  const [avg, setAvg] = useState();
+  const [min, setMin] = useState();
+  const [max, setMax] = useState();
   useEffect(() => {
+    setAvg('...');
+    setMin('...');
+    setMax('...');   
     getTemperature(params.lap).then((data) => {
       setAvg(data.avg);
       setMin(data.min);

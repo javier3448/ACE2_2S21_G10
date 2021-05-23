@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { getUser } from 'services/user';
 import { urlServer } from 'config';
-
-const IdUser = getUser().IdUser;
+import { getUser } from 'services/user';
 
 /**
  * Recupera el mínimo, máximo y promedio de oxigeno.
@@ -13,8 +11,9 @@ const IdUser = getUser().IdUser;
  */
 const getOxygen = async (lap = -1) => {
   try {
+    const IdUser = getUser().IdUser;
     const response = await axios.get(urlServer + `proyecto2/obtener-oxigenov2/${IdUser}`);
-    if (response.data.length) {
+    if (response.data && response.data.length) {
       if (lap > -1) {
         const lapNumber = Number(lap);
         const lapSet = response.data.find(e => e.repeticion === lapNumber);
@@ -64,8 +63,9 @@ const getOxygen = async (lap = -1) => {
  */
 const getTemperature = async (lap = -1) => {
   try {
+    const IdUser = getUser().IdUser;
     const response = await axios.get(urlServer + `proyecto2/obtener-temperaturav2/${IdUser}`);
-    if (response.data.length) {
+    if (response.data && response.data.length) {
       if (lap > -1) {
         const lapNumber = Number(lap);
         const lapSet = response.data.find(e => e.repeticion === lapNumber);
@@ -115,8 +115,9 @@ const getTemperature = async (lap = -1) => {
  */
 const getHeart = async (lap = -1) => {
   try {
+    const IdUser = getUser().IdUser;
     const response = await axios.get(urlServer + `proyecto2/obtener-ritmov2/${IdUser}`);
-    if (response.data.length) {
+    if (response.data && response.data.length) {
       if (lap > -1) {
         const lapNumber = Number(lap);
         const lapSet = response.data.find(e => e.repeticion === lapNumber);
@@ -157,4 +158,26 @@ const getHeart = async (lap = -1) => {
   }
 }
 
-export { getHeart, getOxygen, getTemperature };
+/**
+ * Desde acá se pueden obtener medidas de dispersión
+ * para determinar si el usuario necesita mejorar 
+ * su resistencia
+ * @param {number} lap
+ */
+const getArray = async (lap) => {
+  const IdUser = getUser().IdUser;
+  const lapNumber = Number(lap);
+  try {
+    const response = await axios.get(urlServer + `proyecto2/obtener-ritmov2/${IdUser}`);
+    const data = response.data;
+    if (data.length) {
+      const lapSet = data.find(e => e.repeticion === lapNumber);
+      return lapSet.arrayRitmo;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
+}
+
+export { getHeart, getOxygen, getTemperature, getArray };
